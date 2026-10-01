@@ -80,7 +80,11 @@ if (section && room) {
   // --- the page's colours, from 0 (lights on) to 1 (off) ------------------------------------
 
   const hex = (v: string): RGB => {
-    const n = parseInt(v.trim().replace('#', ''), 16);
+    let h = v.trim().replace('#', '');
+    // The built CSS shortens colours where it can (#ffffff to #fff), and #fff read as six digits
+    // is blue: each of the three digits stands for two.
+    if (h.length === 3) h = h.replace(/./g, '$&$&');
+    const n = parseInt(h, 16);
     return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   };
   const token = (name: string) => hex(getComputedStyle(root).getPropertyValue(name));
