@@ -72,11 +72,11 @@ const f = rig.features;
         <g mask="url(#nb-fade-mask)">
           <!-- The neck as it carries on up behind the jaw: what shows when the head lifts or tilts away. -->
           <g class="bust__neck">
-            <rect x={neckLeft.x + 4} y="470" width={neckRight.x - neckLeft.x} height="180"></rect>
+            <rect x={neckLeft.x + 4} y="430" width={neckRight.x - neckLeft.x} height="220"></rect>
             <use href="#nb-shadow" y="-11"></use>
             <use href="#nb-shadow" y="-22"></use>
-            <rect x={neckLeft.x} y="486" width={neckLeft.width} height="80" class="bust__line"></rect>
-            <rect x={neckRight.x} y="486" width={neckRight.width} height="80" class="bust__line"></rect>
+            <rect x={neckLeft.x} y="440" width={neckLeft.width} height="110" class="bust__line"></rect>
+            <rect x={neckRight.x} y="440" width={neckRight.width} height="110" class="bust__line"></rect>
           </g>
           <use href="#nb-base" clip-path="url(#nb-torso)"></use>
 
@@ -199,7 +199,7 @@ const f = rig.features;
 
   .bust__sway {
     transform-box: view-box;
-    transform-origin: 512px 606px;
+    transform-origin: 510px 575px;
   }
 
   /*
@@ -207,6 +207,8 @@ const f = rig.features;
    * where the pointer is relative to his head; the head leans that way, the face slides
    * across it, the nose a little further and the eyes further still. These use `translate`
    * and `rotate`, which add to the `transform` the timed animations below are using.
+   * Kept small: the portrait's beard is drawn in strands on the cheeks, which stay with the
+   * head, so a face that slides far leaves the mouth and moustache off the beard.
    */
   .bust__sway {
     rotate: calc(var(--look-x, 0) * 1.6deg);
@@ -214,16 +216,16 @@ const f = rig.features;
   }
 
   .bust__look {
-    translate: calc(var(--look-x, 0) * 9px) calc(var(--look-y, 0) * 6px);
+    translate: calc(var(--look-x, 0) * 4px) calc(var(--look-y, 0) * 3px);
     transition: translate 0.35s ease-out;
   }
 
   .bust__look--nose {
-    translate: calc(var(--look-x, 0) * 5px) calc(var(--look-y, 0) * 2px);
+    translate: calc(var(--look-x, 0) * 2px) calc(var(--look-y, 0) * 1px);
   }
 
   .bust :global(.bust-blink) {
-    translate: calc(var(--look-x, 0) * 2.5px) calc(var(--look-y, 0) * 1.5px);
+    translate: calc(var(--look-x, 0) * 1.2px) calc(var(--look-y, 0) * 0.8px);
     transition: translate 0.35s ease-out;
   }
 
@@ -273,19 +275,19 @@ const f = rig.features;
 
   @keyframes bust-look {
     from {
-      transform: translate(-5px, 0.5px);
+      transform: translate(-2px, 0.3px);
     }
     to {
-      transform: translate(5px, -1px);
+      transform: translate(2px, -0.5px);
     }
   }
 
   @keyframes bust-look-nose {
     from {
-      transform: translateX(-2.5px);
+      transform: translateX(-1px);
     }
     to {
-      transform: translateX(2.5px);
+      transform: translateX(1px);
     }
   }
 

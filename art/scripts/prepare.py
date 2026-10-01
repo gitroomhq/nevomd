@@ -31,7 +31,7 @@ PINK = np.array([255, 0, 131], dtype=np.float32)     # #FF0083
 # Which generation of each drawing is used.
 PICKS = {
     "mark": "brain-full/generated_2.png",   # the small brain in the nav and the chat bubbles
-    "bust": "nevo-bust/generated_2.png",     # Nevo, for the finale and "How it works"
+    "bust": "nevo-bust/v2_3.png",            # Nevo (v1 was generated_2.png), for the finale and "How it works"
 }
 
 

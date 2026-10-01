@@ -38,7 +38,7 @@ export const NODES = [
 ];
 
 /** The cut across the forehead where the top of the head lifts off, in bust image pixels (1024). */
-export const LID = { cx: 505, cy: 265, rx: 207, ry: 38 };
+export const LID = { cx: 504, cy: 238, rx: 190, ry: 36 };
 
 const BUST_SIZE = 640;
 const BUST_TOP = 330;
@@ -52,7 +52,7 @@ export const BUST = {
   /** Where the lid hinges, in bust image pixels. */
   hinge: `${LID.cx - LID.rx} ${LID.cy}`,
   /** The top of his hair and the end of his shoulders, in scene units. */
-  hairTop: BUST_TOP + 44 * k,
+  hairTop: BUST_TOP + 48 * k,
   bottom: BUST_TOP + 950 * k,
   /** The opening in the head, in scene units. */
   opening: { x: 500, y: Math.round(BUST_TOP + LID.cy * k) },
@@ -64,18 +64,18 @@ export const BUST = {
  */
 export const HEAD = {
   /** The jaw, from his left cheek round the chin to his right cheek, just outside the drawn line. */
-  jaw: 'H668L652 552L640 567L622 589L602 609L582 626L562 639L542 648L522 651H502L482 646L462 635L442 619L422 603L402 584L384 566L372 552L356 548',
+  jaw: 'H666L657 524L642 548L624 568L604 585L582 597L558 606L532 612H486L460 606L434 596L412 583L394 566L377 546L363 522L350 500',
   /** The height at which the jaw line meets the cheeks. */
-  cut: 548,
+  cut: 500,
   /** The point the head turns about: the middle of the neck. */
-  pivot: { x: 512, y: 606 },
+  pivot: { x: 510, y: 575 },
   /** The two lines of the neck, which carry on up behind the jaw: x and width. */
   neck: [
-    { x: 370, width: 10 },
-    { x: 645, width: 12 },
+    { x: 371, width: 9 },
+    { x: 647, width: 9 },
   ],
   /** The mouth's middle, for the round mouth he makes when he is amazed. */
-  mouth: { x: 512, y: 523 },
+  mouth: { x: 510, y: 486 },
 };
 
 /**

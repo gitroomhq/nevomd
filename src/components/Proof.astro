@@ -52,16 +52,6 @@ import { proof, proofSection, asOfLabel } from '../content/site';
       </details>
     </figure>
 
-    <ul class="bubbles">
-      {
-        proofSection.bubbles.map((b) => (
-          <li class:list={['bubble', `bubble--${b.size}`]}>
-            <strong>{b.value}</strong>
-            <span>{b.label}</span>
-          </li>
-        ))
-      }
-    </ul>
   </div>
 </section>
 
@@ -161,46 +151,4 @@ import { proof, proofSection, asOfLabel } from '../content/site';
     color: var(--ink-muted);
   }
 
-  /* Lemonade's stat bubbles: plain grey circles of different sizes, loosely clustered. */
-  .bubbles {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.875rem;
-    margin-top: clamp(2.5rem, 6vw, 4.5rem);
-  }
-
-  .bubble {
-    --d: 8.625rem;
-    width: var(--d);
-    height: var(--d);
-    display: grid;
-    place-content: center;
-    text-align: center;
-    background: var(--band);
-    border-radius: 50%;
-    line-height: 1.15;
-  }
-
-  .bubble--l {
-    --d: 11rem;
-  }
-
-  .bubble--s {
-    --d: 7rem;
-  }
-
-  .bubble:nth-child(even) {
-    translate: 0 1.125rem;
-  }
-
-  .bubble strong {
-    font-size: calc(var(--d) * 0.24);
-    font-weight: 700;
-  }
-
-  .bubble span {
-    font-size: 0.9375rem;
-  }
 </style>

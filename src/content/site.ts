@@ -175,8 +175,8 @@ export const meta = {
 };
 
 export const hero = {
-  title: 'Your agent can build anything. Now teach it to sell.',
-  sub: 'Nevo’s Brain is a SKILL file and an MCP server that plug the distribution playbook behind Postiz into your agent: how to find a niche, catch a hype early, pick the channel, and grow the number.',
+  title: 'I got my startup Postiz to $2.7m ARR as a solo founder. Your agent can too with my brain for free.',
+  sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and it will correct your marketing, positioning and add you insane growth hacks. You don\'t need an audience, run ads, or have a crazy budget. make it part of your workflow to make decisions.',
   free: 'Free. No signup. One command.',
 };
 
@@ -365,13 +365,6 @@ export const proofSection = {
     { date: '2024-09-01', text: 'open-source launch', dx: 12, dy: -46 },
     { date: '2025-08-15', text: 'one outreach campaign', dx: -150, dy: -62 },
     { date: '2026-02-01', text: 'agents arrive', dx: -128, dy: -70 },
-  ],
-  bubbles: [
-    { value: arrShort, label: 'ARR', size: 'l' },
-    { value: proof.raised, label: 'raised', size: 'm' },
-    { value: String(proof.founders), label: 'founder', size: 's' },
-    { value: proof.platforms, label: 'platforms', size: 'm' },
-    { value: proof.articleViews, label: 'article views', size: 'm' },
   ],
 };
 

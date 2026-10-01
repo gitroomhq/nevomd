@@ -27,33 +27,54 @@ OUT = ROOT / "src/assets/art"
 
 INK = "#4a4a4a"
 WHITE = "#ffffff"
-GREY = "#e4e4e4"
+# The trace keeps the drawing's greys (five of them, darkest first). Its darkest is the line,
+# and becomes the site's ink; the rest stay as traced, which is where the hair's strands and
+# the beard's texture live. (The first trace snapped everything to three colours and lost them.)
+RECOLOUR = {"#646464": INK}
 
 # Where each feature sits, in the drawing's 1024-pixel coordinates: (x0, y0, x1, y1).
 # A path belongs to the first feature whose box holds its centre and whose limits it meets.
+ANY = None
 FEATURES = {
-    "browL": dict(box=(370, 312, 495, 356), fills={INK}, min_width=60),
-    "browR": dict(box=(535, 312, 662, 356), fills={INK}, min_width=60),
-    "eyeL": dict(box=(388, 340, 492, 378), fills={INK, WHITE, GREY}, max_height=34),
-    "eyeR": dict(box=(545, 340, 640, 378), fills={INK, WHITE, GREY}, max_height=34),
-    "nose": dict(box=(460, 345, 572, 472), fills={INK, GREY}, max_width=44),
-    "mouth": dict(box=(430, 500, 600, 545), fills={INK, GREY}, min_width=80, max_width=180, max_height=30),
-    "chin": dict(box=(470, 545, 560, 572), fills={INK, GREY}, max_width=80),
+    "browL": dict(box=(365, 280, 492, 318), fills=ANY, min_width=8),
+    "browR": dict(box=(522, 280, 648, 318), fills=ANY, min_width=8),
+    "eyeL": dict(box=(385, 310, 495, 352), fills=ANY, max_height=40),
+    "eyeR": dict(box=(530, 310, 635, 352), fills=ANY, max_height=40),
+    "nose": dict(box=(458, 385, 562, 440), fills=ANY, max_width=110),
+    "mouth": dict(box=(432, 468, 592, 512), fills=ANY, max_width=170, max_height=40),
+    "chin": dict(box=(462, 505, 560, 535), fills=ANY, max_width=100),
     # The moustache only: the stubble along the jaw stays with the head's outline.
-    "moustache": dict(box=(420, 455, 606, 512), fills={GREY}, min_x=400, max_x=610),
+    "moustache": dict(box=(422, 430, 604, 470), fills=ANY, max_width=190, min_x=418, max_x=608),
 }
 # The big white shape of the face, and the shadow under the chin.
-SKIN = dict(box=(450, 330, 570, 460), fill=WHITE, min_width=250)
-SHADOW = dict(box=(450, 610, 560, 680), fill=GREY, min_width=120)
+SKIN = dict(box=(440, 300, 580, 470), fill=WHITE, min_width=250)
+SHADOW = dict(box=(450, 590, 570, 640), fill="#c9c9c9", min_width=90)
+
+
+def points(d: str) -> tuple[list[float], list[float]]:
+    """The x and y of every point a path passes through or bends towards (absolute commands).
+    An arc's first five numbers are its radii, rotation and flags, not a point."""
+    xs, ys = [], []
+    for cmd, args in re.findall(r"([MLCQAZ])([^MLCQAZ]*)", d):
+        nums = [float(v) for v in re.findall(r"-?\d+\.?\d*", args)]
+        if cmd == "A":
+            nums = [v for i in range(0, len(nums), 7) for v in nums[i + 5 : i + 7]]
+        xs += nums[0::2]
+        ys += nums[1::2]
+    return xs, ys
 
 
 def parse(svg: str) -> list[dict]:
     paths = []
     for attrs in re.findall(r"<path([^>]*)/>", svg, flags=re.S):
+        # Vectorizer's gap fillers: hairline strokes that hide seams between shapes. On a
+        # rig whose features move they would be left behind, so they go.
+        if "stroke=" in attrs:
+            continue
         fill = re.search(r'fill="([^"]+)"', attrs).group(1).lower()
+        fill = RECOLOUR.get(fill, fill)
         d = re.search(r'\bd="([^"]+)"', attrs, flags=re.S).group(1)
-        nums = [float(v) for v in re.findall(r"-?\d+\.?\d*", d)]
-        xs, ys = nums[0::2], nums[1::2]
+        xs, ys = points(d)
         paths.append(dict(fill=fill, d=compact(d), x0=min(xs), y0=min(ys), x1=max(xs), y1=max(ys)))
     return paths
 
@@ -73,7 +94,7 @@ def inside(p: dict, box: tuple) -> bool:
 def feature_of(p: dict) -> str | None:
     w, h = p["x1"] - p["x0"], p["y1"] - p["y0"]
     for name, rule in FEATURES.items():
-        if not inside(p, rule["box"]) or p["fill"] not in rule["fills"]:
+        if not inside(p, rule["box"]) or (rule["fills"] is not None and p["fill"] not in rule["fills"]):
             continue
         if w < rule.get("min_width", 0) or w > rule.get("max_width", 1e9) or h > rule.get("max_height", 1e9):
             continue

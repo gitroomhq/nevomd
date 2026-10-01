@@ -220,7 +220,7 @@ Modelled on your Stripe profile card, redrawn in the site's style: charcoal text
 |---|---|---|
 | Brain and the four ability objects | 3D models built in code | Done |
 | Brain's still image (first paint, no-WebGL fallback) | One frame from the hero canvas: `node tests/capture-still.mjs` | Done |
-| Nevo's portrait | Drawn from your photo, traced with Vectorizer.AI, cut into a rig | Done |
+| Nevo's portrait | Redrawn (Oct 2026) from a front-facing photo (`reference/nevo-photo-2.png`, pick `v2_3`), traced with Vectorizer.AI keeping five greys, checked against the drawing (`trace_bust.py`: mean error 1.5/255, beard 6.5), cut into a rig | Done |
 | Hero scenes (lab, rocket) | Image model with Lemonade crops as style reference, small things near the brain removed, pink added, then a Seedance loop | Done |
 | Nevo's four scenes | Image model: a sheet of Nevo drawn from your photo, then a first and a last key frame per scene with the brain in it; Seedance animates from one to the other | Done |
 | The night room (last section) | Image model, from the sheet: the room with him asleep and the lamp on. Everything after that is Seedance, each clip referencing the frames of the others: the lights going off (its last frame is the night, N), him waking (its last frame is him awake, A), a loop on A, A to N, a loop on N | Done |
@@ -238,7 +238,7 @@ Modelled on your Stripe profile card, redrawn in the site's style: charcoal text
 
 **The loops.** Each is 5 seconds at 24 fps, made at 1080p and trimmed to its drawing: 260 to 540 KB each, loaded only when on screen. The first and last frames match (checked: 0 to 8 pixels differ), so they loop without a jump. To remake one after changing its drawing: `python3 art/scripts/scenery_video.py frame <name> && … animate <name> && … finish <name>` (about $2.50 each at 1080p). The grey loops made before the pink was added are kept in `art/video/grey/`, unused.
 
-**Nevo's scenes.** Made at 1080p, 5 seconds, and encoded so the scroll can move them to any moment: 1120 px wide, a keyframe every 8 frames, 0.3 to 1.2 MB each. The kick is over in its first 2.3 seconds, so the video is cut to that (`span`), and the whole scroll is the kick. What was learned making them:
+**Nevo's scenes.** Made at 1080p, 5 seconds, and encoded so the scroll can move them to any moment: 1120 px wide, a keyframe every 8 frames, 0.3 to 1.2 MB each. The kick is over in its first 3 seconds, so the video is cut to that (`span`), and the whole scroll is the kick. It was remade (Oct 2026, $4.96 for two takes): given the cheering last frame, Seedance cut to it mid-flight instead of moving there, twice; it now gets only the first frame and words asking for one continuous shot. What was learned making them:
 
 - Likeness: the first drafts were drawn from the finale's traced bust and didn't look like you. Drawing from the photo, through a sheet made from it, with the features named (swept-back hair with short sides, thick straight brows, jaw beard, full lips, broad jaw), and drawing you big, fixed it.
 - Asked for a closing frame that needs more room (a plant growing tall), the image model shrinks the whole scene. Drawing the opening frame back from the closing one (`before`) keeps the size.

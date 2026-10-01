@@ -95,6 +95,9 @@ function start(finale: HTMLElement, stage: HTMLElement) {
   let raf = 0;
   let last = performance.now();
   let idleTurns = 0;
+  /** The ability objects' own turning: unlike the brain's, it never comes to rest, so they
+   *  keep turning round his head at the end. */
+  let iconTurns = 0;
   let shown = -1; // timeline time currently displayed; -1 = nothing yet
   let target = 0; // where the scroll says it should be
   let onScreen = false;
@@ -140,6 +143,7 @@ function start(finale: HTMLElement, stage: HTMLElement) {
     // settles into the head. Capped so nothing lurches after a long frame or a tab switch.
     const spin = 1 - smoothstep(0.4, 0.62, landing);
     if (!still) idleTurns += (Math.min(dt, 0.1) / IDLE_PERIOD) * spin;
+    if (!still) iconTurns += Math.min(dt, 0.1) / IDLE_PERIOD;
     const scrollTurns = still ? 0 : Math.max(0, p.scrolled) * TURNS_PER_SCREEN;
 
     if (renderer) {
@@ -176,7 +180,7 @@ function start(finale: HTMLElement, stage: HTMLElement) {
           x: NODES[i].x + read(el, 'x'),
           y: NODES[i].y + read(el, 'y') - shift,
           size: SCENE.icon * read(el, 'scaleX'),
-          turns: still ? RESTING[i] : idleTurns * 1.7 + i * 0.27,
+          turns: still ? RESTING[i] : iconTurns * 1.7 + i * 0.27,
         });
       });
       // At the very end the abilities come back out, around Nevo's head.
@@ -187,7 +191,7 @@ function start(finale: HTMLElement, stage: HTMLElement) {
             x: mix(BUST.opening.x, spot.x, act.halo),
             y: nevoY + mix(BUST.opening.y, spot.y, act.halo) - shift,
             size: SCENE.icon * FINALE.haloScale * act.halo,
-            turns: still ? RESTING[i] : idleTurns * 1.7 + i * 0.27,
+            turns: still ? RESTING[i] : iconTurns * 1.7 + i * 0.27,
           });
         });
       }

@@ -21,7 +21,8 @@ export const GATHER_LENGTH = 1.5;
 export const LANDING_LENGTH = 2.5;
 
 /** How far Nevo's features slide across his face for a full turn or tilt of the head, in bust image pixels. */
-const SLIDE = { face: { x: 19, y: 10 }, nose: { x: 10, y: 4 }, head: { x: 5, y: 3 } };
+// Small, so the mouth and moustache stay on the beard drawn on his cheeks.
+const SLIDE = { face: { x: 8, y: 5 }, nose: { x: 4, y: 2 }, head: { x: 5, y: 3 } };
 
 export function buildTimeline(scene: HTMLElement) {
   const one = <T extends Element>(sel: string) => scene.querySelector<T>(sel)!;

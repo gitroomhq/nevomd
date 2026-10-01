@@ -17,23 +17,28 @@ ROOT = Path(__file__).resolve().parents[2]
 
 PROMPT = (
     "Redraw the man in this photo as a flat monoline vector illustration: a front-facing "
-    "head-and-shoulders bust, looking straight at the viewer with a relaxed closed-mouth smile. "
+    "head-and-shoulders bust, looking straight at the viewer, calm and confident, mouth closed, "
+    "the faintest smile. It must be a clear likeness of THIS man, not a generic handsome face. "
     "Uniform thin dark-grey outlines (#4A4A4A) with round caps and joins, the same line weight "
     "everywhere. White fills for the skin and the shirt. Flat light-grey shading shapes (#EEEEEE) "
-    "with no outline. Keep what makes him recognisable, simplified: dark hair swept back and up "
-    "from the forehead, short on the sides, drawn as one solid dark-grey (#4A4A4A) shape; thick "
-    "dark eyebrows; a short trimmed beard and moustache drawn as flat light-grey shading along "
-    "the jaw and upper lip; a collared button-up shirt. Simple dot-and-line facial features, "
-    "friendly, not a caricature. The WHOLE head must be visible, including the very top of the "
-    "hair, with clear empty space above the head. No pink, no colour other than dark grey, white "
-    "and light grey. No gradients, no textures, no drop shadows, no text. Transparent background, "
+    "with no outline. Keep exactly what makes him recognisable: black hair combed straight back "
+    "and slightly to the side, sleek and close to the head with a little volume on top, short "
+    "faded sides, drawn as one solid dark-grey (#4A4A4A) shape; a wide, square jaw and a broad "
+    "face; thick, straight, dark eyebrows set low over dark, almond-shaped eyes with heavy "
+    "lids; a straight nose with a broad tip; full lips, the lower lip full; a short, dense "
+    "boxed beard that follows the whole jawline and chin and joins a moustache, drawn as a "
+    "solid mid-grey (#9A9A9A) shape with no outline; a fairly thick neck; an open-collared "
+    "button-up shirt. The WHOLE head must be visible, including the very top of the "
+    "hair, with clear empty space above the head. No pink, no colour other than greys "
+    "and white. No gradients, no textures, no drop shadows, no text. Transparent background, "
     "bust centered, cut off cleanly at the chest."
 )
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("photo", nargs="?", default=str(ROOT / "reference/nevo-photo-1.png"))
+    ap.add_argument("photo", nargs="?", default=str(ROOT / "reference/nevo-photo-2.png"))
+    ap.add_argument("--prefix", default="generated")
     ap.add_argument("--n", type=int, default=2)
     ap.add_argument("--model", default="chatgpt-image-latest")
     args = ap.parse_args()
@@ -43,7 +48,7 @@ def main() -> None:
 
     out = ROOT / "art/raw/nevo-bust"
     out.mkdir(parents=True, exist_ok=True)
-    (out / "prompt.txt").write_text(PROMPT + "\n")
+    (out / "prompt.txt").write_text(PROMPT + "\n") if args.prefix == "generated" else (out / f"{args.prefix}_prompt.txt").write_text(PROMPT + "\n")
 
     client = OpenAI()
     with open(args.photo, "rb") as photo:
@@ -57,7 +62,7 @@ def main() -> None:
             n=args.n,
         )
     for i, item in enumerate(result.data, start=1):
-        path = out / f"generated_{i}.png"
+        path = out / f"{args.prefix}_{i}.png"
         path.write_bytes(base64.b64decode(item.b64_json))
         print(f"- {path}")
 

@@ -134,14 +134,22 @@ SCENES = {
         scrub=True,
         # The kick is over in the first two seconds; the rest is Nevo holding his cheer. For the
         # mouse, the whole width of the section is the kick.
-        span=(0, 2.3),
+        span=(0, 3.0),
+        # Given the cheering last frame too, Seedance cut to it twice instead of moving there;
+        # with only the first frame, the words carry it to the end in one take.
+        open_end=True,
+        # The first take had a hard cut 1.4 s in (brain back at the net, Nevo jumped to his
+        # cheer): the words now ask for one continuous shot, paced over the whole clip.
         motion=ACT
-        + "Nevo kicks the brain once, like a football, with the foot that is drawn back: in the first "
+        + "One single continuous shot with no cuts, no jumps and no scene changes: every frame "
+        "follows smoothly from the one before. "
+        "Nevo kicks the brain once, like a football, with the foot that is drawn back: in the first "
         "second his leg swings forward and strikes it, and the brain flies to the RIGHT in one smooth, "
         "low arc and into the pink net of the goal, which bulges as it lands at the end. The brain only "
         "ever moves right, toward the goal: it never goes left, never bounces and is not touched again. "
         "As it flies, Nevo follows through, his kicking leg high, and throws both arms up, cheering. "
-        "Nevo stays the same size throughout. The whiteboard, the easel and the goal stay where they are.",
+        "Over the last seconds he moves smoothly from the follow-through into the final cheering pose, "
+        "and the brain settles into the net. The brain stays the same size as it flies, low over the grass, never toward the camera. Nevo stays the same size throughout. The whiteboard, the easel and the goal stay where they are.",
     ),
     "nevo-grow": dict(
         pick="nevo-grow/before_1.png",
