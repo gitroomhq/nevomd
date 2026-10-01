@@ -175,8 +175,8 @@ export const meta = {
 };
 
 export const hero = {
-  title: 'I got my startup Postiz to $2.7m ARR as a solo founder. Your agent can too with my brain for free.',
-  sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and it will correct your marketing, positioning and add you insane growth hacks. You don\'t need an audience, run ads, or have a crazy budget. make it part of your workflow to make decisions.',
+  title: 'I took Postiz to $2.7m ARR alone. Your agent can copy my brain, for free.',
+  sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and\nit will correct your marketing, positioning and add you insane growth hacks.',
   free: 'Free. No signup. One command.',
 };
 

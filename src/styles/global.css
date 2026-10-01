@@ -104,6 +104,7 @@ button {
   font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   line-height: 1.6;
   max-width: 34em;
+  text-wrap: balance;
 }
 
 .hand {
