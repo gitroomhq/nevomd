@@ -142,7 +142,10 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
      * round it) is never as tall as the screen: the command above it and the first chapter
      * below it must overlap on screen, or for a moment nothing would move with the page.
      */
-    --hero-brain: min(22rem, 50vw, calc((100svh - 11.5rem - var(--chapter-pad)) / 0.768));
+    /* The room the brain has; the brain itself is a little smaller than that (the scenery on
+       either side is still sized from the room). */
+    --hero-room: min(22rem, 50vw, calc((100svh - 11.5rem - var(--chapter-pad)) / 0.768));
+    --hero-brain: calc(var(--hero-room) * 0.8);
     /*
      * One scene unit in the finale, as a length: the finished picture (the brain big in the
      * middle, then Nevo with the abilities round his head) fits the screen both ways.
@@ -299,9 +302,9 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
     position: absolute;
     bottom: 0;
     height: min(
-      calc(var(--hero-brain) * 1.14),
+      calc(var(--hero-room) * 1.14),
       52svh,
-      calc((50vw - var(--hero-brain) / 2 - 5rem) / var(--scene-fit))
+      calc((50vw - var(--hero-room) / 2 - 5rem) / var(--scene-fit))
     );
     background-position: bottom;
   }
@@ -382,7 +385,7 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
 
   @media (max-width: 1099px) {
     .story {
-      --hero-brain: min(20rem, 70vw);
+      --hero-room: min(20rem, 70vw);
     }
 
     .hero-get {

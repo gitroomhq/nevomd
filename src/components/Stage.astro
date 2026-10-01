@@ -242,13 +242,14 @@ const f = rig.features;
     animation-name: bust-look-nose;
   }
 
-  .scene.has-bust .bust :global(.bust-blink) {
+  /* Only his right eye (on the viewer's right) closes: both at once looked odd. */
+  .scene.has-bust .bust [data-bust-eye='r'] :global(.bust-blink) {
     transform-box: fill-box;
     transform-origin: 50% 60%;
     animation: bust-blink 5.2s infinite;
   }
 
-  /* The brain is in and he is pleased with it: one wink, then back to blinking. */
+  /* The brain is in and he is pleased with it: one wink, then back to winking now and then. */
   .scene.is-done .bust [data-bust-eye='r'] :global(.bust-blink) {
     animation:
       bust-wink 1s 0.25s 1 both,
@@ -317,7 +318,7 @@ const f = rig.features;
     .scene.has-bust .bust svg,
     .scene.has-bust .bust__sway,
     .scene.has-bust .bust__look,
-    .scene.has-bust .bust :global(.bust-blink),
+    .scene.has-bust .bust [data-bust-eye='r'] :global(.bust-blink),
     .scene.is-done .bust [data-bust-eye='r'] :global(.bust-blink) {
       animation: none;
       transition: none;
