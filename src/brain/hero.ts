@@ -51,6 +51,11 @@ function start(slot: HTMLElement, canvas: HTMLCanvasElement) {
   let spun = 0;
   let spin = 0;
   let tip = 0;
+  /** The last frame's turns, and how hard the brain is spinning now (0 to 1), which lights the pad. */
+  let lastTurns: number | null = null;
+  let boost = 0;
+  const pad = slot.parentElement;
+  const air = Array.from(pad?.querySelectorAll('.dock__air > *, .brain-air path') ?? []).flatMap((p) => p.getAnimations());
   /** The pointer holding the brain, where it was last, and when. */
   let hold: { id: number; x: number; y: number; t: number } | null = null;
 
@@ -80,9 +85,22 @@ function start(slot: HTMLElement, canvas: HTMLCanvasElement) {
       if (Math.abs(tip) < 0.001) tip = 0;
     }
     const scrolled = still ? 0 : (Math.max(0, window.scrollY) / window.innerHeight) * TURNS_PER_SCREEN;
-    renderer!.draw([{ model: 'brain', x: 500, y: 500, size: 1000, turns: STILL_TURNS + idle + scrolled + spun, tip }], line);
+    const turns = STILL_TURNS + idle + scrolled + spun;
+    renderer!.draw([{ model: 'brain', x: 500, y: 500, size: 1000, turns, tip }], line);
+    // Faster than its idle turn (scrolling, a flick), the pad blows harder; it eases back down.
+    if (lastTurns !== null && dt > 0) {
+      const extra = Math.max(0, Math.abs(turns - lastTurns) / dt - 1 / IDLE_PERIOD);
+      const target = clamp(extra / 0.6, 0, 1);
+      boost += (target - boost) * (1 - Math.exp(-dt / (target > boost ? 0.08 : 0.5)));
+      if (boost < 0.002) boost = 0;
+      pad?.style.setProperty('--boost', boost.toFixed(3));
+      // The streaks rise faster too.
+      for (const a of air) a.playbackRate = 1 + boost * 2.5;
+    }
+    lastTurns = turns;
     slot.classList.add('is-live');
     if (onScreen && !document.hidden && !still) schedule();
+    else boost = 0;
   }
 
   function schedule() {

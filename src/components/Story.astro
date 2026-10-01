@@ -49,6 +49,40 @@ const sceneFit = Math.max(...scenes.map((s) => (s.image.width / s.image.height) 
 const stillWidth = (1 / BODY.width).toFixed(4);
 const stillTop = ((BODY.height / 2 - BODY.v) / BODY.width).toFixed(4);
 const bodyAspect = (BODY.height / BODY.width).toFixed(4);
+
+// The pad's wind: streaks and specks of air rising off the ring, spread across it with a
+// fixed scatter (the same every build). The gusts only blow while the brain spins fast.
+const scatter = (i: number) => ((Math.sin(i * 12.9898) * 43758.5453) % 1 + 1) % 1;
+const air = Array.from({ length: 22 }, (_, i) => ({
+  x: +(56 + (128 * (i + scatter(i) * 0.6)) / 22).toFixed(1),
+  h: +(9 + scatter(i + 50) * 6).toFixed(1),
+  w: (i % 2 ? 4 : -4) * (0.6 + scatter(i + 90) * 0.6),
+  d: -(scatter(i + 7) * 2.2).toFixed(2),
+  gust: i % 5 > 1,
+}));
+const motes = Array.from({ length: 28 }, (_, i) => ({
+  x: +(54 + scatter(i + 200) * 132).toFixed(1),
+  r: +(0.8 + scatter(i + 300) * 1.2).toFixed(2),
+  d: -(scatter(i + 400) * 2.6).toFixed(2),
+  gust: i % 3 > 0,
+}));
+
+// Air off the brain, in its box (0–100 each way, the cerebrum filling it): streaks curling up
+// round both sides and wisps lifting off the top.
+const brainAir = [
+  ...[0, 1, 2, 3].flatMap((i) => {
+    const o = 2 + i * 3.5;
+    return [
+      { d: `M${14 - o} 95 C${-o} 70 ${-o} 30 ${18 - o} ${4 - o}`, delay: -(i * 0.7), gust: i > 2 },
+      { d: `M${86 + o} 95 C${100 + o} 70 ${100 + o} 30 ${82 + o} ${4 - o}`, delay: -(i * 0.7 + 0.35), gust: i > 2 },
+    ];
+  }),
+  ...Array.from({ length: 11 }, (_, i) => {
+    const x = 20 + i * 6;
+    const top = 4 + Math.abs(x - 50) * 0.3;
+    return { d: `M${x} ${top} q${i % 2 ? 3 : -3} -12 0 -24 t0 -24`, delay: -((i * 0.83) % 2.2).toFixed(2), gust: i % 4 === 3 };
+  }),
+];
 ---
 
 <div
@@ -81,10 +115,31 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
       <path class="dock__side" d="M8 26 v10 a112 19 0 0 0 224 0 v-10"></path>
       <ellipse cx="120" cy="26" rx="112" ry="19"></ellipse>
       <ellipse class="dock__ring" cx="120" cy="25" rx="74" ry="11"></ellipse>
+      <!-- The air the pad blows up, holding the brain: soft wavy streaks rising off the ring. -->
+      <g class="dock__air">
+        {
+          air.map(({ x, h, w, d, gust }) => (
+            <path class:list={[gust && 'dock__gust']} d={`M${x} ${30 - Math.abs(x - 120) / 15} q${w} ${-h} 0 ${-h * 2} t0 ${-h * 2}`} style={`--d:${d}s`} />
+          ))
+        }
+        {
+          motes.map(({ x, r, d, gust }) => (
+            <circle class:list={['dock__mote', gust && 'dock__gust']} cx={x} cy="26" r={r} style={`--d:${d}s`} />
+          ))
+        }
+      </g>
     </svg>
     <div class="hero-slot__brain" data-hero-brain>
       <img src={still.src} width="1024" height="1024" alt="" data-hero-still />
       <canvas aria-hidden="true"></canvas>
+      <!-- The pad's air carrying on past the brain: hugging its sides and lifting off its top. -->
+      <svg class="brain-air" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        {
+          brainAir.map(({ d, delay, gust }) => (
+            <path class:list={[gust && 'dock__gust']} d={d} style={`--d:${delay}s`} />
+          ))
+        }
+      </svg>
     </div>
   </div>
   </div>
@@ -204,6 +259,13 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
     position: relative;
     width: var(--hero-brain);
     height: calc(var(--hero-brain) * var(--body-aspect));
+    animation: hover-float 4s ease-in-out infinite;
+  }
+
+  /* It hovers on the pad's air: a slow bob up and down, with a slight sway. */
+  @keyframes hover-float {
+    0%, 100% { translate: 0 0; rotate: 0deg; }
+    50% { translate: 0 -0.9rem; rotate: -0.6deg; }
   }
 
   /* The still and the canvas: the brain's whole drawing square, placed so the cerebrum fills the box above. */
@@ -254,6 +316,18 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
     filter: drop-shadow(0 0.5rem 1rem rgb(255 0 131 / 0.22));
   }
 
+  /* The harder the brain spins, the stronger the wind: taller streaks, thicker, and the gusts join in. */
+  .dock .dock__air {
+    transform-box: view-box;
+    transform-origin: 50% 40%;
+    scale: 1 calc(1 + var(--boost, 0) * 0.8);
+  }
+
+  .dock .dock__air .dock__gust {
+    visibility: visible;
+    stroke-opacity: var(--boost, 0);
+  }
+
   .dock path,
   .dock ellipse {
     fill: #ffe3f0;
@@ -270,6 +344,92 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
   .dock .dock__ring {
     fill: #ffb3d6;
     stroke: var(--pink);
+    animation: ring-pulse 4s ease-in-out infinite;
+  }
+
+  /* The ring glows brightest when the brain is lowest, in time with its bob. */
+  @keyframes ring-pulse {
+    0%, 100% { fill: #ff9cc9; }
+    50% { fill: #ffd0e5; }
+  }
+
+  .dock .dock__air path {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 10 60;
+    opacity: 0;
+    animation: air-rise 2.2s linear infinite;
+    stroke-width: calc(1.5px + var(--boost, 0) * 1.5px);
+    animation-delay: var(--d);
+  }
+
+  @keyframes air-rise {
+    0% { stroke-dashoffset: 0; opacity: 0; }
+    25% { opacity: 0.6; }
+    100% { stroke-dashoffset: -60; opacity: 0; }
+  }
+
+  /* The air off the brain: drawn like the pad's, and bobbing with the brain. */
+  .brain-air {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .brain-air path {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: calc(1.5px + var(--boost, 0) * 1.5px);
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 14 90;
+    opacity: 0;
+    animation: brain-air-rise 2.2s linear infinite;
+    animation-delay: var(--d);
+  }
+
+  .brain-air .dock__gust {
+    stroke-opacity: var(--boost, 0);
+  }
+
+  @keyframes brain-air-rise {
+    0% { stroke-dashoffset: 0; opacity: 0; }
+    25% { opacity: 0.55; }
+    100% { stroke-dashoffset: -90; opacity: 0; }
+  }
+
+  /* Specks of air: drift straight up and fade. */
+  .dock .dock__air .dock__mote {
+    fill: var(--pink);
+    stroke: none;
+    stroke-dasharray: none;
+    animation: mote-rise 2.6s ease-out infinite;
+    animation-delay: var(--d);
+  }
+
+  .dock .dock__air .dock__mote.dock__gust {
+    fill-opacity: var(--boost, 0);
+  }
+
+  @keyframes mote-rise {
+    0% { translate: 0 0; opacity: 0; }
+    20% { opacity: 0.7; }
+    100% { translate: 0 -46px; opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dock .dock__mote { display: none; }
+    .hero-slot__brain,
+    .dock .dock__ring,
+    .brain-air path,
+    .dock .dock__air path {
+      animation: none;
+    }
   }
 
   /* --- the drawings: a still on white paper, and its video over it once it plays --------- */
