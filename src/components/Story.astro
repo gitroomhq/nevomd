@@ -241,7 +241,8 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
     }
   }
 
-  /* Drawn in the scenes' hand: thin grey lines, white on top, light grey on the side. */
+  /* Drawn in the scenes' hand, with their touch of pink: a pink side, a pale pink top and a
+     pink ring the brain hovers over, glowing a little on the paper. */
   .dock {
     position: absolute;
     bottom: 0.375rem;
@@ -250,11 +251,12 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
     height: auto;
     translate: -50% 0;
     overflow: visible;
+    filter: drop-shadow(0 0.5rem 1rem rgb(255 0 131 / 0.22));
   }
 
   .dock path,
   .dock ellipse {
-    fill: #fff;
+    fill: #ffe3f0;
     stroke: #5e5e5e;
     stroke-width: 1.5;
     stroke-linejoin: round;
@@ -262,12 +264,12 @@ const bodyAspect = (BODY.height / BODY.width).toFixed(4);
   }
 
   .dock .dock__side {
-    fill: #e8e8e8;
+    fill: var(--pink);
   }
 
   .dock .dock__ring {
-    fill: #f1f1f1;
-    stroke: #c4c4c4;
+    fill: #ffb3d6;
+    stroke: var(--pink);
   }
 
   /* --- the drawings: a still on white paper, and its video over it once it plays --------- */
