@@ -5,9 +5,9 @@ import '@fontsource/lato/700.css';
 import '@fontsource/caveat/700.css';
 import '../styles/global.css';
 import { meta } from '../content/site';
-import mark from '../assets/art/brain-mark.png';
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og.png', Astro.site);
 ---
 
 <!doctype html>
@@ -18,13 +18,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/png" href={mark.src} />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#ffffff" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={meta.title} />
     <meta property="og:description" content={meta.description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nevo’s Brain: the distribution playbook behind Postiz, for your AI agent" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
