@@ -351,7 +351,7 @@ export const meetNevo = {
   title: 'It all came out of one head.',
   body: [
     `I’m Nevo. I built Postiz alone, with no investors, from a project stuck at $3k MRR to ${arrLabel}.`,
-    'Before that I ran growth at a startup, sold a LinkedIn outreach tool, and ran a consultancy growing open-source repos. Everything that worked is in the brain, and I add to it every time something new does.',
+    'Before that I ran growth at a startup and ran a consultancy growing open-source repos. Everything that worked is in the brain, and I add to it every time something new does.',
   ],
   callout: 'Nevo’s brain',
 };
@@ -376,41 +376,6 @@ export const howItWorks = {
     { title: 'Ship it', text: 'It answers with the play and the numbers behind it. Your agent does the work.' },
   ],
 };
-
-export const faq = [
-  {
-    q: 'What exactly is it?',
-    a: 'A SKILL file and an MCP server. Both give your agent the same thing: my playbooks for finding a niche, catching a hype, picking channels and growing revenue, written from what worked on Postiz.',
-  },
-  {
-    q: 'Which agents does it work with?',
-    a: 'Anything that reads a SKILL.md or speaks MCP. That covers Claude Code, Claude, Cursor, Codex, OpenClaw, Hermes, Gemini CLI and most others.',
-  },
-  {
-    q: 'How is this different from asking ChatGPT for marketing advice?',
-    a: 'A general model gives you the average of the internet. This is one person’s playbook with the numbers attached: what I did, in what order, and what it moved.',
-  },
-  {
-    q: 'Is it only for SaaS?',
-    a: 'It was learned on a SaaS, but distribution is distribution. If you sell something online and need people to find it, most of it applies.',
-  },
-  {
-    q: 'How often is it updated?',
-    a: 'Every time I publish a new playbook. The MCP always has the latest. The skill updates when you run npx skills update.',
-  },
-  {
-    q: 'Do I need Postiz?',
-    a: 'No. The brain tells your agent what to do. If what it needs to do is post, Postiz is what I use.',
-  },
-  {
-    q: 'What does it cost?',
-    a: 'Nothing. No card, no signup, no key.',
-  },
-  {
-    q: 'Why is it free?',
-    a: 'Because I would rather you know who I am the day you need a scheduler.',
-  },
-];
 
 export const finalCta = {
   title: 'Nevo’s brain never sleeps',
