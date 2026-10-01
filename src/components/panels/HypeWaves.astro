@@ -1,0 +1,208 @@
+---
+/**
+ * Hype antenna: three waves, each bigger than the last, and the one small thing Postiz shipped
+ * to ride each of them. The third, the agent wave, is pink, with what it did to the number.
+ * The sizes of the waves are a picture, not data; the facts are the names, what was shipped,
+ * and the receipt.
+ */
+import { panels, type Ability } from '../../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { receipt } = Astro.props.ability;
+const { waves } = panels.hypes;
+
+// The sea, in its own units. The three crests sit over the three columns of text below it.
+const W = 900;
+const H = 200;
+const BASE = 178;
+const shapes = [
+  { cx: 150, half: 100, h: 36 },
+  { cx: 450, half: 120, h: 76 },
+  { cx: 750, half: 140, h: 148 },
+];
+
+/** One wave, left foot to right foot: a long back, the crest a little forward, a steep face. */
+function wave({ cx, half, h }: (typeof shapes)[number]) {
+  const top = BASE - h;
+  const crest = cx + half * 0.18;
+  const f = (n: number) => n.toFixed(1);
+  return {
+    from: cx - half,
+    to: cx + half,
+    crest: { x: crest, y: top },
+    d:
+      `C${f(cx - half * 0.45)} ${BASE} ${f(cx - half * 0.3)} ${f(top)} ${f(crest)} ${f(top)} ` +
+      `C${f(crest + half * 0.3)} ${f(top)} ${f(cx + half * 0.55)} ${BASE} ${f(cx + half)} ${BASE}`,
+  };
+}
+
+const [one, two, big] = shapes.map(wave);
+const sea = `M8 ${BASE} L${one.from} ${BASE} ${one.d} L${two.from} ${BASE} ${two.d} L${big.from} ${BASE}`;
+const rest = `M${big.to} ${BASE} L${W - 8} ${BASE}`;
+const bigLine = `M${big.from} ${BASE} ${big.d}`;
+const bigArea = `${bigLine} Z`;
+---
+
+<div class="waves">
+  <svg class="sea" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Three waves, each bigger than the last: ${waves.map((w) => w.name).join(', ')}.`}>
+    <path d={bigArea} class="sea__area"></path>
+    <path d={sea} class="sea__line"></path>
+    <path d={rest} class="sea__line"></path>
+    <path d={bigLine} class="sea__line sea__line--now"></path>
+    <circle cx={one.crest.x} cy={one.crest.y} r="5" class="sea__crest"></circle>
+    <circle cx={two.crest.x} cy={two.crest.y} r="5" class="sea__crest"></circle>
+    <circle cx={big.crest.x} cy={big.crest.y} r="7" class="sea__crest sea__crest--now"></circle>
+    <!-- Spray off the top of the big one. -->
+    <circle cx={big.crest.x + 26} cy={big.crest.y - 8} r="3" class="sea__spray"></circle>
+    <circle cx={big.crest.x + 40} cy={big.crest.y + 6} r="2.5" class="sea__spray"></circle>
+    <circle cx={big.crest.x + 18} cy={big.crest.y - 22} r="2" class="sea__spray"></circle>
+  </svg>
+
+  <!-- Under each wave its name and what was shipped; under the last one, what it did. -->
+  <div class="steps">
+    {
+      waves.map((w) => (
+        <div class="step">
+          <p class="step__name">{w.name}</p>
+          <p class="step__shipped">{w.shipped}</p>
+        </div>
+      ))
+    }
+    <p class="result">
+      <strong>{receipt.value.replace(' to ', ' → ')}</strong>
+      <span>{receipt.label}</span>
+    </p>
+  </div>
+
+  <p class="waves__note">
+    {receipt.note}
+    <a class="link" href={receipt.source.href} rel="noopener">{receipt.source.label}</a>
+  </p>
+</div>
+
+<style>
+  .waves {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+
+  .sea {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sea__line {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sea__line--now {
+    stroke: var(--pink);
+    stroke-width: 3;
+  }
+
+  .sea__area {
+    fill: var(--pink);
+    opacity: 0.1;
+  }
+
+  .sea__crest {
+    fill: #fff;
+    stroke: var(--ink);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sea__crest--now {
+    fill: var(--pink);
+    stroke: #fff;
+    stroke-width: 2.5;
+  }
+
+  .sea__spray {
+    fill: var(--pink);
+    opacity: 0.55;
+  }
+
+  /* Three columns, each under its wave. */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    text-align: center;
+  }
+
+  .step {
+    display: grid;
+    align-content: start;
+    justify-items: center;
+    gap: 0.25rem;
+    padding-inline: 0.5rem;
+  }
+
+  .step__name {
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .step__shipped {
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    color: var(--ink-muted);
+  }
+
+  .result {
+    grid-column: 3;
+    justify-self: center;
+    display: grid;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1.125rem;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+
+  .result strong {
+    font-size: 1.625rem;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .result span {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--ink-muted);
+  }
+
+  .waves__note {
+    margin-top: 1rem;
+    max-width: 36rem;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    color: var(--ink-muted);
+    text-align: center;
+  }
+
+  .waves__note .link {
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  /* Narrow: the result goes under all three, where it has room. */
+  @media (max-width: 560px) {
+    .result {
+      grid-column: 1 / -1;
+      margin-top: 1rem;
+    }
+  }
+</style>

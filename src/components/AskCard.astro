@@ -1,0 +1,95 @@
+---
+/** An example exchange: what you would ask your agent, and what the brain answers. */
+import type { Ability } from '../content/site';
+import mark from '../assets/art/brain-mark.png';
+
+interface Props {
+  ask: Ability['ask'];
+}
+
+const { ask } = Astro.props;
+---
+
+<div class="ask">
+  <p class="ask__q"><span class="sr-only">You ask: </span>{ask.prompt}</p>
+  <div class="ask__a">
+    <img src={mark.src} width="40" height="40" alt="" />
+    <div class="ask__bubble">
+      <span class="sr-only">The brain answers:</span>
+      <ul>
+        {ask.bullets.map((b) => <li>{b}</li>)}
+      </ul>
+      <p class="ask__src">
+        An example, taken from{' '}
+        <a class="link" href={ask.source.href} rel="noopener">{ask.source.label}</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ask {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .ask__q {
+    justify-self: end;
+    max-width: 88%;
+    padding: 0.75rem 1.125rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.5625rem;
+  }
+
+  .ask__a {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.625rem;
+    align-items: end;
+  }
+
+  .ask__a img {
+    width: 2.5rem;
+    height: auto;
+  }
+
+  .ask__bubble {
+    padding: 1rem 1.25rem;
+    background: #fff;
+    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+    box-shadow: var(--shadow-card);
+    font-size: 1.0625rem;
+    line-height: 1.5625rem;
+  }
+
+  ul {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  li {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+
+  li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 0.5625rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--pink);
+  }
+
+  .ask__src {
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--ink-muted);
+  }
+</style>

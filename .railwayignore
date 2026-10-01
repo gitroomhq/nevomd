@@ -1,0 +1,11 @@
+# What `railway up` leaves out, on top of .gitignore. None of it is needed to build the site.
+
+# Nevo's inputs, including his photo. Never uploaded, even with --no-gitignore.
+reference/
+
+# The art pipeline's sources and raw videos (about 195 MB): the site uses only src/assets.
+art/
+
+# Test output.
+test-results/
+playwright-report/

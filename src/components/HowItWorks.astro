@@ -1,0 +1,149 @@
+---
+import InstallPanel from './InstallPanel.astro';
+import { howItWorks } from '../content/site';
+import bustUrl from '../assets/art/nevo-bust.svg?url';
+---
+
+<section class="band band--grey" id="how">
+  <div class="wrap">
+    <div class="band__head">
+      <h2 class="h2">{howItWorks.title}</h2>
+    </div>
+
+    <!-- Nevo's head, a cable, your agent's terminal. Decorative: the steps below say the same. -->
+    <div class="diagram" aria-hidden="true">
+      <img class="diagram__head" src={bustUrl} width="1024" height="1024" alt="" loading="lazy" />
+      <svg class="diagram__cable" viewBox="0 0 260 90" preserveAspectRatio="none">
+        <path d="M4 52 C 70 8, 150 96, 232 44" />
+        <circle cx="232" cy="44" r="7" />
+        <path d="M239 44 H256" />
+      </svg>
+      <div class="diagram__term">
+        <p><span></span><span></span><span></span></p>
+        <p>you: find me a niche</p>
+        <p class="diagram__reply">brain: start from who the leaders ignore</p>
+      </div>
+    </div>
+
+    <ol class="steps">
+      {
+        howItWorks.steps.map((s, i) => (
+          <li>
+            <span class="steps__n">{i + 1}</span>
+            <h3 class="h3">{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <InstallPanel />
+  </div>
+</section>
+
+<style>
+  .diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .diagram__head {
+    width: 9.375rem;
+    height: 9.375rem;
+    object-fit: cover;
+    object-position: 50% 12%;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+  }
+
+  .diagram__cable {
+    width: min(16.25rem, 28vw);
+    height: 5.625rem;
+    overflow: visible;
+  }
+
+  .diagram__cable path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .diagram__cable circle {
+    fill: var(--pink);
+    stroke: var(--ink);
+    stroke-width: 2.5;
+  }
+
+  .diagram__term {
+    width: min(18.75rem, 40vw);
+    padding: 0.75rem 1rem 0.875rem;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+  }
+
+  .diagram__term p:first-child {
+    display: flex;
+    gap: 0.375rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .diagram__term span {
+    width: 0.5625rem;
+    height: 0.5625rem;
+    border-radius: 50%;
+    background: var(--shade);
+  }
+
+  .diagram__reply {
+    color: var(--ink-muted);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.25rem, 4vw, 3rem);
+    max-width: 61.25rem;
+    margin: 0 auto clamp(2.5rem, 6vw, 4rem);
+    text-align: center;
+  }
+
+  .steps li {
+    display: grid;
+    gap: 0.5rem;
+    justify-items: center;
+    align-content: start;
+  }
+
+  .steps__n {
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--pink);
+  }
+
+  .steps p {
+    font-size: 1.0625rem;
+    line-height: 1.625rem;
+    max-width: 17em;
+  }
+
+  @media (max-width: 760px) {
+    .steps {
+      grid-template-columns: 1fr;
+    }
+
+    .diagram__head {
+      width: 6rem;
+      height: 6rem;
+    }
+  }
+</style>

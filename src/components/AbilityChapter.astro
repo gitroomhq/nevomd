@@ -1,0 +1,32 @@
+---
+/**
+ * One ability's text: its handwritten name, the headline and a paragraph. The drawing that
+ * goes with it is placed under it by Story.astro.
+ */
+import type { Ability } from '../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { ability } = Astro.props;
+---
+
+<div class="ability">
+  <p class="hand ability__name">{ability.name}</p>
+  <h2 class="h2">{ability.title}</h2>
+  <p class="lede">{ability.body}</p>
+</div>
+
+<style>
+  .ability {
+    display: grid;
+    justify-items: center;
+    gap: 1.5rem;
+  }
+
+  .ability__name {
+    color: var(--pink-text);
+    margin-bottom: -0.75rem;
+  }
+</style>

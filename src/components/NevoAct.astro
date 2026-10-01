@@ -1,0 +1,77 @@
+---
+/**
+ * Nevo at the bottom of an ability's section, doing that section's thing with the brain: a
+ * short animation that the scroll plays instead of a clock (scripts/nevo-acts.ts). It starts as
+ * the animation's first frame, a still, and the video takes over once it can show any moment
+ * of itself.
+ *
+ * Decorative: what it shows is said in the section's text.
+ */
+import { nevoActs } from '../content/site';
+
+interface Props {
+  id: keyof typeof nevoActs;
+}
+
+const act = nevoActs[Astro.props.id];
+const stills = import.meta.glob<{ default: ImageMetadata }>('../assets/scenery/nevo-*.webp', { eager: true });
+const videos = import.meta.glob<string>('../assets/scenery/nevo-*.mp4', { eager: true, query: '?url', import: 'default' });
+const image = stills[`../assets/scenery/nevo-${act}.webp`]?.default;
+const video = videos[`../assets/scenery/nevo-${act}.mp4`];
+---
+
+{
+  image && (
+    <div
+      class="act"
+      data-act={act}
+      aria-hidden="true"
+      style={`--image:url(${image.src}); --ratio:${image.width} / ${image.height}; --aspect:${(image.width / image.height).toFixed(4)}`}
+    >
+      <div class="act__picture">
+        {video && <video muted playsinline preload="none" tabindex="-1" data-act-video data-src={video} />}
+      </div>
+    </div>
+  )
+}
+
+<style>
+  /*
+   * No wider than 44rem and no taller than 46% of the screen. The width is set here, on the
+   * section's grid item, where 100% is the section's width.
+   */
+  .act {
+    position: relative;
+    width: min(100%, 44rem, calc(46svh * var(--aspect)));
+    margin-top: clamp(4rem, 11vh, 7rem);
+  }
+
+  /*
+   * The picture. Its sides and top fade out, so its pale background never stops at a line; its
+   * ground line is the section's bottom edge. Drawn on white paper: multiplied, the paper takes
+   * the band's colour.
+   */
+  .act__picture {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--ratio);
+    background: var(--image) no-repeat center bottom / contain;
+    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent), linear-gradient(to bottom, transparent, #000 12%);
+    mask-composite: intersect;
+    mix-blend-mode: multiply;
+  }
+
+  /* The video lies over the still it starts from, and shows once the scroll can play it. */
+  .act__picture video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+  }
+
+  .act:global(.is-live) video {
+    opacity: 1;
+  }
+</style>

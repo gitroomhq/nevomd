@@ -1,0 +1,148 @@
+---
+/**
+ * The install block of the hero and of the last section: a switch between the MCP server and
+ * the CLI (the skill, added with the skills CLI), and under it the one line to copy: the
+ * server's URL, or the command. The MCP server comes first. No instructions here: every
+ * agent's steps are in "How it works" (InstallPanel.astro). Everything it prints comes from
+ * content/site.ts.
+ */
+import CommandBox from './CommandBox.astro';
+import { install, skillCommand } from '../content/site';
+
+interface Props {
+  /** A prefix for the ids, so two of these on one page never share any. */
+  id: string;
+}
+
+const { id } = Astro.props;
+const options = [
+  ...(install.mcpLive ? [{ key: 'mcp', label: 'MCP', value: install.mcpUrl, name: 'the MCP server URL' }] : []),
+  { key: 'cli', label: 'CLI', value: skillCommand, name: 'the skill command' },
+];
+---
+
+<div class="quick" data-install>
+  {
+    options.length > 1 && (
+      <div class="quick__tabs" role="tablist" aria-label="How to add it to your agent">
+        {options.map((o, i) => (
+          <button
+            type="button"
+            role="tab"
+            id={`${id}-tab-${o.key}`}
+            aria-controls={`${id}-panel-${o.key}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            tabindex={i === 0 ? 0 : -1}
+            data-tab={o.key}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    )
+  }
+  {
+    options.map((o, i) => (
+      <div class="quick__panel" role="tabpanel" id={`${id}-panel-${o.key}`} aria-labelledby={`${id}-tab-${o.key}`} data-panel={o.key} hidden={i !== 0}>
+        <CommandBox value={o.value} name={o.name} />
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  /* The switch, then the line to copy under it. Centered. */
+  .quick {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    row-gap: 1.25rem;
+    width: min(100%, 36rem);
+  }
+
+  .quick__tabs {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  /*
+   * The switch carries the page's one colour, in the same voice as Lemonade's button: uppercase
+   * Lato 700, radius 5. The chosen one is solid pink with the glow; the other is a pale pink
+   * you can see is waiting to be pressed. At this size the label needs the darker pinks to stay
+   * readable (4.9:1 and 4.8:1).
+   */
+  .quick__tabs button {
+    min-width: 6.25rem;
+    padding: 0.5625rem 1.375rem;
+    background: var(--pink-wash);
+    color: var(--pink-deep);
+    border: 0;
+    border-radius: 0.3125rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.12s ease,
+      box-shadow 0.12s ease;
+  }
+
+  .quick__tabs button:hover {
+    background: var(--pink-wash-strong);
+  }
+
+  .quick__tabs button[aria-selected='true'] {
+    background: var(--pink-text);
+    color: #fff;
+    box-shadow: var(--shadow-cta);
+  }
+
+  .quick__panel {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .quick__panel[hidden] {
+    display: none;
+  }
+
+  /* The line to copy sits on a card of its own, big enough to read as the thing to take away. */
+  .quick__panel :global(.cmd) {
+    min-height: 3.25rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-card);
+    text-align: left;
+  }
+
+  .quick__panel :global(.cmd__text) {
+    align-self: center;
+    padding: 0.8125rem 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.4375rem;
+    /* A long command wraps here; scrolling sideways inside a hero is nobody's idea of fun. */
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .quick__panel :global(.cmd__copy) {
+    min-width: 5rem;
+    border-radius: 0 0.75rem 0.75rem 0;
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 520px) {
+    .quick__panel :global(.cmd__text) {
+      padding: 0.75rem 0.875rem;
+      font-size: 0.8125rem;
+      line-height: 1.3125rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quick__tabs button {
+      transition: none;
+    }
+  }
+</style>

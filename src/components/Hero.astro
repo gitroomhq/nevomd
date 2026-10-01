@@ -1,0 +1,33 @@
+---
+/**
+ * The hero text, centered as on Lemonade: the headline and one paragraph, nothing above them.
+ * The install block and the brain follow under it (see Story.astro).
+ */
+import { hero } from '../content/site';
+---
+
+<div class="hero">
+  <h1 class="h1">{hero.title}</h1>
+  <p class="lede">{hero.sub}</p>
+</div>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .h1 {
+    max-width: 17em;
+  }
+
+  /* Smaller than the ledes further down the page: up here the space matters more than the size. */
+  .lede {
+    max-width: 42em;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+</style>

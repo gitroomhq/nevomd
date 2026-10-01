@@ -1,0 +1,206 @@
+---
+import MrrChart from './MrrChart.astro';
+import { series, usd, monthYear } from '../lib/chart';
+import { proof, proofSection, asOfLabel } from '../content/site';
+---
+
+<section class="band" id="proof">
+  <div class="wrap">
+    <div class="band__head">
+      <h2 class="h2">{proofSection.title}</h2>
+      <p>{proofSection.sub}</p>
+    </div>
+
+    <figure class="card">
+      <figcaption class="card__head">
+        <div>
+          <p class="card__label">{proofSection.chartTitle}</p>
+          <p class="card__value">{usd(proof.mrr)}</p>
+        </div>
+        <p class="card__meta">
+          As of {asOfLabel}.
+          <a class="link" href={proof.stripeUrl} rel="noopener">{proofSection.stripeLink}</a>
+        </p>
+      </figcaption>
+
+      <MrrChart variant="wide" />
+      <MrrChart variant="narrow" />
+
+      <details class="card__table">
+        <summary>See the numbers as a table</summary>
+        <div class="card__scroll">
+          <table>
+            <caption class="sr-only">Postiz monthly recurring revenue by month</caption>
+            <thead>
+              <tr><th scope="col">Month</th><th scope="col">MRR</th></tr>
+            </thead>
+            <tbody>
+              {
+                series.map((p, i) => (
+                  <tr>
+                    <th scope="row">{i === series.length - 1 ? asOfLabel : monthYear(p.t)}</th>
+                    <td>{usd(p.mrr)}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="card__fine">
+          Read off the Stripe chart to the nearest $500, except the latest figure, which is exact.
+        </p>
+      </details>
+    </figure>
+
+    <ul class="bubbles">
+      {
+        proofSection.bubbles.map((b) => (
+          <li class:list={['bubble', `bubble--${b.size}`]}>
+            <strong>{b.value}</strong>
+            <span>{b.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .card {
+    max-width: 62.5rem;
+    margin-inline: auto;
+    padding: clamp(1.125rem, 3vw, 2rem);
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .card__label {
+    font-size: 1rem;
+    color: var(--ink-muted);
+  }
+
+  /* The one hero figure on the page: same sans as everything else, proportional digits. */
+  .card__value {
+    font-weight: 700;
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    line-height: 1.15;
+  }
+
+  .card__meta {
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+
+  .card__meta .link {
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  .card__table {
+    margin-top: 0.75rem;
+    font-size: 0.9375rem;
+  }
+
+  .card__table summary {
+    cursor: pointer;
+    color: var(--ink-muted);
+    width: fit-content;
+  }
+
+  .card__scroll {
+    max-height: 20rem;
+    overflow: auto;
+    margin-top: 0.75rem;
+    border: 1px solid var(--hairline);
+    border-radius: 0.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th,
+  td {
+    padding: 0.375rem 0.875rem;
+    text-align: left;
+    font-weight: 400;
+    border-bottom: 1px solid var(--shade);
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    font-weight: 700;
+  }
+
+  td {
+    text-align: right;
+  }
+
+  thead th:last-child {
+    text-align: right;
+  }
+
+  .card__fine {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  /* Lemonade's stat bubbles: plain grey circles of different sizes, loosely clustered. */
+  .bubbles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .bubble {
+    --d: 8.625rem;
+    width: var(--d);
+    height: var(--d);
+    display: grid;
+    place-content: center;
+    text-align: center;
+    background: var(--band);
+    border-radius: 50%;
+    line-height: 1.15;
+  }
+
+  .bubble--l {
+    --d: 11rem;
+  }
+
+  .bubble--s {
+    --d: 7rem;
+  }
+
+  .bubble:nth-child(even) {
+    translate: 0 1.125rem;
+  }
+
+  .bubble strong {
+    font-size: calc(var(--d) * 0.24);
+    font-weight: 700;
+  }
+
+  .bubble span {
+    font-size: 0.9375rem;
+  }
+</style>

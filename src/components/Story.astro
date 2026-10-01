@@ -1,0 +1,407 @@
+---
+/**
+ * The brain story, top to bottom:
+ *
+ *   hero     the headline, the install command, and the brain turning on its dock between a
+ *            robot lab and a rocket, the way Lemonade's hero has a street either side
+ *   chapters one per ability, as Lemonade lays out a section: the text centered at the top;
+ *            under it a picture of its own (panels/); and at the bottom Nevo, doing that
+ *            section's thing, played by the mouse (NevoAct)
+ *   finale   the brain comes back with the four abilities round it, takes them in, and drops
+ *            into Nevo's head as the page brings him up under it
+ *
+ * Nothing is pinned and nothing sticks: every part of the story is in the page and scrolls at
+ * the browser's own speed. The one thing held still is the brain during the finale, while the
+ * page carries Nevo up to it (stage.ts); at that moment it is Nevo, and the page, that move.
+ */
+import Stage from './Stage.astro';
+import Hero from './Hero.astro';
+import InstallQuick from './InstallQuick.astro';
+import AbilityChapter from './AbilityChapter.astro';
+import AbilityProof from './AbilityProof.astro';
+import NevoAct from './NevoAct.astro';
+import MeetNevo from './MeetNevo.astro';
+import { abilities } from '../content/site';
+import { BODY, FINALE } from '../brain/layout';
+import still from '../assets/art/brain-still.png';
+
+// The hero's two drawings, made by art/scripts/scenery*.py. Each has a still (shown first, and
+// instead of the video for anyone who asked for less motion) and, once it has been made, a video.
+// Only these: the folder also holds the other sections' pictures, which they load themselves.
+const stills = import.meta.glob<{ default: ImageMetadata }>('../assets/scenery/scene-*.webp', { eager: true });
+const videos = import.meta.glob<string>('../assets/scenery/scene-*.mp4', { eager: true, query: '?url', import: 'default' });
+const art = (name: string) => ({
+  image: stills[`../assets/scenery/${name}.webp`].default,
+  video: videos[`../assets/scenery/${name}.mp4`],
+});
+
+// `reach` is how much of a hero scene's width, from its outer end, the solid drawing takes
+// (the lab; the rocket and its tower). The rest is the pale layer, which fades out.
+const scenes = [
+  { side: 'left', reach: 0.56, ...art('scene-left') },
+  { side: 'right', reach: 0.37, ...art('scene-right') },
+];
+// Scene width per unit of height, counting only the solid part: the larger of the two decides
+// how tall both scenes can be before one of them comes too close to the brain.
+const sceneFit = Math.max(...scenes.map((s) => (s.image.width / s.image.height) * s.reach)).toFixed(3);
+
+// The still brain is the brain's whole drawing square; the cerebrum is only part of it.
+const stillWidth = (1 / BODY.width).toFixed(4);
+const stillTop = ((BODY.height / 2 - BODY.v) / BODY.width).toFixed(4);
+const bodyAspect = (BODY.height / BODY.width).toFixed(4);
+---
+
+<div
+  class="story"
+  data-story
+  style={`--body-aspect:${bodyAspect}; --still-width:${stillWidth}; --still-top:${stillTop}; --final-tall:${FINALE.tall}; --final-wide:${FINALE.wide}; --final-slot:${FINALE.slot}`}
+>
+  <!-- The hero: the first screen, all of it. -->
+  <div class="hero-screen" data-row>
+  <section class="hero-row" data-chapter="hero">
+    <Hero />
+  </section>
+
+  <!-- How to get it: the MCP server or the CLI, one line each. Every agent's steps are in "How it works". -->
+  <div class="hero-get">
+    <InstallQuick id="hero" />
+  </div>
+
+  <!-- The brain on its dock. The image shows until the 3D canvas has drawn (and instead of it
+       without WebGL); the canvas is the same size and in the same place (brain/hero.ts). -->
+  <div class="hero-slot" style={`--scene-fit:${sceneFit}`}>
+    {
+      scenes.map(({ side, image, video }) => (
+        <div class:list={['art', 'scenery', `scenery--${side}`]} style={`--image:url(${image.src}); --ratio:${image.width} / ${image.height}`} aria-hidden="true">
+          {video && <video muted loop playsinline preload="none" tabindex="-1" data-scenery-video data-src={video} />}
+        </div>
+      ))
+    }
+    <svg class="dock" viewBox="0 0 240 60" aria-hidden="true">
+      <path class="dock__side" d="M8 26 v10 a112 19 0 0 0 224 0 v-10"></path>
+      <ellipse cx="120" cy="26" rx="112" ry="19"></ellipse>
+      <ellipse class="dock__ring" cx="120" cy="25" rx="74" ry="11"></ellipse>
+    </svg>
+    <div class="hero-slot__brain" data-hero-brain>
+      <img src={still.src} width="1024" height="1024" alt="" data-hero-still />
+      <canvas aria-hidden="true"></canvas>
+    </div>
+  </div>
+  </div>
+
+  {
+    abilities.map((ability, i) => (
+      <section
+        class:list={['chapter', { 'chapter--band': i % 2 === 0 }]}
+        id={i === 0 ? 'abilities' : undefined}
+        data-chapter="ability"
+        data-row
+      >
+        <div class="chapter__text">
+          <AbilityChapter ability={ability} />
+        </div>
+        <div class="chapter__proof">
+          <AbilityProof ability={ability} />
+        </div>
+        <NevoAct id={ability.id as 'niches' | 'hypes' | 'tactics' | 'growth'} />
+      </section>
+    ))
+  }
+
+  <section class="finale" data-chapter="finale" data-row id="nevo">
+    <!-- The brain's stage, in the page. Nevo stands under it, in his place below. -->
+    <div class="finale__stage" data-arena data-sticky>
+      <Stage />
+    </div>
+    <div class="finale__body">
+      <div class="finale__slot" data-nevo-slot></div>
+      <div class="finale__text">
+        <MeetNevo />
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  import '../brain/hero.ts';
+  import '../brain/stage.ts';
+  import '../scripts/scenery.ts';
+  import '../scripts/nevo-acts.ts';
+</script>
+
+<style>
+  .story {
+    /* Space above and below each chapter's text. */
+    --chapter-pad: clamp(4.5rem, 11vh, 8rem);
+    /* Space above and below each ability: a lot, so each one has the screen to itself. */
+    --chapter-space: clamp(6rem, 17vh, 12rem);
+    /*
+     * How wide the brain is in the hero: small enough that the scenes either side of it can
+     * stand taller than it and still leave white space round it. On a short screen it is
+     * held back further, so that its place in the page (0.768 of its width, plus the space
+     * round it) is never as tall as the screen: the command above it and the first chapter
+     * below it must overlap on screen, or for a moment nothing would move with the page.
+     */
+    --hero-brain: min(22rem, 50vw, calc((100svh - 11.5rem - var(--chapter-pad)) / 0.768));
+    /*
+     * One scene unit in the finale, as a length: the finished picture (the brain big in the
+     * middle, then Nevo with the abilities round his head) fits the screen both ways.
+     */
+    --final-unit: min(
+      calc(100svh / var(--final-tall)),
+      calc((100vw - 2 * var(--gutter)) / var(--final-wide))
+    );
+  }
+
+  /* --- hero ------------------------------------------------------------------------------ */
+
+  /* The hero's text is in front of the scenery, should the two ever meet on a very wide window. */
+  .hero-row,
+  .hero-get {
+    position: relative;
+    z-index: 1;
+  }
+
+  /*
+   * The hero fills the first screen, and the first ability starts at the fold: the headline,
+   * its paragraph, the switch and the line to copy together at the top, and the brain and the
+   * two scenes standing at the bottom of the screen, with the space left over between them. On
+   * a screen too short for all of it, it is just as tall as it needs to be.
+   */
+  .hero-screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    /* A breath under the scenes, so they stop just short of the screen's edge. */
+    padding-bottom: clamp(0.75rem, 2vh, 1.25rem);
+  }
+
+  .hero-row {
+    padding: clamp(3rem, 9vh, 6rem) var(--gutter) 0;
+  }
+
+  .hero-get {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding: clamp(2.25rem, 5vh, 3.25rem) var(--gutter) 0;
+  }
+
+  .hero-slot {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    margin-top: auto;
+    /* Room below for the stem and the cerebellum, which hang under the cerebrum, and for the dock under them. */
+    padding: 4rem var(--gutter) calc(var(--hero-brain) * 0.14 + 3.25rem);
+  }
+
+  /* As wide as the cerebrum seen from the side, and as tall. */
+  .hero-slot__brain {
+    position: relative;
+    width: var(--hero-brain);
+    height: calc(var(--hero-brain) * var(--body-aspect));
+  }
+
+  /* The still and the canvas: the brain's whole drawing square, placed so the cerebrum fills the box above. */
+  .hero-slot__brain img,
+  .hero-slot__brain canvas {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--hero-brain) * var(--still-top));
+    width: calc(var(--hero-brain) * var(--still-width));
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1;
+    translate: -50% 0;
+  }
+
+  /* Once the canvas is drawing, it takes over from the still image. */
+  .hero-slot__brain:global(.is-live) img {
+    visibility: hidden;
+  }
+
+  /*
+   * And, with a mouse, it can be picked up and turned (brain/hero.ts): a hand shows where
+   * there is a mouse. On a touch screen it is not touched at all: every swipe over it scrolls
+   * the page, as anywhere else.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .hero-slot__brain:global(.is-live) canvas {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .hero-slot__brain:global(.is-held) canvas {
+      cursor: grabbing;
+    }
+  }
+
+  /* Drawn in the scenes' hand: thin grey lines, white on top, light grey on the side. */
+  .dock {
+    position: absolute;
+    bottom: 0.375rem;
+    left: 50%;
+    width: calc(var(--hero-brain) * 0.46);
+    height: auto;
+    translate: -50% 0;
+    overflow: visible;
+  }
+
+  .dock path,
+  .dock ellipse {
+    fill: #fff;
+    stroke: #5e5e5e;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .dock .dock__side {
+    fill: #e8e8e8;
+  }
+
+  .dock .dock__ring {
+    fill: #f1f1f1;
+    stroke: #c4c4c4;
+  }
+
+  /* --- the drawings: a still on white paper, and its video over it once it plays --------- */
+
+  .art {
+    aspect-ratio: var(--ratio);
+    background: var(--image) no-repeat center / contain;
+  }
+
+  .art video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+  }
+
+  /* Shown once it is really playing (scripts/scenery.ts), so there is never an empty frame over the still. */
+  .art :global(video.is-playing) {
+    opacity: 1;
+  }
+
+  /*
+   * The two hero scenes stand on the bottom edge of the hero, one at each edge of the window,
+   * a little taller than the brain between them. Both are the same height. On a narrow window
+   * they are held back, so that the lab and the rocket always leave white space before the
+   * brain (--scene-fit is how wide the solid part of a scene is for each unit of its height).
+   * The pale layer beyond the solid part fades out well before the brain.
+   */
+  .scenery {
+    position: absolute;
+    bottom: 0;
+    height: min(
+      calc(var(--hero-brain) * 1.14),
+      52svh,
+      calc((50vw - var(--hero-brain) / 2 - 5rem) / var(--scene-fit))
+    );
+    background-position: bottom;
+  }
+
+  .scenery--left {
+    left: 0;
+    mask-image: linear-gradient(to right, #000 57%, transparent 82%);
+  }
+
+  .scenery--right {
+    right: 0;
+    mask-image: linear-gradient(to left, #000 46%, transparent 54%);
+  }
+
+  /* --- chapters -------------------------------------------------------------------------- */
+
+  /*
+   * Lemonade's section: the text centered at the top, and the drawing centered under it,
+   * standing on the section's bottom edge. White and grey bands take turns, from the hero
+   * down to the finale.
+   */
+  .chapter {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding: var(--chapter-space) var(--gutter) 0;
+    text-align: center;
+  }
+
+  .chapter--band {
+    background: var(--band);
+  }
+
+  .chapter__text {
+    max-width: 44rem;
+  }
+
+  /* The conversation and the receipt: well clear of the text above and the drawing below. */
+  .chapter__proof {
+    width: min(100%, 60rem);
+    margin-top: clamp(3.5rem, 9vh, 5.5rem);
+  }
+
+  /* --- finale ---------------------------------------------------------------------------- */
+
+  .finale {
+    background: var(--band);
+  }
+
+  /*
+   * The brain's stage: as tall as the screen, unless the scene is smaller than that (a phone),
+   * so the brain can come to the middle of the screen with Nevo still below.
+   */
+  .finale__stage {
+    position: relative;
+    height: min(100svh, calc(var(--final-unit) * 1000 + 4rem));
+  }
+
+  .finale__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    padding: 0 var(--gutter) var(--chapter-pad);
+  }
+
+  .finale__slot {
+    width: 100%;
+    height: calc(var(--final-unit) * var(--final-slot));
+  }
+
+  .finale__text {
+    max-width: 42rem;
+    padding-top: 1.5rem;
+    text-align: center;
+  }
+
+  /* --- one column ------------------------------------------------------------------------ */
+
+  @media (max-width: 1099px) {
+    .story {
+      --hero-brain: min(20rem, 70vw);
+    }
+
+    .hero-get {
+      padding-block: 2.25rem 0;
+    }
+
+    .hero-slot {
+      padding-top: 3rem;
+    }
+
+    .chapter {
+      padding-top: 5rem;
+    }
+  }
+
+  /* Too narrow for the hero's scenes to stand beside the brain. */
+  @media (max-width: 899px) {
+    .scenery {
+      display: none;
+    }
+  }
+</style>

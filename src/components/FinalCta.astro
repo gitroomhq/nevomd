@@ -1,0 +1,212 @@
+---
+/**
+ * The end of the page: "Nevo's brain never sleeps" and the install block, over the top half of
+ * Nevo's room, as Lemonade puts its last call over a bedroom (lemonade.com/life). He lies awake
+ * with the lamp on, looking about, while his brain types at the laptop; when you reach the
+ * bottom of the page he falls asleep and the lights go off, and the page goes dark with the
+ * room; the buttons glow pink in the dark, and their light falls on the room. His brain carries
+ * on typing. Scroll back up and the lamp comes on and he wakes. The page ends with the room.
+ *
+ * All of it is one movie in four clips (scripts/night.ts plays them, art/scripts/scenery_video.py
+ * made them), each starting on the frame another ends on. The two stills are the first frames of
+ * the two loops: the room before anything plays, and the room for anyone who asked for less
+ * motion or less data.
+ */
+import InstallQuick from './InstallQuick.astro';
+import { finalCta } from '../content/site';
+
+type Notes = { fps: number; meets?: number[][]; darkness?: number[]; enter?: number };
+
+// Only the files the page uses, so nothing else of the room's is built into the site.
+const stills = import.meta.glob<{ default: ImageMetadata }>(['../assets/scenery/night-awake.webp', '../assets/scenery/night-loop.webp'], { eager: true });
+const videos = import.meta.glob<string>('../assets/scenery/night-*.mp4', { eager: true, query: '?url', import: 'default' });
+const notes = import.meta.glob<Notes>('../assets/scenery/night-*.json', { eager: true, import: 'default' });
+const at = (file: string) => `../assets/scenery/${file}`;
+
+const lit = stills[at('night-awake.webp')]?.default;
+const dark = stills[at('night-loop.webp')]?.default;
+const sleep = notes[at('night-sleep.json')];
+const meets = notes[at('night-awake.json')]?.meets;
+const clips = [
+  { name: 'awake', src: videos[at('night-awake.mp4')], loop: true, notes: { meets } },
+  { name: 'sleep', src: videos[at('night-sleep.mp4')], notes: { darkness: sleep?.darkness, enter: sleep?.enter } },
+  { name: 'wake', src: videos[at('night-sleep.rev.mp4')] },
+  { name: 'night', src: videos[at('night-loop.mp4')], loop: true },
+];
+const movie = clips.every((c) => c.src) && !!sleep?.darkness && !!meets;
+---
+
+<section class="band night" data-night aria-labelledby="final-title">
+  <div class="wrap night__text">
+    <h2 class="h2" id="final-title">{finalCta.title}</h2>
+    <InstallQuick id="final" />
+  </div>
+  {
+    lit && dark && (
+      <div
+        class="night__room"
+        aria-hidden="true"
+        style={`--ratio:${lit.width} / ${lit.height}; --aspect:${(lit.width / lit.height).toFixed(4)}`}
+        data-night-room
+      >
+        <div class="night__film">
+          <div class="night__still" style={`--image:url(${lit.src})`} />
+          <div class="night__still night__still--dark" style={`--image:url(${dark.src})`} />
+          {movie &&
+            clips.map((c) => (
+              <video
+                muted
+                playsinline
+                preload="none"
+                tabindex="-1"
+                loop={c.loop}
+                data-clip={c.name}
+                data-src={c.src}
+                data-notes={c.notes ? JSON.stringify(c.notes) : undefined}
+              />
+            ))}
+        </div>
+        <div class="night__glow" />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  /*
+   * The page's colours here follow the room's light, from white to the page's dark: night.ts
+   * sets them frame by frame from the clip on screen (--night and the rest), and they are the
+   * page's own colours until it does.
+   */
+  .night {
+    padding-bottom: 0;
+    background: var(--night-paper, var(--bg));
+  }
+
+  /* Over the room: in front of it, and of the glow. */
+  .night__text {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 1.75rem;
+    text-align: center;
+  }
+
+  /* The words stand on the drawing: a soft halo of the page's colour keeps them off its lines. */
+  .night__text .h2 {
+    color: var(--night-ink, var(--ink));
+    text-shadow:
+      0 0 0.3em var(--night-paper, var(--bg)),
+      0 0 0.6em var(--night-paper, var(--bg));
+  }
+
+  /*
+   * The buttons glow in the dark, as far as it is dark: the chosen one of the switch most, the
+   * other less. Pink light, from the page's one colour.
+   */
+  .night__text :global(.quick__tabs button) {
+    box-shadow: 0 0 calc(var(--night, 0) * 1.5rem) calc(var(--night, 0) * 0.125rem) rgb(255 0 131 / calc(var(--night, 0) * 0.55));
+  }
+
+  .night__text :global(.quick__tabs button[aria-selected='true']) {
+    box-shadow:
+      var(--shadow-cta),
+      0 0 calc(var(--night, 0) * 2.75rem) calc(var(--night, 0) * 0.5rem) rgb(255 0 131 / calc(var(--night, 0) * 0.9));
+  }
+
+  /*
+   * The card with the line to copy. With the lights on it stands off the white room on a deep
+   * soft shadow, and a tight one under its edge; they fade as the lights go off, and pink light
+   * glows round it instead. All of it is the card's shadow, so it shines out from behind the
+   * card and never over its words.
+   */
+  .night__text :global(.quick .cmd) {
+    box-shadow:
+      0 1.5rem 3.5rem -0.75rem rgb(74 74 74 / calc((1 - var(--night, 0)) * 0.42)),
+      0 0.25rem 0.875rem rgb(74 74 74 / calc((1 - var(--night, 0)) * 0.14)),
+      0 0 calc(var(--night, 0) * 2.5rem) calc(var(--night, 0) * 0.25rem) rgb(255 0 131 / calc(var(--night, 0) * 0.45));
+  }
+
+  /*
+   * The room: as wide as the page allows, and pulled up behind the text by 12% of its height:
+   * the install block's small print stands on the faded top of it, and everything in the room
+   * (the window, the z's, Nevo and the brain) is below the words, none of it behind them. (Half
+   * of its height, and then 30%, put the words over his head.) Its bottom edge is the end of
+   * the page. Its sides and top fade out, so it never stops at a line, lit or dark.
+   */
+  .night__room {
+    --w: min(100%, 84rem);
+    position: relative;
+    width: var(--w);
+    margin: calc(var(--w) / var(--aspect) * -0.12) auto 0;
+    aspect-ratio: var(--ratio);
+    mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 14%);
+    mask-composite: intersect;
+  }
+
+  .night__film,
+  .night__glow,
+  .night__still,
+  .night__room video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The clips stack on one another in here, so nothing they do can rise above the glow. */
+  .night__film {
+    isolation: isolate;
+  }
+
+  .night__still {
+    background: var(--image) no-repeat 50% 100% / cover;
+  }
+
+  /* The dark room is shown as far as the lights are off (what the page shows without the videos). */
+  .night__still--dark {
+    opacity: var(--night, 0);
+  }
+
+  /* The clips, each shown once it is playing, over the one before it (night.ts sets how fast). */
+  .night__room video {
+    object-fit: cover;
+    object-position: 50% 100%;
+    opacity: 0;
+    transition: opacity 160ms linear;
+  }
+
+  .night__room video:global(.is-shown) {
+    opacity: 1;
+  }
+
+  /* The buttons' light on the room: pink, falling from just above it, fading out over the wall. */
+  .night__glow {
+    background: radial-gradient(ellipse 32% 80% at 50% 0%, rgb(255 0 131 / 0.42), rgb(255 0 131 / 0.14) 50%, transparent 80%);
+    mix-blend-mode: screen;
+    opacity: var(--night, 0);
+    pointer-events: none;
+  }
+
+  /*
+   * A narrow screen: the room is small beside the text there, so it stands under it, its top
+   * only a little behind the fine print. It keeps some height and loses its far ends instead
+   * (the lamp, the books), so Nevo and the brain stay big enough to see.
+   */
+  @media (max-width: 899px) {
+    .night__room {
+      min-height: 13rem;
+      margin-top: 0.5rem;
+    }
+
+    .night__glow {
+      background: radial-gradient(ellipse 45% 55% at 50% 0%, rgb(255 0 131 / 0.36), transparent 80%);
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/night.ts';
+</script>

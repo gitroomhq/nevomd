@@ -1,0 +1,170 @@
+---
+/**
+ * Growth engine: a question a founder would ask, what the brain answers, and beside it what
+ * those fixes did for Postiz in January 2026: the same number of trials, and more revenue.
+ * The columns start from zero, so their heights are honest; the trials have no scale shown,
+ * because the article gives no number for them, only that they stayed the same.
+ */
+import AskCard from '../AskCard.astro';
+import { panels, type Ability } from '../../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { ask, receipt } = Astro.props.ability;
+const { period, before, after } = panels.growth;
+const k = (n: number) => `$${Math.round(n / 1000)}k`;
+const rise = Math.round(((after - before) / before) * 100);
+---
+
+<div class="growth">
+  <AskCard ask={ask} />
+
+  <figure class="result">
+    <div class="result__head">
+      <p class="result__period">{period}</p>
+      <p class="result__rise">+{rise}% MRR</p>
+      <p class="result__same">with the same number of trials</p>
+    </div>
+
+    <div class="chart" role="img" aria-label={`Trials: the same before and after. MRR: ${k(before)} before, ${k(after)} after.`}>
+      <div class="group">
+        <div class="cols">
+          <span class="col" style="--h: 0.7"></span>
+          <span class="col" style="--h: 0.7"></span>
+        </div>
+        <p class="group__name">Trials</p>
+        <p class="group__sub">the same</p>
+      </div>
+      <div class="group">
+        <div class="cols">
+          <span class="col" style={`--h: ${(before / after).toFixed(3)}`}><em>{k(before)}</em></span>
+          <span class="col col--after" style="--h: 1"><em>{k(after)}</em></span>
+        </div>
+        <p class="group__name">MRR</p>
+        <p class="group__sub">before, after</p>
+      </div>
+    </div>
+
+    <figcaption>
+      {receipt.note}
+      <a class="link" href={receipt.source.href} rel="noopener">{receipt.source.label}</a>
+    </figcaption>
+  </figure>
+</div>
+
+<style>
+  .growth {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.75rem, 3.5vw, 3rem);
+    text-align: left;
+  }
+
+  .result {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.375rem 1.5rem 1.25rem;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+
+  .result__period {
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+
+  .result__rise {
+    margin-top: 0.125rem;
+    font-weight: 700;
+    font-size: 2.125rem;
+    line-height: 1.15;
+  }
+
+  .result__same {
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+
+  /* Two groups of two columns, on one baseline. */
+  .chart {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding-top: 1.75rem;
+  }
+
+  .group {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .cols {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    width: 100%;
+    height: 7.5rem;
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  /* 4px rounded tops, square feet on the baseline. */
+  .col {
+    position: relative;
+    width: 2.75rem;
+    height: calc(var(--h) * 100%);
+    background: #d4d4d4;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .col--after {
+    background: var(--pink);
+  }
+
+  /* The value over its column, in ink: the column carries the colour, the text does not. */
+  .col em {
+    position: absolute;
+    bottom: calc(100% + 0.25rem);
+    left: 50%;
+    translate: -50% 0;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+
+  .group__name {
+    margin-top: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9375rem;
+  }
+
+  .group__sub {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+  }
+
+  figcaption {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--hairline);
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+  }
+
+  figcaption .link {
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 860px) {
+    .growth {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2rem;
+    }
+  }
+</style>

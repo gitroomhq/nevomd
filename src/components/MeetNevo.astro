@@ -1,0 +1,28 @@
+---
+import { meetNevo, links } from '../content/site';
+---
+
+<div class="meet">
+  <h2 class="h2">{meetNevo.title}</h2>
+  {meetNevo.body.map((p) => <p class="lede">{p}</p>)}
+  <p class="meet__links">
+    <a class="link" href={links.x} rel="noopener">@wickedguro on X</a>
+    <a class="link" href={links.postiz} rel="noopener">Postiz</a>
+  </p>
+</div>
+
+<style>
+  .meet {
+    display: grid;
+    justify-items: center;
+    gap: 1.375rem;
+  }
+
+  .meet__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    font-size: 1.0625rem;
+  }
+</style>

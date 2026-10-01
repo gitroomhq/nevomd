@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import Story from '../components/Story.astro';
+import Proof from '../components/Proof.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Faq from '../components/Faq.astro';
+import FinalCta from '../components/FinalCta.astro';
+---
+
+<Base>
+  <main id="main">
+    <Story />
+    <Proof />
+    <HowItWorks />
+    <Faq />
+    <FinalCta />
+  </main>
+</Base>
+
+<script>
+  import '../scripts/install-panel.ts';
+  import '../scripts/chart-hover.ts';
+</script>

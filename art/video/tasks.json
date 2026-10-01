@@ -1,0 +1,116 @@
+{
+  "scene-left.1080p": {
+    "frame": "610c70c3d6b42dadfb4081acc3523cc00224dfa1",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the robot sitting at the desk inside the lab types on its laptop and nods its head slightly, and its antenna sways; small bubbles rise from the glass flask on the desk; the satellite dish on the roof turns slowly; one pale cloud drifts very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792019-pxtweq7v"
+  },
+  "scene-right.1080p": {
+    "frame": "b530f688a2bea53657417f5d61ec9921b3498221",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the rocket is warming up its engines: small round clouds of white smoke billow gently out from under the rocket's three engine nozzles, at the foot of the rocket on the launch pad, spread a little along the pad and fade away, again and again. The smoke comes only from under the rocket. The rocket itself, the tower, the cabin and the ladder do not move. In the pale background, the satellite dish, the observatory dome and the hills are completely still and have no smoke; the small stars twinkle gently and the pale clouds drift very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792385-ppuvytuv"
+  },
+  "chapter-niches.1080p": {
+    "frame": "7c15095b147b51c21fb4ad5b4b2b0a33c5b335e3",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the robot at the desk taps the round radar screen with its finger and nods; on the screen the crowded dots blink softly and the single circled dot pulses; the big radar dish turns slowly a little to one side and back; one pale cloud drifts very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792023-cd8nnmvt"
+  },
+  "chapter-hypes.1080p": {
+    "frame": "cb9932f3472dfa5dca97a0f3e62a429fdd0287b2",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the robot on the surfboard bobs gently and shifts its arms to keep its balance; the foam and the small drops of spray at the top of the wave ripple and sparkle, while the wave itself keeps its shape and stays where it is; the small robots on the beach bounce as they run on the spot; the palm trees sway a little; one pale cloud drifts very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792025-2rzalwuj"
+  },
+  "chapter-tactics.1080p": {
+    "frame": "6d2aa485e29a0758a430c5b0993e07051dfea38e",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the coach robot taps the play on the whiteboard with its pointer and nods; the two robots on the bench nod along, and the one with the clipboard writes on it; the drawing on the board stays exactly as it is; one pale cloud drifts very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792026-k11o4tef"
+  },
+  "chapter-growth.1080p": {
+    "frame": "99a35829df0632f52755f1501bf53f228069798c",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: the robot tilts its watering can and a few small drops of water fall onto the pots; the leaves of the plants sway gently; the flower on top of the tallest plant bobs and turns its face a little; the pots and the bench stay where they are; one pale cloud drifts very slowly. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790792028-2q4dqnq6"
+  },
+  "nevo-surf.1080p": {
+    "frame": "9fb0556b3161950e1f8da9a2a104d939dd01ac47",
+    "last": "10576af768e1ec2d3bb17385634bf5a1f33a8654",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the two images: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind, the same hot-pink details. The camera is locked: no zoom, no pan, no shake. The white background stays pure white. Nothing new appears and no colour is added. Nevo looks the same throughout, and so does the brain: white, with grey fold lines. The motion is one smooth, continuous movement from the first image to the second, at an even pace from start to end, with no pauses, no cuts and no going back: The wave behind Nevo rises and begins to curl over; Nevo picks the brain up from the front of the pink surfboard and pops up from sitting into a low surfing crouch, riding along the face of the wave, holding the brain out to the side, grinning. The beach and the palm trees far away stay still.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790795895-6gp97blt"
+  },
+  "nevo-coach.1080p": {
+    "frame": "f2132c89b269cd474119efc3524b74eec34eed21",
+    "last": "91f98780c7bc97207535a9ec9f4be118f908d88d",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the two images: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind, the same hot-pink details. The camera is locked: no zoom, no pan, no shake. The white background stays pure white. Nothing new appears and no colour is added. Nevo looks the same throughout, and so does the brain: white, with grey fold lines. The motion is one smooth, continuous movement from the first image to the second, at an even pace from start to end, with no pauses, no cuts and no going back: Nevo kicks the brain once, like a football, with the foot that is drawn back: in the first second his leg swings forward and strikes it, and the brain flies to the RIGHT in one smooth, low arc and into the pink net of the goal, which bulges as it lands at the end. The brain only ever moves right, toward the goal: it never goes left, never bounces and is not touched again. As it flies, Nevo follows through, his kicking leg high, and throws both arms up, cheering. Nevo stays the same size throughout. The whiteboard, the easel and the goal stay where they are.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790796265-ojk76kxh"
+  },
+  "nevo-scan.1080p": {
+    "frame": "90048a1e0ecc2662188448d5004b95ae2a3969d9",
+    "last": "5ce7820259b13a20b4fccc51e2232f114f989df7",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the two images: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind, the same hot-pink details. The camera is locked: no zoom, no pan, no shake. The white background stays pure white. Nothing new appears and no colour is added. Nevo looks the same throughout, and so does the brain: white, with grey fold lines. The motion is one smooth, continuous movement from the first image to the second, at an even pace from start to end, with no pauses, no cuts and no going back: Nevo, holding the brain up high in one hand, sweeps it smoothly from the left of the picture across to the right, turning from the hips up, and the three pink radar arcs coming off the brain turn with it; as they reach the lone cottage on the right, his small frown becomes a smile. His feet stay planted on the hill. The town, the cottage and the hills stay still.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790795977-6s6sn9qm"
+  },
+  "nevo-grow.1080p": {
+    "frame": "7724746f88e358733287a6db6790ff18a8dcbcfa",
+    "last": "e2bda656cf6da86b95ebf65926f7769b6cc38f69",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the two images: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind, the same hot-pink details. The camera is locked: no zoom, no pan, no shake. The white background stays pure white. Nothing new appears and no colour is added. Nevo looks the same throughout, and so does the brain: white, with grey fold lines. The motion is one smooth, continuous movement from the first image to the second, at an even pace from start to end, with no pauses, no cuts and no going back: Drops fall from the pink watering can, and the small brain in the pot grows: its stem rises straight up out of the pot, its leaves stepping up like a rising chart, and the brain at the top gets bigger as it rises, staying white; Nevo, still kneeling, leans back to look up at it, delighted, still holding the watering can. The pot stays where it is.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790796200-afmn0lsl"
+  },
+  "night-out.1080p": {
+    "frame": "b1faeb8e60b960b2bcad97f36371d7c0b56e4a39",
+    "last": "b1faeb8e60b960b2bcad97f36371d7c0b56e4a39",
+    "prompt": "Flat 2D line-art animation of a bedroom at bedtime. The camera is locked: no zoom, no pan, no shake, and nothing in the room moves, changes shape or changes size. In the first second, the lamp on the bedside table switches off and the whole room falls into darkness: the white background, the wall and every white or light-grey surface turn near-black and very dark grey, and the drawing's lines stay faintly visible in mid grey. The laptop's pink screen keeps glowing, now the only light in the room: a soft hot-pink glow spreads from it into the dark, lighting the brain at the desk, its little arms and the coffee mug in pink, fading out with distance. For the rest of the video the room stays dark like that, calm and still: the brain keeps typing, Nevo sleeps, breathing slowly. No new objects, no text.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790820200-4nrjk8st"
+  },
+  "night-loop.1080p": {
+    "frame": "1aaf0d501ba205b32409b6a81c02c654fbf3a2b3",
+    "last": "1aaf0d501ba205b32409b6a81c02c654fbf3a2b3",
+    "prompt": "Flat 2D line-art animation of a dark bedroom at night that keeps the exact drawing style and colours of the image: a near-black background, dark-grey shapes with faint mid-grey lines, and the hot-pink glow of the laptop's screen. The camera is locked: no zoom, no pan, no shake. The room, the furniture, the window and the near-black background do not move or change, nothing new appears, and no light comes on. Only these small movements happen: the brain at the desk types busily on the laptop, its little arms moving; the pink glow of the screen flickers softly as it works; Nevo sleeps, breathing slowly under the blanket; the little z's above his head float up gently and fade. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790820547-m6dfycwe"
+  },
+  "night-wake.1080p": {
+    "frame": "b1faeb8e60b960b2bcad97f36371d7c0b56e4a39",
+    "last": "b1faeb8e60b960b2bcad97f36371d7c0b56e4a39",
+    "prompt": "Flat 2D line-art animation of a bedroom at bedtime that keeps the exact drawing style and colours of the image: thin dark-grey outlines, white and light-grey flat fills, the hot-pink laptop screen. The camera is locked: no zoom, no pan, no shake. The lamp stays on and the light does not change. The room, the furniture, the window and the white background do not move or change, and nothing new appears. Only this happens: the little z's above Nevo's head fade away, and Nevo, lying in bed with his head on the pillow, opens his eyes and wakes up, calm and relaxed, and looks at the viewer with a slight smile. He stays lying where he is, under the blanket. The brain at the desk keeps typing on the laptop. By the end Nevo is awake, eyes open, looking at the viewer.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790821948-qdi1puiy"
+  },
+  "night-awake.1080p": {
+    "frame": "6d55d597904844344fea33001d908942c2c7c079",
+    "last": "6d55d597904844344fea33001d908942c2c7c079",
+    "prompt": "Flat 2D line-art animation of a bedroom at bedtime that keeps the exact drawing style and colours of the image: thin dark-grey outlines, white and light-grey flat fills, the hot-pink laptop screen. The camera is locked: no zoom, no pan, no shake. The lamp stays on and the light does not change. The room, the furniture, the window and the white background do not move or change, and nothing new appears. Only these small movements happen: Nevo lies awake in bed, his head on the pillow, eyes open; he looks around a little, his eyes and head turning slowly toward the window, back to the viewer, toward the brain at the desk, and back to the viewer, blinking now and then. The brain at the desk types busily on the laptop, its little arms moving. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790822243-sprqfudv"
+  },
+  "night-sleep.1080p": {
+    "frame": "6d55d597904844344fea33001d908942c2c7c079",
+    "last": "1aaf0d501ba205b32409b6a81c02c654fbf3a2b3",
+    "prompt": "Flat 2D line-art animation of a bedroom at bedtime. The camera is locked: no zoom, no pan, no shake, and nothing in the room moves, changes shape or changes size. First Nevo, lying awake in bed with his head on the pillow, yawns, closes his eyes and falls asleep, his head sinking a little into the pillow, and small z's float up above his head. Then the lamp on the bedside table switches off and the whole room falls into darkness: the white background and every white or light-grey surface turn near-black and very dark grey, the drawing's lines stay faintly visible in mid grey, and the laptop's pink screen keeps glowing, now the only light in the room, lighting the brain and the coffee mug in pink. The brain keeps typing on the laptop the whole time. For the last second the room stays dark and calm. No new objects, no text.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790822244-68aulu26"
+  }
+}

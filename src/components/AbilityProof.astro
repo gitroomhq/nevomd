@@ -1,0 +1,25 @@
+---
+/**
+ * The middle of an ability section, between its text and its drawing. Each ability has its
+ * own picture of what the brain knows there, all from Nevo's articles (components/panels/):
+ *
+ *   niches   the radar screen, read out: the crowd, and the one blip Postiz went for
+ *   hypes    three waves, each bigger, and what Postiz shipped to ride each one
+ *   tactics  the channel board, with one channel's rules, and a campaign's result
+ *   growth   a founder's question, the brain's answer, and what those fixes did
+ */
+import NicheRadar from './panels/NicheRadar.astro';
+import HypeWaves from './panels/HypeWaves.astro';
+import TacticsBoard from './panels/TacticsBoard.astro';
+import GrowthResult from './panels/GrowthResult.astro';
+import type { Ability } from '../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { ability } = Astro.props;
+const Panel = { niches: NicheRadar, hypes: HypeWaves, tactics: TacticsBoard, growth: GrowthResult }[ability.id];
+---
+
+{Panel && <Panel ability={ability} />}

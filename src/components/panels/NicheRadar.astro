@@ -1,0 +1,266 @@
+---
+/**
+ * Niche radar: the radar screen from the drawing, read out. The big players are a crowd on
+ * one side, all selling to marketers; one blip is alone on the other: developers and
+ * self-hosters, where Postiz went. A diagram, not data: the dots are not counted, and the only
+ * facts are the names, the audience and the $20k.
+ */
+import { panels, type Ability } from '../../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { receipt } = Astro.props.ability;
+const p = panels.niches;
+
+// The screen, in its own units: a 360 square with the centre at (180, 180).
+const C = 180;
+const R = 160;
+const at = (deg: number, r: number) => [C + r * Math.cos((deg * Math.PI) / 180), C + r * Math.sin((deg * Math.PI) / 180)];
+
+// The crowd, lower left: x, y, radius. Fixed, so every build draws the same crowd.
+const crowd = [
+  [70, 220, 9], [94, 202, 8], [113, 228, 10], [84, 249, 8], [58, 246, 7], [103, 259, 8], [129, 252, 7],
+  [79, 272, 7], [121, 203, 7], [142, 231, 8], [104, 286, 7], [52, 222, 6], [135, 275, 6], [90, 225, 6],
+  [66, 199, 6], [153, 256, 6], [58, 269, 5], [124, 296, 5],
+];
+// The blip, alone, up and to the right.
+const [bx, by] = at(-40, 108);
+// The sweep: a wedge trailing its leading edge. It turns (CSS) about the centre.
+const [ax, ay] = at(-48, R);
+const [ex, ey] = at(0, R);
+---
+
+<div class="radar">
+  <div class="note note--crowd">
+    <p class="hand">{p.crowdTitle}</p>
+    <p>{p.crowd}</p>
+    <svg class="note__arrow" viewBox="0 0 80 50" aria-hidden="true">
+      <path d="M4 8 C 30 6, 56 16, 72 38"></path>
+      <path d="M60 36 L73 40 L74 26"></path>
+    </svg>
+  </div>
+
+  <svg class="screen" viewBox="0 0 360 360" role="img" aria-label={`A radar screen. A crowd of dots on one side: the big players, selling to marketers. One dot alone on the other side: ${receipt.note.toLowerCase()}`}>
+    <circle cx={C} cy={C} r={R} class="screen__face"></circle>
+    <circle cx={C} cy={C} r={(R * 2) / 3} class="screen__ring"></circle>
+    <circle cx={C} cy={C} r={R / 3} class="screen__ring"></circle>
+    <line x1={C - R} y1={C} x2={C + R} y2={C} class="screen__ring"></line>
+    <line x1={C} y1={C - R} x2={C} y2={C + R} class="screen__ring"></line>
+    <g class="screen__sweep">
+      <path d={`M${C} ${C} L${ax.toFixed(1)} ${ay.toFixed(1)} A${R} ${R} 0 0 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z`} class="screen__wedge"></path>
+      <line x1={C} y1={C} x2={ex.toFixed(1)} y2={ey.toFixed(1)} class="screen__edge"></line>
+    </g>
+    {crowd.map(([x, y, r]) => <circle cx={x} cy={y} r={r} class="screen__dot" />)}
+    <circle cx={bx.toFixed(1)} cy={by.toFixed(1)} r="16" class="screen__ping"></circle>
+    <circle cx={bx.toFixed(1)} cy={by.toFixed(1)} r="16" class="screen__halo"></circle>
+    <circle cx={bx.toFixed(1)} cy={by.toFixed(1)} r="7.5" class="screen__blip"></circle>
+    <circle cx={C} cy={C} r="4" class="screen__hub"></circle>
+    <circle cx={C} cy={C} r={R} class="screen__rim"></circle>
+  </svg>
+
+  <div class="note note--found">
+    <svg class="note__arrow" viewBox="0 0 80 50" aria-hidden="true">
+      <path d="M76 10 C 56 4, 26 8, 10 32"></path>
+      <path d="M22 29 L10 32 L12 18"></path>
+    </svg>
+    <p class="hand">{p.foundTitle}</p>
+    <p class="note__value">{receipt.value} MRR</p>
+    <p>
+      {receipt.note}
+      <a class="link" href={receipt.source.href} rel="noopener">{receipt.source.label}</a>
+    </p>
+  </div>
+</div>
+
+<style>
+  /* The screen in the middle, a note on each side pointing at what it is about. */
+  .radar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem minmax(0, 1fr);
+    align-items: center;
+    column-gap: 1.5rem;
+  }
+
+  .note {
+    position: relative;
+    display: grid;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    line-height: 1.4375rem;
+    color: var(--ink-muted);
+  }
+
+  .note .hand {
+    color: var(--ink);
+    font-size: 1.75rem;
+  }
+
+  .note--crowd {
+    justify-items: end;
+    align-self: end;
+    margin-bottom: 3.5rem;
+    text-align: right;
+  }
+
+  .note--found {
+    align-self: start;
+    margin-top: 3.25rem;
+  }
+
+  .note .link {
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  .note__value {
+    font-weight: 700;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .note__arrow {
+    width: 4.5rem;
+    height: auto;
+    overflow: visible;
+  }
+
+  .note__arrow path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .note--found .note__arrow {
+    margin-left: -2.5rem;
+  }
+
+  .screen {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .screen__face {
+    fill: #fff;
+  }
+
+  .screen__ring {
+    fill: none;
+    stroke: #e3e3e3;
+    stroke-width: 1.5;
+  }
+
+  .screen__rim {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 3;
+  }
+
+  .screen__hub {
+    fill: var(--ink);
+  }
+
+  .screen__wedge {
+    fill: var(--pink);
+    opacity: 0.07;
+  }
+
+  .screen__edge {
+    stroke: var(--pink);
+    stroke-width: 1.5;
+    opacity: 0.45;
+  }
+
+  /* 2px of white round each dot, so the crowd reads as many and not as one blot. */
+  .screen__dot {
+    fill: #b9b9b9;
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .screen__blip {
+    fill: var(--pink);
+    stroke: #fff;
+    stroke-width: 2.5;
+  }
+
+  .screen__halo,
+  .screen__ping {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 2;
+  }
+
+  /* The sweep goes round, and the blip pings, while it is on screen and motion is welcome. */
+  .screen__sweep {
+    transform-box: view-box;
+    transform-origin: 180px 180px;
+    animation: sweep 6s linear infinite;
+  }
+
+  .screen__ping {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ping 2s ease-out infinite;
+  }
+
+  @keyframes sweep {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes ping {
+    from {
+      transform: scale(0.6);
+      opacity: 0.9;
+    }
+    to {
+      transform: scale(2.2);
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .screen__sweep,
+    .screen__ping {
+      animation: none;
+    }
+
+    .screen__ping {
+      opacity: 0;
+    }
+  }
+
+  /* Narrow: the screen, with a note above it and one under it. */
+  @media (max-width: 860px) {
+    .radar {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+      row-gap: 1.25rem;
+      text-align: center;
+    }
+
+    .screen {
+      width: min(100%, 18rem);
+    }
+
+    .note--crowd,
+    .note--found {
+      justify-items: center;
+      align-self: auto;
+      margin: 0;
+      text-align: center;
+    }
+
+    .note__arrow {
+      display: none;
+    }
+  }
+</style>

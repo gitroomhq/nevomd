@@ -1,0 +1,267 @@
+---
+/**
+ * Tactics board: the channels from the section's text, as a board of what is working now and
+ * what keeps getting harder, with the rules for one of them. Beside it, in one of Lemonade's
+ * stat circles, what one well-run campaign did.
+ */
+import { panels, type Ability } from '../../content/site';
+
+interface Props {
+  ability: Ability;
+}
+
+const { receipt } = Astro.props.ability;
+const p = panels.tactics;
+---
+
+<div class="tactics">
+  <div class="board">
+    <div class="board__col">
+      <p class="board__head">
+        <svg viewBox="0 0 16 16" aria-hidden="true" class="board__icon board__icon--up"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"></path></svg>
+        Working now
+      </p>
+      <ul class="chips">
+        {p.working.map((c) => <li class="chip chip--up">{c}</li>)}
+      </ul>
+    </div>
+    <div class="board__col board__col--down">
+      <p class="board__head">
+        <svg viewBox="0 0 16 16" aria-hidden="true" class="board__icon"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5"></path></svg>
+        Getting harder
+      </p>
+      <ul class="chips">
+        {p.harder.map((c) => <li class="chip chip--down">{c}</li>)}
+      </ul>
+    </div>
+    <div class="board__rules">
+      <p class="hand">{p.rulesTitle}</p>
+      <ol>
+        {p.rules.map((r) => <li>{r}</li>)}
+      </ol>
+    </div>
+  </div>
+
+  <figure class="stat">
+    <div class="stat__disc">
+      <strong>{p.multiple}</strong>
+      <span>MRR in one month</span>
+      <b>{receipt.value.replace(' to ', ' → ')}</b>
+    </div>
+    <figcaption>
+      <svg class="stat__arrow" viewBox="0 0 60 44" aria-hidden="true">
+        <path d="M8 40 C 12 24, 22 12, 40 6"></path>
+        <path d="M28 4 L41 6 L35 17"></path>
+      </svg>
+      <span class="hand">{p.campaign}</span>
+      <span class="stat__note">
+        {receipt.note}
+        <a class="link" href={receipt.source.href} rel="noopener">{receipt.source.label}</a>
+      </span>
+    </figcaption>
+  </figure>
+</div>
+
+<style>
+  .tactics {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    text-align: left;
+  }
+
+  /* The board: two lists side by side, and one channel's rules underneath. */
+  .board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 1.5rem 1.75rem;
+    padding: 1.625rem 1.75rem 1.5rem;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+
+  .board__col--down {
+    padding-left: 1.75rem;
+    border-left: 1.5px dashed var(--hairline);
+  }
+
+  .board__head {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-bottom: 0.875rem;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .board__icon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: var(--ink-muted);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .board__icon--up {
+    stroke: var(--pink-text);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .chip {
+    padding: 0.375rem 0.875rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    white-space: nowrap;
+  }
+
+  .chip--up {
+    background: var(--pink-wash);
+    color: var(--pink-deep);
+    font-weight: 700;
+  }
+
+  .chip--down {
+    background: var(--shade);
+    color: var(--ink);
+  }
+
+  .board__rules {
+    grid-column: 1 / -1;
+    padding-top: 1.125rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .board__rules .hand {
+    font-size: 1.5rem;
+    color: var(--pink-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .board__rules ol {
+    display: grid;
+    gap: 0.375rem;
+    counter-reset: rule;
+  }
+
+  .board__rules li {
+    position: relative;
+    padding-left: 1.625rem;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    counter-increment: rule;
+  }
+
+  .board__rules li::before {
+    content: counter(rule);
+    position: absolute;
+    left: 0;
+    top: -0.125rem;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--pink-text);
+  }
+
+  /* The stat: one of Lemonade's circles, with a handwritten note pointing up at it. */
+  .stat {
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+  }
+
+  .stat__disc {
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    width: 12.5rem;
+    aspect-ratio: 1;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: var(--shadow-card);
+    text-align: center;
+  }
+
+  .stat__disc strong {
+    font-size: 4rem;
+    line-height: 1;
+  }
+
+  .stat__disc span {
+    margin-top: 0.375rem;
+    font-size: 0.9375rem;
+    color: var(--ink-muted);
+  }
+
+  .stat__disc b {
+    font-size: 1.125rem;
+  }
+
+  figcaption {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .stat__arrow {
+    width: 3.25rem;
+    height: auto;
+    margin: 0.25rem 0 -0.25rem 5rem;
+    overflow: visible;
+  }
+
+  .stat__arrow path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  figcaption .hand {
+    font-size: 1.75rem;
+  }
+
+  .stat__note {
+    max-width: 17rem;
+    margin-top: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.375rem;
+    color: var(--ink-muted);
+  }
+
+  .stat__note .link {
+    margin-left: 0.25rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 860px) {
+    .tactics {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .board {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 1.25rem;
+    }
+
+    .board__col--down {
+      padding-left: 0;
+      padding-top: 1.25rem;
+      border-left: 0;
+      border-top: 1.5px dashed var(--hairline);
+    }
+  }
+</style>

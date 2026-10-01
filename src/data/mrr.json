@@ -1,0 +1,112 @@
+{
+  "source": "Digitized from reference/stripe-mrr-2026-09-30.png (Stripe MRR chart, Postiz)",
+  "method": "Line traced against the $0 and $250K gridlines and the Jan 1 2025 / Jan 1 2026 ticks",
+  "accuracy_usd": 1300,
+  "note": "Approximate month-start values, rounded to $500. The last point is the exact figure shown on the card. Replace with a Stripe export if one is available.",
+  "points": [
+    {
+      "date": "2024-09-01",
+      "mrr": 0
+    },
+    {
+      "date": "2024-10-01",
+      "mrr": 500
+    },
+    {
+      "date": "2024-11-01",
+      "mrr": 500
+    },
+    {
+      "date": "2024-12-01",
+      "mrr": 1500
+    },
+    {
+      "date": "2025-01-01",
+      "mrr": 2000
+    },
+    {
+      "date": "2025-02-01",
+      "mrr": 4500
+    },
+    {
+      "date": "2025-03-01",
+      "mrr": 4500
+    },
+    {
+      "date": "2025-04-01",
+      "mrr": 5000
+    },
+    {
+      "date": "2025-05-01",
+      "mrr": 5000
+    },
+    {
+      "date": "2025-06-01",
+      "mrr": 4000
+    },
+    {
+      "date": "2025-07-01",
+      "mrr": 5500
+    },
+    {
+      "date": "2025-08-01",
+      "mrr": 7000
+    },
+    {
+      "date": "2025-09-01",
+      "mrr": 13000
+    },
+    {
+      "date": "2025-10-01",
+      "mrr": 13000
+    },
+    {
+      "date": "2025-11-01",
+      "mrr": 13500
+    },
+    {
+      "date": "2025-12-01",
+      "mrr": 15500
+    },
+    {
+      "date": "2026-01-01",
+      "mrr": 17000
+    },
+    {
+      "date": "2026-02-01",
+      "mrr": 19000
+    },
+    {
+      "date": "2026-03-01",
+      "mrr": 43000
+    },
+    {
+      "date": "2026-04-01",
+      "mrr": 76500
+    },
+    {
+      "date": "2026-05-01",
+      "mrr": 89500
+    },
+    {
+      "date": "2026-06-01",
+      "mrr": 114000
+    },
+    {
+      "date": "2026-07-01",
+      "mrr": 145000
+    },
+    {
+      "date": "2026-08-01",
+      "mrr": 170500
+    },
+    {
+      "date": "2026-09-01",
+      "mrr": 185500
+    },
+    {
+      "date": "2026-09-30",
+      "mrr": 229846
+    }
+  ]
+}

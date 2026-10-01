@@ -1,0 +1,30 @@
+/* Design tokens. Values measured from lemonade.com on 30 Sep 2026 (PLAN.md section 4). */
+:root {
+  color-scheme: light;
+
+  --ink: #4a4a4a;
+  --ink-muted: #767676; /* smallest grey that clears 4.5:1 on white */
+  --ink-faint: #b7b7b7; /* decorative only: fails contrast for text */
+  --hairline: #e8e8e8;
+  --shade: #eeeeee;
+  --bg: #ffffff;
+  --band: #f7f7f7;
+  --pink: #ff0083;
+  --pink-text: #db0070; /* the accent, darkened until small text clears 4.5:1 on white and on the grey band */
+  --pink-deep: #cc0068; /* pink text on the pale pink below: 4.8:1 */
+  --pink-wash: #ffe8f3; /* a tab that is not chosen */
+  --pink-wash-strong: #ffd6ea; /* the same under the pointer */
+  --dark: #202020; /* the page's dark, when the lights go off at the end (scripts/night.ts) */
+
+  --font-serif: 'Merriweather', Georgia, serif;
+  --font-sans: 'Lato', 'Helvetica Neue', Arial, sans-serif;
+  --font-hand: 'Caveat', 'Bradley Hand', cursive;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --page: 75rem;
+
+  --radius: 0.75rem;
+  --shadow-card: 0 0.875rem 2.5rem -1.25rem rgba(74, 74, 74, 0.45);
+  --shadow-cta: 0 0.625rem 2.5rem -0.625rem rgba(255, 0, 131, 0.5);
+}

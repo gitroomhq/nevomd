@@ -1,0 +1,404 @@
+---
+/**
+ * The stage: everything the finale animates.
+ *
+ * All layers live in a 1000×1000 "scene" that is scaled to fit, so positions are in scene
+ * units (and this file's sizes are in px on purpose: they are scene units, not page sizes).
+ * One WebGL canvas draws the 3D brain and the four 3D ability objects; Nevo and the
+ * handwritten labels are ordinary SVG and HTML around it.
+ * The stage is decorative: everything it shows is also said in the text.
+ *
+ * Nevo is the traced portrait cut into layers (art/scripts/rig_bust.py): shoulders that stay
+ * put, a head that turns on the neck, and a face whose features slide across the head as it
+ * turns. The features are clipped to the skin, so an eye that slides toward the edge of the
+ * face goes behind it, the way it would on a round head.
+ */
+import { abilities, meetNevo } from '../content/site';
+import rig from '../assets/art/nevo-rig.json';
+import { SCENE, NODES, BUST, LID, HEAD, FINALE } from '../brain/layout';
+
+// The top of the head lifts off along an ellipse across the forehead (bust image coordinates).
+const { cx, cy, rx, ry } = LID;
+// The part below the cut starts a little above it, under the lid, so no seam shows between the two.
+const belowLid = `M-300 ${cy - 3} L${cx - rx} ${cy - 3} A${rx} ${ry} 0 0 0 ${cx + rx} ${cy - 3} L1324 ${cy - 3} V1324 H-300 Z`;
+const aboveLid = `M-300 -600 H1324 V${cy} L${cx + rx} ${cy} A${rx} ${ry + 1.5} 0 0 1 ${cx - rx} ${cy} L-300 ${cy} Z`;
+const rimFront = `M${cx - rx} ${cy} A${rx} ${ry} 0 0 0 ${cx + rx} ${cy}`;
+const headShape = `M-300 -600 H1324 V${HEAD.cut} ${HEAD.jaw} H-300 Z`;
+const torsoShape = `M-300 1324 H1324 V${HEAD.cut} ${HEAD.jaw} H-300 Z`;
+const bustBox = `left:${BUST.left}px; top:${BUST.top}px; width:${BUST.size}px;`;
+const brainBox = `left:${SCENE.brain.x - SCENE.brain.size / 2}px; top:${SCENE.brain.top}px; width:${SCENE.brain.size}px; height:${SCENE.brain.size}px;`;
+const [neckLeft, neckRight] = HEAD.neck;
+const f = rig.features;
+---
+
+<div class="stage" data-stage aria-hidden="true">
+  <div class="scene" data-scene>
+    <!-- Back of the head: the opening the brain drops into. -->
+    <div class="bust" data-bust style={bustBox}>
+      <svg viewBox="0 0 1024 1024">
+        <g data-head>
+          <g class="bust__sway">
+            <ellipse cx={cx} cy={cy} rx={rx - 4} ry={ry} class="bust__cavity" data-cavity></ellipse>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- The brain's place: an empty box the timeline scales. The canvas draws the brain. -->
+    <div class="brain" data-brain style={brainBox}></div>
+
+    <canvas class="layer" data-canvas></canvas>
+
+    <!-- Front of the head: the face, and the lid that lifts. Drawn over the brain. -->
+    <div class="bust" data-bust style={bustBox}>
+      <svg viewBox="0 0 1024 1024">
+        <defs>
+          <!-- The drawing without its moving features, defined once and used for each layer. -->
+          <g id="nb-base" set:html={rig.base} />
+          <clipPath id="nb-head"><path d={headShape}></path></clipPath>
+          <clipPath id="nb-torso"><path d={torsoShape}></path></clipPath>
+          <clipPath id="nb-below-lid"><path d={belowLid}></path></clipPath>
+          <clipPath id="nb-above-lid"><path d={aboveLid}></path></clipPath>
+          <clipPath id="nb-on-skin"><use href="#nb-skin"></use></clipPath>
+          <linearGradient id="nb-fade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0.8" stop-color="#fff"></stop>
+            <stop offset="0.93" stop-color="#000"></stop>
+          </linearGradient>
+          <mask id="nb-fade-mask" maskUnits="userSpaceOnUse" x="-300" y="-600" width="1624" height="1624">
+            <rect x="-300" y="-600" width="1624" height="1624" fill="url(#nb-fade)"></rect>
+          </mask>
+        </defs>
+
+        <g mask="url(#nb-fade-mask)">
+          <!-- The neck as it carries on up behind the jaw: what shows when the head lifts or tilts away. -->
+          <g class="bust__neck">
+            <rect x={neckLeft.x + 4} y="470" width={neckRight.x - neckLeft.x} height="180"></rect>
+            <use href="#nb-shadow" y="-11"></use>
+            <use href="#nb-shadow" y="-22"></use>
+            <rect x={neckLeft.x} y="486" width={neckLeft.width} height="80" class="bust__line"></rect>
+            <rect x={neckRight.x} y="486" width={neckRight.width} height="80" class="bust__line"></rect>
+          </g>
+          <use href="#nb-base" clip-path="url(#nb-torso)"></use>
+
+          <g data-head>
+            <g class="bust__sway">
+              <g clip-path="url(#nb-below-lid)">
+                <g clip-path="url(#nb-head)">
+                  <use href="#nb-base"></use>
+                  <g clip-path="url(#nb-on-skin)">
+                    <!-- Two wrappers throughout: the outer one is moved by the scroll story, the
+                         inner one moves on a timer (looking about, blinking). Two elements,
+                         so the two never fight. -->
+                    <g data-face>
+                      <g class="bust__look">
+                        <g data-bust-moustache set:html={f.moustache} />
+                        <g data-bust-nose><g class="bust__look bust__look--nose" set:html={f.nose} /></g>
+                        <g data-bust-chin set:html={f.chin} />
+                        <g data-bust-mouth set:html={f.mouth} />
+                        <ellipse cx={HEAD.mouth.x} cy={HEAD.mouth.y + 2} rx="19" ry="23" class="bust__oh" data-bust-oh></ellipse>
+                        <g data-bust-eye="l"><g class="bust-blink" set:html={f.eyeL} /></g>
+                        <g data-bust-eye="r"><g class="bust-blink" set:html={f.eyeR} /></g>
+                        <g data-bust-brow="l" set:html={f.browL} />
+                        <g data-bust-brow="r" set:html={f.browR} />
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+              <path d={rimFront} class="bust__rim" data-cavity></path>
+              <g data-lid>
+                <g clip-path="url(#nb-above-lid)">
+                  <g clip-path="url(#nb-head)">
+                    <use href="#nb-base"></use>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- One per ability. The canvas draws the 3D object at this spot; this holds its name. -->
+    {
+      NODES.map((n, i) => (
+        <div class="node" data-node={i} style={`left:${n.x}px; top:${n.y}px;`}>
+          <p class="node__name">{abilities[i].name}</p>
+        </div>
+      ))
+    }
+
+    <!-- Two boxes: the outer one follows Nevo down the page, the inner one is the timeline's to fade in. -->
+    <div class="callout" style={`left:${FINALE.callout.x}px; top:${FINALE.callout.y}px;`}>
+      <div class="callout__in" data-callout>
+        <p>{meetNevo.callout}</p>
+        <svg viewBox="0 0 60 70" width="60" height="70">
+          <path d="M34 4 C 22 22, 22 40, 30 62"></path>
+          <path d="M16 48 L30 64 L42 46"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* The scene, scaled to fit: stage.ts measures the page and sets --k. */
+  .scene {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1000px;
+    height: 1000px;
+    transform: translate(-50%, -50%) scale(var(--k, 1));
+  }
+
+  .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .brain {
+    position: absolute;
+  }
+
+  /*
+   * Nevo stands --nevo-y below his place in the scene: under the stage, in the page itself,
+   * so the scroll carries him up.
+   */
+  .bust {
+    position: absolute;
+    opacity: 0;
+    translate: 0 calc(var(--nevo-y, 0) * 1px);
+  }
+
+  .bust svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /*
+   * Nevo is a little alive on his own: he breathes, blinks, and his head is never quite
+   * still. These run only while he is on stage (stage.ts adds .has-bust), and not at all
+   * when motion is reduced. Everything else he does is driven by the scroll, in
+   * story-timeline.ts.
+   */
+  .scene.has-bust .bust svg {
+    animation: bust-breathe 3.8s ease-in-out infinite alternate;
+  }
+
+  .bust__sway {
+    transform-box: view-box;
+    transform-origin: 512px 606px;
+  }
+
+  /*
+   * He also looks at the pointer. stage.ts sets --look-x and --look-y (each -1 to 1) from
+   * where the pointer is relative to his head; the head leans that way, the face slides
+   * across it, the nose a little further and the eyes further still. These use `translate`
+   * and `rotate`, which add to the `transform` the timed animations below are using.
+   */
+  .bust__sway {
+    rotate: calc(var(--look-x, 0) * 1.6deg);
+    transition: rotate 0.35s ease-out;
+  }
+
+  .bust__look {
+    translate: calc(var(--look-x, 0) * 9px) calc(var(--look-y, 0) * 6px);
+    transition: translate 0.35s ease-out;
+  }
+
+  .bust__look--nose {
+    translate: calc(var(--look-x, 0) * 5px) calc(var(--look-y, 0) * 2px);
+  }
+
+  .bust :global(.bust-blink) {
+    translate: calc(var(--look-x, 0) * 2.5px) calc(var(--look-y, 0) * 1.5px);
+    transition: translate 0.35s ease-out;
+  }
+
+  .scene.has-bust .bust__sway {
+    animation: bust-sway 6.4s ease-in-out infinite alternate;
+  }
+
+  /* His face slides a little across his head, the nose a little further: he is looking about. */
+  .scene.has-bust .bust__look {
+    animation: bust-look 9.2s ease-in-out infinite alternate;
+  }
+
+  .scene.has-bust .bust__look--nose {
+    animation-name: bust-look-nose;
+  }
+
+  .scene.has-bust .bust :global(.bust-blink) {
+    transform-box: fill-box;
+    transform-origin: 50% 60%;
+    animation: bust-blink 5.2s infinite;
+  }
+
+  /* The brain is in and he is pleased with it: one wink, then back to blinking. */
+  .scene.is-done .bust [data-bust-eye='r'] :global(.bust-blink) {
+    animation:
+      bust-wink 1s 0.25s 1 both,
+      bust-blink 5.2s 2.2s infinite;
+  }
+
+  @keyframes bust-breathe {
+    from {
+      translate: 0 0;
+    }
+    to {
+      translate: 0 -3px;
+    }
+  }
+
+  @keyframes bust-sway {
+    from {
+      transform: rotate(-1.1deg);
+    }
+    to {
+      transform: rotate(1.1deg);
+    }
+  }
+
+  @keyframes bust-look {
+    from {
+      transform: translate(-5px, 0.5px);
+    }
+    to {
+      transform: translate(5px, -1px);
+    }
+  }
+
+  @keyframes bust-look-nose {
+    from {
+      transform: translateX(-2.5px);
+    }
+    to {
+      transform: translateX(2.5px);
+    }
+  }
+
+  @keyframes bust-wink {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    22%,
+    72% {
+      transform: scaleY(0.08);
+    }
+  }
+
+  @keyframes bust-blink {
+    0%,
+    93%,
+    100% {
+      transform: scaleY(1);
+    }
+    96% {
+      transform: scaleY(0.08);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene.has-bust .bust svg,
+    .scene.has-bust .bust__sway,
+    .scene.has-bust .bust__look,
+    .scene.has-bust .bust :global(.bust-blink),
+    .scene.is-done .bust [data-bust-eye='r'] :global(.bust-blink) {
+      animation: none;
+      transition: none;
+    }
+  }
+
+  .bust__neck rect {
+    fill: #fff;
+  }
+
+  .bust__neck .bust__line {
+    fill: var(--ink);
+  }
+
+  .bust__cavity {
+    fill: #dcdcdc;
+    stroke: var(--ink);
+    stroke-width: 6;
+    opacity: 0;
+  }
+
+  .bust__rim {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 6;
+    stroke-linecap: round;
+    opacity: 0;
+  }
+
+  /* The round mouth of someone watching a brain come down at him. */
+  .bust__oh {
+    fill: var(--ink);
+    opacity: 0;
+  }
+
+  .node {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  .node__name {
+    position: absolute;
+    top: 112px;
+    left: -150px;
+    width: 300px;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .callout {
+    position: absolute;
+    width: max-content;
+    translate: -50% calc(var(--nevo-y, 0) * 1px);
+  }
+
+  .callout__in {
+    display: grid;
+    justify-items: center;
+    opacity: 0;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .callout svg {
+    margin-top: 4px;
+    max-width: none;
+    overflow: visible;
+  }
+
+  .callout path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

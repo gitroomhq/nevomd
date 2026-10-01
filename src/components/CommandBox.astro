@@ -1,0 +1,167 @@
+---
+interface Props {
+  value: string;
+  /** What is being copied, for the button's accessible name and for analytics. */
+  name: string;
+  /** Prose instead of a shell command: wrap lines and use the text face. */
+  prose?: boolean;
+  /** For narrow places: smaller type, an icon for a button, and the command may wrap. */
+  compact?: boolean;
+}
+
+const { value, name, prose = false, compact = false } = Astro.props;
+---
+
+<div class:list={['cmd', { 'cmd--prose': prose, 'cmd--compact': compact }]}>
+  {prose ? <p class="cmd__text">{value}</p> : <pre class="cmd__text"><code>{value}</code></pre>}
+  <button type="button" class="cmd__copy" data-copy={value} data-copy-name={name} aria-label={`Copy ${name}`}>
+    <svg class="cmd__icon cmd__icon--copy" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <rect x="6" y="6" width="9" height="9" rx="2"></rect>
+      <path d="M12 6V4.5A1.5 1.5 0 0 0 10.5 3h-6A1.5 1.5 0 0 0 3 4.5v6A1.5 1.5 0 0 0 4.5 12H6"></path>
+    </svg>
+    <svg class="cmd__icon cmd__icon--done" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+      <path d="M4 9.5l3.2 3.2L14 6"></path>
+    </svg>
+    <span data-copy-label>Copy</span>
+  </button>
+</div>
+
+<style>
+  .cmd {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 0.5rem;
+    max-width: 100%;
+    /* A long command must scroll inside its box, never widen the layout around it.
+       It is also a container, so a narrow box can switch itself to the compact form. */
+    container-type: inline-size;
+  }
+
+  .cmd__text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.9062rem;
+    line-height: 1.375rem;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .cmd--prose .cmd__text {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.625rem;
+    white-space: normal;
+  }
+
+  .cmd__copy {
+    flex: none;
+    display: grid;
+    place-items: center;
+    padding: 0 1rem;
+    background: none;
+    border: 0;
+    border-left: 1px solid var(--hairline);
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 4.75rem;
+  }
+
+  .cmd__copy:hover {
+    background: var(--band);
+  }
+
+  .cmd__icon {
+    display: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /*
+   * Compact: smaller type, the command may wrap, and the word "Copy" gives way to an icon
+   * that turns into a tick once copied. Asked for with the `compact` prop, and automatic
+   * whenever the box is too narrow for the long form.
+   */
+  .cmd--compact .cmd__text {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8438rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .cmd--compact .cmd__copy {
+    min-width: 2.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .cmd--compact [data-copy-label] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .cmd--compact .cmd__icon--copy {
+    display: block;
+  }
+
+  .cmd--compact .cmd__copy:global(.is-copied) .cmd__icon--copy {
+    display: none;
+  }
+
+  .cmd--compact .cmd__copy:global(.is-copied) .cmd__icon--done {
+    display: block;
+    stroke: var(--pink-text);
+  }
+
+  @container (max-width: 25rem) {
+    .cmd__text {
+      padding: 0.625rem 0.75rem;
+      font-size: 0.8438rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .cmd--prose .cmd__text {
+      font-size: 1rem;
+    }
+
+    .cmd__copy {
+      min-width: 2.75rem;
+      padding: 0 0.75rem;
+    }
+
+    [data-copy-label] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .cmd__icon--copy {
+      display: block;
+    }
+
+    .cmd__copy:global(.is-copied) .cmd__icon--copy {
+      display: none;
+    }
+
+    .cmd__copy:global(.is-copied) .cmd__icon--done {
+      display: block;
+      stroke: var(--pink-text);
+    }
+  }
+</style>

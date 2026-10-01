@@ -1,0 +1,263 @@
+---
+/**
+ * The full MRR chart, drawn at build time. Two sizes are rendered (wide and narrow) and CSS
+ * shows the one that fits, so the axis text stays readable on a phone.
+ */
+import { series, scales, linePath, areaPath, usd, usdCompact, fullDate, valueAt } from '../lib/chart';
+import { proofSection } from '../content/site';
+
+interface Props {
+  variant: 'wide' | 'narrow';
+}
+
+const { variant } = Astro.props;
+const wide = variant === 'wide';
+
+const W = wide ? 960 : 380;
+const H = wide ? 400 : 280;
+const m = wide ? { top: 30, right: 62, bottom: 38, left: 10 } : { top: 26, right: 46, bottom: 32, left: 6 };
+const box = { x0: m.left, x1: W - m.right, y0: m.top, y1: H - m.bottom };
+
+const Y_MAX = 250_000;
+const t0 = series[0].t;
+const t1 = series[series.length - 1].t;
+const { x, y } = scales(box, [t0, t1], Y_MAX);
+
+const pts = series.map((p) => ({ x: x(p.t), y: y(p.mrr) }));
+const end = pts[pts.length - 1];
+const last = series[series.length - 1];
+
+const yTicks = wide ? [0, 50_000, 100_000, 150_000, 200_000, 250_000] : [0, 100_000, 200_000];
+const xTicks = (wide ? ['2025-01-01', '2025-07-01', '2026-01-01', '2026-07-01'] : ['2025-01-01', '2026-01-01']).map((iso) => {
+  const t = Date.parse(`${iso}T00:00:00Z`);
+  return { x: x(t), label: new Date(t).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) };
+});
+
+// Handwritten notes at the moments the story turns. Wide chart only.
+const notes = wide
+  ? proofSection.annotations.map((a) => {
+      const px = x(Date.parse(`${a.date}T00:00:00Z`));
+      const py = y(valueAt(a.date));
+      const tx = px + a.dx;
+      const ty = py + a.dy;
+      // The arrow leaves from under the middle of the text and lands just above the point.
+      const sx = tx + (a.dx < 0 ? a.text.length * 8.2 : 18);
+      const sy = ty + 10;
+      const ex = px;
+      const ey = py - 12;
+      const cxp = (sx + ex) / 2 + (a.dx < 0 ? 26 : -22);
+      const cyp = (sy + ey) / 2 - 4;
+      return { ...a, tx, ty, arrow: `M${sx.toFixed(1)} ${sy.toFixed(1)} Q${cxp.toFixed(1)} ${cyp.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}` };
+    })
+  : [];
+
+const hoverPoints = series.map((p, i) => ({ x: +pts[i].x.toFixed(1), y: +pts[i].y.toFixed(1), v: usd(p.mrr), d: fullDate(p.t) }));
+const id = `mrr-${variant}`;
+---
+
+<div class:list={['chart', `chart--${variant}`]} data-chart data-view-w={W} data-view-h={H}>
+  <svg
+    viewBox={`0 0 ${W} ${H}`}
+    role="img"
+    aria-label={`Line chart of Postiz monthly recurring revenue from ${fullDate(t0)} to ${fullDate(t1)}, rising from $0 to ${usd(last.mrr)}. The numbers are in the table below.`}
+  >
+    <defs>
+      <marker id={`${id}-arrow`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M1 1 L9 5 L1 9" class="chart__arrowhead"></path>
+      </marker>
+    </defs>
+
+    {
+      yTicks.map((v) => (
+        <g>
+          <line x1={box.x0} x2={box.x1} y1={y(v)} y2={y(v)} class:list={['chart__grid', { 'chart__grid--base': v === 0 }]} />
+          <text x={box.x1 + 10} y={y(v) + 4} class="chart__tick">
+            {usdCompact(v)}
+          </text>
+        </g>
+      ))
+    }
+    {
+      xTicks.map((t) => (
+        <g>
+          <line x1={t.x} x2={t.x} y1={box.y1} y2={box.y1 + 5} class="chart__grid chart__grid--base" />
+          <text x={t.x} y={box.y1 + 22} text-anchor="middle" class="chart__tick">
+            {t.label}
+          </text>
+        </g>
+      ))
+    }
+
+    <path d={areaPath(pts, box.y1)} class="chart__area"></path>
+    <path d={linePath(pts)} class="chart__line"></path>
+
+    {
+      notes.map((n) => (
+        <g class="chart__note">
+          <path d={n.arrow} marker-end={`url(#${id}-arrow)`} />
+          <text x={n.tx} y={n.ty}>
+            {n.text}
+          </text>
+        </g>
+      ))
+    }
+
+    <circle cx={end.x} cy={end.y} r="5.5" class="chart__end"></circle>
+    <text x={end.x - 12} y={end.y - 12} text-anchor="end" class="chart__endlabel">{usd(last.mrr)}</text>
+
+    <g class="chart__hover" data-hover hidden>
+      <line y1={box.y0} y2={box.y1} data-hover-line></line>
+      <circle r="5.5" data-hover-dot></circle>
+    </g>
+    <rect
+      x={box.x0}
+      y={box.y0}
+      width={box.x1 - box.x0}
+      height={box.y1 - box.y0}
+      class="chart__hit"
+      data-hit
+      tabindex="0"
+      aria-label="Explore the chart month by month with the left and right arrow keys"
+    ></rect>
+  </svg>
+  <div class="chart__tip" data-tip hidden>
+    <strong data-tip-value></strong>
+    <span data-tip-date></span>
+  </div>
+  <script type="application/json" data-points set:html={JSON.stringify(hoverPoints)} />
+</div>
+
+<style>
+  .chart {
+    position: relative;
+  }
+
+  .chart--narrow {
+    display: none;
+  }
+
+  @media (max-width: 700px) {
+    .chart--wide {
+      display: none;
+    }
+
+    .chart--narrow {
+      display: block;
+    }
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .chart__grid {
+    stroke: var(--shade);
+    stroke-width: 1;
+  }
+
+  .chart__grid--base {
+    stroke: #d9d9d9;
+  }
+
+  .chart__tick {
+    fill: var(--ink-muted);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chart__area {
+    fill: var(--pink);
+    opacity: 0.08;
+  }
+
+  .chart__line {
+    fill: none;
+    stroke: var(--pink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chart__end,
+  .chart__hover circle {
+    fill: var(--pink);
+    stroke: #fff;
+    stroke-width: 2;
+  }
+
+  .chart__endlabel {
+    fill: var(--ink);
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .chart__note text {
+    fill: var(--ink);
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 24px;
+  }
+
+  .chart__note path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  .chart__arrowhead {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chart__hover[hidden] {
+    display: none;
+  }
+
+  .chart__hover line {
+    stroke: var(--ink-faint);
+    stroke-width: 1;
+  }
+
+  .chart__hit {
+    fill: transparent;
+    cursor: crosshair;
+  }
+
+  .chart__hit:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 2px;
+  }
+
+  .chart__tip {
+    position: absolute;
+    z-index: 2;
+    transform: translate(-50%, calc(-100% - 0.875rem));
+    padding: 0.5rem 0.75rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    pointer-events: none;
+    display: grid;
+  }
+
+  .chart__tip[hidden] {
+    display: none;
+  }
+
+  .chart__tip strong {
+    font-size: 1rem;
+  }
+
+  .chart__tip span {
+    opacity: 0.8;
+  }
+</style>
