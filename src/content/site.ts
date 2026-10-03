@@ -163,7 +163,7 @@ export const meta = {
 export const hero = {
   title: 'I took Postiz to $2.7m ARR alone.\nYour agent can copy my brain, free.',
   sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and\nit will correct your marketing, positioning and add you insane growth hacks.',
-  free: 'Free. No signup. One command.',
+  free: 'Free. One command, then your email.',
 };
 
 export type Ability = {
@@ -357,7 +357,7 @@ export const proofSection = {
 export const howItWorks = {
   title: 'How Nevo’s Brain works',
   steps: [
-    { title: 'Connect it', text: 'Add the MCP server. One command, no account.' },
+    { title: 'Connect it', text: 'Add the MCP server with one command, then sign in with your email. Free.' },
     { title: 'Ask it', text: 'Your agent consults the brain whenever the task is growth: an idea, a niche, a launch, a pricing page.' },
     { title: 'Ship it', text: 'It answers with the play and the numbers behind it. Your agent does the work.' },
   ],

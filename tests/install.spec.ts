@@ -73,7 +73,7 @@ test('every MCP line in the full panel is built from the one server name and URL
     await expect(panel.locator('[data-agent-panel]:not([hidden]) .cmd__text')).toHaveText(command);
   }
 
-  // No command on the page mentions a key or a login: the server is open.
+  // No command on the page carries a key: sign-in happens over OAuth the first time the agent connects.
   const all = await page.locator('.cmd__text').allTextContents();
   for (const text of all) expect(text).not.toMatch(/api[-_ ]?key|bearer|authorization/i);
 });
@@ -95,7 +95,8 @@ test('the agent chosen in How it works is remembered', async ({ page }) => {
 test('launch check: the MCP server answers', async ({ request }) => {
   test.skip(isMock, 'install names in content/site.ts are still mocks (install.mock = true)');
 
-  // The MCP server: a plain initialize request, with no key, as the page promises.
+  // The MCP server: a plain initialize request with no token is turned away with a 401
+  // that points the agent at the OAuth sign-in, which is how every agent gets in.
   const response = await request.post(mcpUrl, {
     headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
     data: {
@@ -105,6 +106,6 @@ test('launch check: the MCP server answers', async ({ request }) => {
       params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'launch-check', version: '1.0.0' } },
     },
   });
-  expect(response.status()).toBe(200);
-  expect(await response.text()).toContain('"result"');
+  expect(response.status()).toBe(401);
+  expect(response.headers()['www-authenticate']).toMatch(/resource_metadata=/i);
 });

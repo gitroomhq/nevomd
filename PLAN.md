@@ -44,7 +44,7 @@ The page has one job: get a founder who already works with an AI agent to copy t
 
 **Why believe it:** Stripe-verified revenue, one founder, $0 raised (in the Proof section and Meet Nevo).
 
-**Price:** free. No signup, no card, no key. It is said in "How it works" and the questions (it was under the hero's command until you had that line taken out).
+**Price:** free. No card, no key; the agent signs in once with your email over OAuth. It is said in "How it works" and the questions (it was under the hero's command until you had that line taken out).
 
 **Voice:** first person, specific numbers, no guru tone. Headlines are short the way Lemonade's are.
 
@@ -147,7 +147,7 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 | Hermes | `hermes mcp add nevos-brain --url https://mcp.nevo.md/mcp` |
 | Gemini CLI | `gemini mcp add --transport http nevos-brain https://mcp.nevo.md/mcp` |
 
-The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it sends the MCP server an `initialize` request. The MCP has no key and no auth.
+The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it sends the MCP server an `initialize` request with no token and expects the OAuth 401. The MCP has no key; it signs users in with OAuth2 and their email, free.
 
 ## 6. The brain story
 
@@ -305,7 +305,7 @@ nevomd/
 - That drawing is Nevo, in a different pose in each section and never the finale's bust, always doing something with the brain, and played by the scroll, like the finale (not the mouse). He has to look like you.
 - Every drawing has one touch of pink, added by the image model.
 - The finale: the brain takes in the four abilities and drops into Nevo's head; Nevo is animated.
-- The MCP has no key and no auth. The names in the commands are mocks for now.
+- The MCP has no key. It signs users in with OAuth2 and their email, free. The names in the commands are mocks for now.
 
 **Still open.** The build uses the default unless you say otherwise.
 
