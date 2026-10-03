@@ -49,7 +49,7 @@ export const install = {
   /** True while the names below are placeholders. The launch check fails on it. */
   mock: true,
   serverName: 'nevos-brain',
-  mcpUrl: 'https://nevo.md/mcp',
+  mcpUrl: 'https://mcp.nevo.md/mcp',
 };
 
 const mcpJson = JSON.stringify({ mcpServers: { [install.serverName]: { url: install.mcpUrl } } }, null, 2);

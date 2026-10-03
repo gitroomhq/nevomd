@@ -77,7 +77,7 @@ Measured from lemonade.com on 30 Sep 2026. The tokens live in `src/styles/tokens
 ┌───────────────────────────────────────────────────────────────┐
 │              H1, centered, two lines                          │
 │              one paragraph                                    │
-│              https://nevo.md/mcp                       Copy   │
+│              https://mcp.nevo.md/mcp                       Copy   │
 │                                                               │
 │  robot lab        ( 3D brain on its dock )       rocket pad   │
 ├─ grey ────────────────────────────────────────────────────────┤
@@ -139,13 +139,13 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 
 | Agent | Command or steps |
 |---|---|
-| Claude Code | `claude mcp add --transport http nevos-brain https://nevo.md/mcp` |
+| Claude Code | `claude mcp add --transport http nevos-brain https://mcp.nevo.md/mcp` |
 | Claude (web, desktop) | Customize → Connectors → + → Add custom connector → paste the URL |
-| Cursor | "Add to Cursor" link, or in `~/.cursor/mcp.json`: `{"mcpServers":{"nevos-brain":{"url":"https://nevo.md/mcp"}}}` |
-| Codex | `codex mcp add nevos-brain --url https://nevo.md/mcp` |
-| OpenClaw | `openclaw mcp add nevos-brain --url https://nevo.md/mcp --transport streamable-http` |
-| Hermes | `hermes mcp add nevos-brain --url https://nevo.md/mcp` |
-| Gemini CLI | `gemini mcp add --transport http nevos-brain https://nevo.md/mcp` |
+| Cursor | "Add to Cursor" link, or in `~/.cursor/mcp.json`: `{"mcpServers":{"nevos-brain":{"url":"https://mcp.nevo.md/mcp"}}}` |
+| Codex | `codex mcp add nevos-brain --url https://mcp.nevo.md/mcp` |
+| OpenClaw | `openclaw mcp add nevos-brain --url https://mcp.nevo.md/mcp --transport streamable-http` |
+| Hermes | `hermes mcp add nevos-brain --url https://mcp.nevo.md/mcp` |
+| Gemini CLI | `gemini mcp add --transport http nevos-brain https://mcp.nevo.md/mcp` |
 
 The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it sends the MCP server an `initialize` request. The MCP has no key and no auth.
 
