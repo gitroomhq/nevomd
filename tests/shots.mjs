@@ -83,12 +83,10 @@ for (const [name, y] of stops) {
   await page.screenshot({ path: join(outDir, `${name}${mobile ? '-m' : ''}.png`) });
 }
 
-// The full install panel in "How it works" (the only place with the MCP server), MCP tab open.
+// The full install panel in "How it works": every agent's MCP steps.
 if (!only || 'install'.includes(only)) {
   await page.evaluate(() => document.querySelector('#how').scrollIntoView());
   await page.waitForTimeout(300);
-  await page.click('#how .install [data-tab="mcp"]');
-  await page.waitForTimeout(400);
   await page.screenshot({ path: join(outDir, `50-install-mcp${mobile ? '-m' : ''}.png`) });
   await page.click('#how .install [data-agent="cursor"]');
   await page.waitForTimeout(400);

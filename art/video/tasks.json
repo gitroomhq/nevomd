@@ -112,5 +112,21 @@
     "duration": 5,
     "quality": "1080p",
     "id": "task-unified-1790822244-68aulu26"
+  },
+  "door-wait.1080p": {
+    "frame": "549b6d6d569b21f22253b310a6327d82d9caac36",
+    "last": "549b6d6d569b21f22253b310a6327d82d9caac36",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the image: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind. The camera is locked: no zoom, no pan, no shake. The white background stays pure white and completely still. The buildings, the ground line and the pale silhouettes do not move or change. Nothing new appears, nothing disappears, no colour is added, no shadows or lighting change. Only these small, gentle movements happen: Nevo, the doorman, glances down at the clipboard in his hand and makes a small tick on it with the pen, then looks back up at the viewer with a calm, friendly look and blinks; the pink velvet rope sways very slightly. The door stays closed and does not move. Every movement is small and calm, and by the end everything is back exactly where it started, so the video loops.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790961019-y9r9ylul"
+  },
+  "door-open.1080p": {
+    "frame": "549b6d6d569b21f22253b310a6327d82d9caac36",
+    "last": "362313dd0d6bcab0cca58f821f91c6ab04fc60da",
+    "prompt": "Flat 2D line-art animation that keeps the exact drawing style of the two images: thin dark-grey outlines, white and light-grey flat fills, pale grey silhouettes behind, the same hot-pink details. The camera is locked: no zoom, no pan, no shake. The white background stays pure white. Nothing new appears and no colour is added. Nevo looks the same throughout, and so does the brain: white, with grey fold lines. The motion is one smooth, continuous movement from the first image to the second, at an even pace from start to end, with no pauses, no cuts and no going back: One single continuous shot with no cuts. Nevo has two hands and two arms throughout. He smiles and nods at the viewer, clips the pen to the clipboard and tucks the clipboard against his side with his right arm; with his left hand he unhooks the pink velvet rope from the post nearest him and lets its end fall to the ground by the door, where it stays; the door behind swings open inward; and he stretches his left arm out toward the open door, palm up, welcoming the viewer in. Nevo stays exactly the same size and in the same place: he does not step forward. The door frame, the lamp and the two posts stay where they are, apart from him.",
+    "duration": 5,
+    "quality": "1080p",
+    "id": "task-unified-1790995482-jxahgohp"
   }
 }

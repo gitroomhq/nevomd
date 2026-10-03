@@ -33,6 +33,25 @@ body {
   overflow-x: clip;
 }
 
+/*
+ * When the lights go off at the end (scripts/night.ts), the whole page goes dark with the room,
+ * not just the last section: a layer of the page's dark over everything above it, as dark as
+ * the room is (--night, frame by frame). The last section stands in front of it (FinalCta.astro).
+ */
+main {
+  position: relative;
+}
+
+main::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: var(--dark);
+  opacity: var(--night, 0);
+  pointer-events: none;
+}
+
 h1,
 h2,
 h3,

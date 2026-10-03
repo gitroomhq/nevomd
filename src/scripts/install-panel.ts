@@ -1,8 +1,7 @@
 /**
  * Behaviour for the install blocks: the copy buttons everywhere, and, in the full panel in "How
- * it works" (the only place with the MCP server), the Skill / MCP switch and the choice of
- * agent, which is remembered. The small blocks in the hero and at the end are the skill command
- * and its Copy alone.
+ * it works", the choice of agent, which is remembered. The small blocks in the hero and at the
+ * end are the MCP server's URL and its Copy alone.
  */
 
 const AGENT_KEY = 'nevos-brain:agent';
@@ -10,31 +9,6 @@ const AGENT_KEY = 'nevos-brain:agent';
 function track(event: string, detail: Record<string, string>) {
   // Analytics hook. DataFast is wired in at launch; until then this is a no-op.
   (window as unknown as { datafast?: (e: string, d: Record<string, string>) => void }).datafast?.(event, detail);
-}
-
-function setupTabs(root: HTMLElement) {
-  const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
-  const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
-
-  const select = (tab: HTMLButtonElement, focus = false) => {
-    for (const t of tabs) {
-      const on = t === tab;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-    }
-    for (const p of panels) p.hidden = p.dataset.panel !== tab.dataset.tab;
-    if (focus) tab.focus();
-  };
-
-  for (const tab of tabs) {
-    tab.addEventListener('click', () => select(tab));
-    tab.addEventListener('keydown', (e) => {
-      const i = tabs.indexOf(tab);
-      // Left and right only. Home, End and the vertical keys keep scrolling the page.
-      if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
-      else if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
-    });
-  }
 }
 
 /** The agent is chosen with a row of buttons in the full panel. */
@@ -105,6 +79,5 @@ function setupCopy() {
 }
 
 const roots = [...document.querySelectorAll<HTMLElement>('[data-install]')];
-roots.forEach(setupTabs);
 setupAgents(roots);
 setupCopy();

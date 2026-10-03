@@ -4,10 +4,14 @@
  * The install block and the brain follow under it (see Story.astro).
  */
 import { hero } from '../content/site';
+
+const lines = hero.title.split('\n');
 ---
 
 <div class="hero">
-  <h1 class="h1">{hero.title}</h1>
+  <h1 class="h1">
+    <span class="h1__lines">{lines.map((line, i) => [i > 0 && ' ', <span class="h1__line">{line}</span>])}</span>
+  </h1>
   <p class="lede">{hero.sub}</p>
 </div>
 
@@ -20,13 +24,38 @@ import { hero } from '../content/site';
     /* A little air above the headline, under the top bar. */
     margin-top: 1.5rem;
     text-align: center;
+    /* The headline sizes itself to this width (cqi), the width it actually has. */
+    container-type: inline-size;
   }
 
   /* Smaller than the page's other headlines and wider, so the long headline stays at two or
      three lines and the brain below still shows on the first screen. */
   .h1 {
     max-width: 24em;
-    font-size: clamp(1.625rem, 2.6vw, 2.125rem);
+    /*
+     * On a narrow screen it shrinks until its longer line fits the width it has (that line is
+     * about 16.8em in this face; 17 leaves a hair spare), so the two lines stay two, the same
+     * width. The width is the hero's own, not the window's: 100vw counts a scrollbar the text
+     * cannot use, and the second line wrapped. Change the headline and the 17 may need to
+     * change with it.
+     */
+    font-size: min(clamp(1.875rem, 3vw, 2.5rem), 100cqi / 17);
+  }
+
+  /*
+   * Its two lines are the same width: the box is as wide as the longer line, and each line is
+   * justified across it, the shorter one spreading its spaces a little.
+   */
+  .h1__lines {
+    display: inline-block;
+  }
+
+  /* Never broken: two lines, always. */
+  .h1__line {
+    display: block;
+    white-space: nowrap;
+    text-align: justify;
+    text-align-last: justify;
   }
 
   /* Smaller than the ledes further down the page: up here the space matters more than the size. */

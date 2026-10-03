@@ -1,19 +1,13 @@
 ---
 /**
- * The full install panel in "How it works": the real commands for the skill and the MCP,
- * with every agent's own steps. The hero and the last section carry the short version
- * (InstallQuick.astro). Everything it prints comes from content/site.ts.
+ * The full install panel in "How it works": the MCP server, with every agent's own steps. The
+ * hero and the last section carry the short version, the URL alone (InstallQuick.astro).
+ * Everything it prints comes from content/site.ts.
  */
 import CommandBox from './CommandBox.astro';
-import { install, skillCommand, skillAlternatives, mcpAgents, tellYourAgent, hero } from '../content/site';
+import { mcpAgents, hero } from '../content/site';
 
-const p = 'how'; // id prefix: the small install blocks on the page use their own
-
-const tabs = [
-  { id: 'skill', label: 'Skill' },
-  ...(install.mcpLive ? [{ id: 'mcp', label: 'MCP' }] : []),
-  { id: 'tell', label: 'Tell your agent' },
-];
+const p = 'how'; // id prefix
 ---
 
 <div class="install" data-install aria-labelledby={`${p}-install-title`}>
@@ -22,78 +16,37 @@ const tabs = [
     <p class="install__free">{hero.free}</p>
   </div>
 
-  <div class="install__tabs" role="tablist" aria-label="Ways to install">
+  <div class="install__body">
+    <div class="install__agents" role="group" aria-label="Your agent">
+      {
+        mcpAgents.map((a, i) => (
+          <button type="button" data-agent={a.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {a.label}
+          </button>
+        ))
+      }
+    </div>
     {
-      tabs.map((t, i) => (
-        <button
-          type="button"
-          role="tab"
-          id={`${p}-tab-${t.id}`}
-          aria-controls={`${p}-panel-${t.id}`}
-          aria-selected={i === 0 ? 'true' : 'false'}
-          tabindex={i === 0 ? 0 : -1}
-          data-tab={t.id}
-        >
-          {t.label}
-        </button>
+      mcpAgents.map((a, i) => (
+        <div data-agent-panel={a.id} hidden={i !== 0}>
+          {a.note && <p>{a.note}</p>}
+          {a.steps && (
+            <ol class="install__steps">
+              {a.steps.map((s) => (
+                <li>{s}</li>
+              ))}
+            </ol>
+          )}
+          <CommandBox value={a.value} name={`the ${a.label} setup`} />
+          {a.deeplink && (
+            <p class="install__deeplink">
+              Or <a class="link" href={a.deeplink.href}>{a.deeplink.label}</a> in one click.
+            </p>
+          )}
+        </div>
       ))
     }
-  </div>
-
-  <div role="tabpanel" id={`${p}-panel-skill`} aria-labelledby={`${p}-tab-skill`} data-panel="skill" tabindex="0">
-    <p>One command. It installs into whichever agents it finds on your machine.</p>
-    <CommandBox value={skillCommand} name="the skill command" />
-    <details class="install__more">
-      <summary>More ways to add the skill</summary>
-      <ul>
-        {
-          skillAlternatives.map((alt) => (
-            <li>
-              <span class="install__label">{alt.label}</span>
-              <CommandBox value={alt.value} name={`the ${alt.label} skill command`} />
-            </li>
-          ))
-        }
-      </ul>
-    </details>
-  </div>
-
-  {
-    install.mcpLive && (
-      <div role="tabpanel" id={`${p}-panel-mcp`} aria-labelledby={`${p}-tab-mcp`} data-panel="mcp" tabindex="0" hidden>
-        <div class="install__agents" role="group" aria-label="Your agent">
-          {mcpAgents.map((a, i) => (
-            <button type="button" data-agent={a.id} aria-pressed={i === 0 ? 'true' : 'false'}>
-              {a.label}
-            </button>
-          ))}
-        </div>
-        {mcpAgents.map((a, i) => (
-          <div data-agent-panel={a.id} hidden={i !== 0}>
-            {a.note && <p>{a.note}</p>}
-            {a.steps && (
-              <ol class="install__steps">
-                {a.steps.map((s) => (
-                  <li>{s}</li>
-                ))}
-              </ol>
-            )}
-            <CommandBox value={a.value} name={`the ${a.label} setup`} />
-            {a.deeplink && (
-              <p class="install__deeplink">
-                Or <a class="link" href={a.deeplink.href}>{a.deeplink.label}</a> in one click.
-              </p>
-            )}
-          </div>
-        ))}
-        <p class="install__fine">No key and no login. The server is open.</p>
-      </div>
-    )
-  }
-
-  <div role="tabpanel" id={`${p}-panel-tell`} aria-labelledby={`${p}-tab-tell`} data-panel="tell" tabindex="0" hidden>
-    <p>No terminal? Paste this into a chat with your agent.</p>
-    <CommandBox value={tellYourAgent} name="the message for your agent" prose />
+    <p class="install__fine">No key and no login. The server is open.</p>
   </div>
 </div>
 
@@ -120,39 +73,12 @@ const tabs = [
     font-size: 1rem;
   }
 
-  .install__tabs {
-    display: flex;
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .install__tabs button {
-    padding: 0.625rem 0.875rem;
-    background: none;
-    border: 0;
-    border-bottom: 0.1875rem solid transparent;
-    margin-bottom: -1px;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--ink-muted);
-    cursor: pointer;
-  }
-
-  .install__tabs button[aria-selected='true'] {
-    color: var(--ink);
-    border-bottom-color: var(--pink);
-  }
-
-  [role='tabpanel'] {
+  .install__body {
     display: grid;
     gap: 0.875rem;
     font-size: 1.0625rem;
     line-height: 1.625rem;
     min-width: 0;
-  }
-
-  [role='tabpanel'][hidden] {
-    display: none;
   }
 
   .install__agents {
@@ -189,29 +115,6 @@ const tabs = [
   .install__steps {
     list-style: decimal;
     padding-left: 1.375rem;
-  }
-
-  .install__more summary {
-    cursor: pointer;
-    color: var(--ink-muted);
-    font-size: 1rem;
-  }
-
-  .install__more ul {
-    display: grid;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-  }
-
-  .install__more li {
-    display: grid;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-
-  .install__label {
-    font-size: 0.9375rem;
-    font-weight: 700;
   }
 
   .install__fine,

@@ -1,15 +1,13 @@
 /**
- * Installing: the hero and the end of the page switch between the MCP server (its URL, shown
- * first) and the CLI (the skill command), with no instructions; every agent's steps are in the
- * full panel in "How it works". Every command comes from content/site.ts, and copying works.
+ * Installing: the hero and the end of the page show the MCP server's URL, with no
+ * instructions; every agent's steps are in the full panel in "How it works". Every command
+ * comes from content/site.ts, and copying works.
  */
 import { test, expect } from '@playwright/test';
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
 const site = readFileSync(new URL('../src/content/site.ts', import.meta.url), 'utf8');
 const pick = (key: string) => site.match(new RegExp(`${key}: '([^']+)'`))![1];
-const skillRepo = pick('skillRepo');
 const serverName = pick('serverName');
 const mcpUrl = pick('mcpUrl');
 const isMock = /mock: true/.test(site);
@@ -25,58 +23,50 @@ const mcpCommands: Record<string, string> = {
 
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
-test('the hero opens on the MCP server, switches to the CLI, and both copy', async ({ page }) => {
+test('the hero shows the MCP server URL, and it copies', async ({ page }) => {
   await page.goto('/');
   const hero = page.locator('.hero-get');
-  const shown = hero.locator('[role="tabpanel"]:not([hidden]) .cmd__text');
 
-  // The MCP server first: its URL, to add to any agent.
-  await expect(hero.getByRole('tab', { name: 'MCP' })).toHaveAttribute('aria-selected', 'true');
-  await expect(shown).toHaveText(mcpUrl);
+  await expect(hero.locator('.cmd__text')).toHaveText(mcpUrl);
   await hero.getByRole('button', { name: 'Copy the MCP server URL' }).click();
   await expect(hero.getByText('Copied')).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(mcpUrl);
-
-  // The CLI: the skill command.
-  await hero.getByRole('tab', { name: 'CLI' }).click();
-  await expect(shown).toHaveText(`npx skills add ${skillRepo}`);
-  await hero.getByRole('button', { name: 'Copy the skill command' }).click();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`npx skills add ${skillRepo}`);
 });
 
-test('the hero has nothing above the headline, and no buttons but the switch and Copy', async ({ page }) => {
+test('the hero has nothing above the headline, and no button but Copy', async ({ page }) => {
   await page.goto('/');
   // No top bar, no menu, no logo, no call-to-action buttons: the headline comes first, and the
-  // only controls are the MCP / CLI switch and a Copy for each.
+  // only control is the Copy for the MCP server URL.
   await expect(page.locator('header, nav[aria-label="Sections"], .strip, .btn')).toHaveCount(0);
   const first = await page.locator('main').evaluate((main) => {
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
     let node: Node | null;
-    while ((node = walker.nextNode())) if (node.textContent?.trim()) return node.parentElement?.tagName;
+    while ((node = walker.nextNode())) if (node.textContent?.trim()) return node.parentElement?.closest('h1, h2, h3, p, button, a, div')?.tagName;
     return null;
   });
   expect(first).toBe('H1');
   const controls = await page.locator('.hero-row, .hero-get').locator('a, button, select').evaluateAll((els) =>
-    els.map((el) => (el.getAttribute('role') === 'tab' ? 'tab' : el.hasAttribute('data-copy') ? 'copy' : el.tagName.toLowerCase())),
+    els.map((el) => (el.hasAttribute('data-copy') ? 'copy' : el.tagName.toLowerCase())),
   );
-  expect(controls).toEqual(['tab', 'tab', 'copy', 'copy']);
+  expect(controls).toEqual(['copy']);
 });
 
-test('the hero and the end switch between MCP and CLI, with no instructions', async ({ page }) => {
+test('the hero and the end show the MCP server URL alone, with no instructions', async ({ page }) => {
   await page.goto('/');
   for (const block of ['.hero-get', '[data-night]']) {
     const install = page.locator(`${block} [data-install]`);
-    await expect(install.getByRole('tab')).toHaveText(['MCP', 'CLI']);
-    // No agent menu and no notes: every agent's steps are in How it works.
-    await expect(install.locator('select, p, label')).toHaveCount(0);
+    await expect(install.locator('.cmd__text')).toHaveText(mcpUrl);
+    // No switch, no agent menu and no notes: every agent's steps are in How it works.
+    await expect(install.locator('[role="tab"], select, p, label')).toHaveCount(0);
   }
-  await expect(page.locator('#how .install').getByRole('tab', { name: 'MCP' })).toHaveCount(1);
+  // Nothing on the page offers the skill or its CLI any more.
+  await expect(page.locator('[role="tab"]')).toHaveCount(0);
+  for (const text of await page.locator('.cmd__text').allTextContents()) expect(text).not.toMatch(/skills? (add|install)/);
 });
 
 test('every MCP line in the full panel is built from the one server name and URL', async ({ page }) => {
   await page.goto('/#how');
   const panel = page.locator('#how .install');
-  await panel.getByRole('tab', { name: 'MCP' }).click();
 
   for (const [agent, command] of Object.entries(mcpCommands)) {
     await panel.getByRole('button', { name: agent, exact: true }).click();
@@ -91,11 +81,9 @@ test('every MCP line in the full panel is built from the one server name and URL
 test('the agent chosen in How it works is remembered', async ({ page }) => {
   await page.goto('/#how');
   const panel = page.locator('#how .install');
-  await panel.getByRole('tab', { name: 'MCP' }).click();
   await panel.getByRole('button', { name: 'Hermes', exact: true }).click();
 
   await page.reload();
-  await panel.getByRole('tab', { name: 'MCP' }).click();
   await expect(panel.locator('[data-agent="hermes"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(panel.locator('[data-agent-panel]:not([hidden]) .cmd__text')).toHaveText(mcpCommands.Hermes);
 });
@@ -104,12 +92,8 @@ test('the agent chosen in How it works is remembered', async ({ page }) => {
  * The launch check from PLAN.md section 9: the commands printed on the page have to work.
  * Skipped while the names are mocks; once `install.mock` is false it talks to the real things.
  */
-test('launch check: the skill repo and the MCP server answer', async ({ request }) => {
+test('launch check: the MCP server answers', async ({ request }) => {
   test.skip(isMock, 'install names in content/site.ts are still mocks (install.mock = true)');
-
-  // The skill: the same CLI the page tells people to run, asked only to list what it finds.
-  const listing = execSync(`npx -y skills add ${skillRepo} --list`, { encoding: 'utf8', timeout: 120_000 });
-  expect(listing.toLowerCase()).toContain('skill');
 
   // The MCP server: a plain initialize request, with no key, as the page promises.
   const response = await request.post(mcpUrl, {

@@ -162,6 +162,37 @@ SCENES = {
         "gets bigger as it rises, staying white; Nevo, still kneeling, leans back to look up at it, "
         "delighted, still holding the watering can. The pot stays where it is.",
     ),
+    # The MCP server's sign-in page (nevos-brain, src/pages.ts): Nevo at the door with the guest
+    # list while you type your email (door-wait, a loop), and letting you in when the code is
+    # right (door-open, played once, from the loop's own picture). Framed alike, so the hand-over
+    # from the loop to the clip doesn't jump.
+    "door-wait": dict(
+        pick="nevo-door/first_2.png",
+        frame_with=["nevo-door/last_1.png"],
+        vignette=True,
+        motion=STILL
+        + "Nevo, the doorman, glances down at the clipboard in his hand and makes a small tick on it with "
+        "the pen, then looks back up at the viewer with a calm, friendly look and blinks; the pink velvet "
+        "rope sways very slightly. The door stays closed and does not move."
+        + LOOP,
+    ),
+    "door-open": dict(
+        pick="nevo-door/first_2.png",
+        # Not last_1: he grew, stood in front of the rope and a post, and the rope ran into his
+        # belt, so the end looked like pictures pasted on each other (Nevo saw it). Not lastb_2:
+        # a third hand held the clipboard. last_1 still frames it, so it lines up with door-wait.
+        last="nevo-door/lastc_2.png",
+        frame_with=["nevo-door/last_1.png"],
+        vignette=True,
+        motion=ACT
+        + "One single continuous shot with no cuts. Nevo has two hands and two arms throughout. He "
+        "smiles and nods at the viewer, clips the pen to the clipboard and tucks the clipboard against "
+        "his side with his right arm; with his left hand he unhooks the pink velvet rope from the post "
+        "nearest him and lets its end fall to the ground by the door, where it stays; the door behind "
+        "swings open inward; and he stretches his left arm out toward the open door, palm up, welcoming "
+        "the viewer in. Nevo stays exactly the same size and in the same place: he does not step "
+        "forward. The door frame, the lamp and the two posts stay where they are, apart from him.",
+    ),
     # The last section (night_room.py, scripts/night.ts): one movie in clips that the page plays
     # one after another, each starting on the frame the one before it ends on, so no hand-over
     # shows. Nevo lies awake with the lamp on, looking about (night-awake, a loop); when you
@@ -341,6 +372,8 @@ def fit(name: str, which: str = "pick") -> tuple[Image.Image, int, int]:
     spec = SCENES[name]
     pictures = {k: whiten(Image.open(RAW / spec[k])) for k in ("pick", "last") if k in spec}
     boxes = [box(a, spec["vignette"]) for a in pictures.values()]
+    # A loop that hands over to a clip is framed by the clip's drawings too, so the two line up.
+    boxes += [box(whiten(Image.open(RAW / p)), spec["vignette"]) for p in spec.get("frame_with", [])]
     top, bottom = min(b[0] for b in boxes), max(b[1] for b in boxes)
     left, right = min(b[2] for b in boxes), max(b[3] for b in boxes)
     a = pictures[which]
@@ -415,7 +448,15 @@ def public_url(path: Path) -> str:
     seen = json.loads(seen_file.read_text()) if seen_file.exists() else {}
     digest = hashlib.sha1(path.read_bytes()).hexdigest()
     if digest not in seen:
-        out = subprocess.run(["postiz", "upload", str(path)], capture_output=True, text=True, check=True).stdout
+        # The upload endpoint sometimes resets the connection (Oct 2026: two in three tries).
+        for attempt in range(5):
+            done = subprocess.run(["postiz", "upload", str(path)], capture_output=True, text=True)
+            if done.returncode == 0 and "{" in done.stdout:
+                break
+            time.sleep(3 * (attempt + 1))
+        else:
+            raise SystemExit(f"postiz upload {path.name} kept failing: {(done.stdout + done.stderr).strip()[-200:]}")
+        out = done.stdout
         # The CLI prints a line of its own before the JSON.
         seen[digest] = json.loads(out[out.index("{") :])["path"]
         seen_file.write_text(json.dumps(seen, indent=2) + "\n")

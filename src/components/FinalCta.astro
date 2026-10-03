@@ -4,7 +4,7 @@
  * Nevo's room, as Lemonade puts its last call over a bedroom (lemonade.com/life). He lies awake
  * with the lamp on, looking about, while his brain types at the laptop; when you reach the
  * bottom of the page he falls asleep and the lights go off, and the page goes dark with the
- * room; the buttons glow pink in the dark, and their light falls on the room. His brain carries
+ * room; the card with the line to copy glows pink in the dark. His brain carries
  * on typing. Scroll back up and the lamp comes on and he wakes. The page ends with the room.
  *
  * All of it is one movie in four clips (scripts/night.ts plays them, art/scripts/scenery_video.py
@@ -39,7 +39,7 @@ const movie = clips.every((c) => c.src) && !!sleep?.darkness && !!meets;
 <section class="band night" data-night aria-labelledby="final-title">
   <div class="wrap night__text">
     <h2 class="h2" id="final-title">{finalCta.title}</h2>
-    <InstallQuick id="final" />
+    <InstallQuick />
   </div>
   {
     lit && dark && (
@@ -79,6 +79,9 @@ const movie = clips.every((c) => c.src) && !!sleep?.darkness && !!meets;
    * page's own colours until it does.
    */
   .night {
+    /* In front of the dark that covers the rest of the page (global.css). */
+    position: relative;
+    z-index: 11;
     padding-bottom: 0;
     background: var(--night-paper, var(--bg));
   }
@@ -100,20 +103,6 @@ const movie = clips.every((c) => c.src) && !!sleep?.darkness && !!meets;
     text-shadow:
       0 0 0.3em var(--night-paper, var(--bg)),
       0 0 0.6em var(--night-paper, var(--bg));
-  }
-
-  /*
-   * The buttons glow in the dark, as far as it is dark: the chosen one of the switch most, the
-   * other less. Pink light, from the page's one colour.
-   */
-  .night__text :global(.quick__tabs button) {
-    box-shadow: 0 0 calc(var(--night, 0) * 1.5rem) calc(var(--night, 0) * 0.125rem) rgb(255 0 131 / calc(var(--night, 0) * 0.55));
-  }
-
-  .night__text :global(.quick__tabs button[aria-selected='true']) {
-    box-shadow:
-      var(--shadow-cta),
-      0 0 calc(var(--night, 0) * 2.75rem) calc(var(--night, 0) * 0.5rem) rgb(255 0 131 / calc(var(--night, 0) * 0.9));
   }
 
   /*

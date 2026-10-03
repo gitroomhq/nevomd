@@ -42,21 +42,15 @@ export const asOfLabel = new Date(`${proof.asOf}T00:00:00Z`).toLocaleDateString(
 });
 
 // ---------------------------------------------------------------------------
-// Install names. Mocks until the real skill repo and MCP server exist.
+// Install names. Mocks until the real MCP server exists.
 // ---------------------------------------------------------------------------
 
 export const install = {
   /** True while the names below are placeholders. The launch check fails on it. */
   mock: true,
-  skillRepo: 'gitroomhq/nevos-brain',
   serverName: 'nevos-brain',
   mcpUrl: 'https://nevo.md/mcp',
-  skillUrl: 'https://nevo.md/SKILL.md',
-  /** Hides the MCP tab until the server is up. */
-  mcpLive: true,
 };
-
-export const skillCommand = `npx skills add ${install.skillRepo}`;
 
 const mcpJson = JSON.stringify({ mcpServers: { [install.serverName]: { url: install.mcpUrl } } }, null, 2);
 
@@ -130,14 +124,6 @@ export const mcpAgents: McpAgent[] = [
   },
 ];
 
-export const skillAlternatives = [
-  { label: 'OpenClaw', value: `openclaw skills install git:${install.skillRepo}` },
-  { label: 'Hermes', value: `hermes skills install ${install.skillUrl}` },
-  { label: 'Gemini CLI', value: `gemini skills install https://github.com/${install.skillRepo}` },
-];
-
-export const tellYourAgent = `Install the skill at ${install.skillUrl} and use it whenever I ask about marketing, distribution or growth.`;
-
 export const worksWith = ['Claude Code', 'Claude', 'Cursor', 'Codex', 'OpenClaw', 'Hermes', 'Gemini CLI'];
 
 // ---------------------------------------------------------------------------
@@ -171,11 +157,11 @@ export const playbooks = [
 export const meta = {
   title: 'Nevo’s Brain: the distribution playbook for your AI agent',
   description:
-    'A free SKILL file and MCP server that give your AI agent the distribution playbook behind Postiz: finding niches, catching hypes, picking channels and growing revenue.',
+    'A free MCP server that gives your AI agent the distribution playbook behind Postiz: finding niches, catching hypes, picking channels and growing revenue.',
 };
 
 export const hero = {
-  title: 'I took Postiz to $2.7m ARR alone. Your agent can copy my brain, for free.',
+  title: 'I took Postiz to $2.7m ARR alone.\nYour agent can copy my brain, free.',
   sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and\nit will correct your marketing, positioning and add you insane growth hacks.',
   free: 'Free. No signup. One command.',
 };
@@ -371,7 +357,7 @@ export const proofSection = {
 export const howItWorks = {
   title: 'How Nevo’s Brain works',
   steps: [
-    { title: 'Connect it', text: 'Add the skill or the MCP server. One command, no account.' },
+    { title: 'Connect it', text: 'Add the MCP server. One command, no account.' },
     { title: 'Ask it', text: 'Your agent consults the brain whenever the task is growth: an idea, a niche, a launch, a pricing page.' },
     { title: 'Ship it', text: 'It answers with the play and the numbers behind it. Your agent does the work.' },
   ],

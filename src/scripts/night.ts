@@ -3,7 +3,7 @@
  * looking about; when you reach the bottom of the page he falls asleep and the lights go off,
  * and his brain carries on typing in the dark; scroll back up and the lamp comes on and he
  * wakes. As at the end of lemonade.com/life, the page goes dark with the room: the section, and
- * the questions above it, take the room's paper colour frame by frame, down to the page's dark.
+ * the rest of the page above it, take the room's paper colour frame by frame, down to the page's dark.
  *
  * The movie is four clips, made to meet one another (art/scripts/scenery_video.py): `awake` (a
  * loop), `sleep` (awake to night), `night` (a loop) and `wake` (`sleep` backwards). It is cut to
@@ -95,7 +95,7 @@ if (section && room) {
   const mix = ([a, b]: RGB[], t: number) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(', ')})`;
 
   let dark = 0;
-  /** Darkens the page as far as the room is dark: the section, its text, and the questions above. */
+  /** Darkens the page as far as the room is dark: the section, its text, and everything above. */
   const paint = (d: number) => {
     d = Math.round(Math.max(0, Math.min(1, d)) * 1000) / 1000;
     if (d === dark) return;

@@ -6,7 +6,7 @@ Plan v4, 1 Oct 2026. This file is the source of truth; change it here first.
 
 **Changed in v4**, from your feedback while it was being built:
 
-1. No top bar, no menu, no logo, no "Get the brain" or "See what it knows" buttons, no MRR card in the hero. The hero is the headline, one paragraph, a pink MCP / CLI switch (MCP first) and the one line to copy: the server's URL, or the skill command. No instructions there: every agent's steps are in "How it works".
+1. No top bar, no menu, no logo, no "Get the brain" or "See what it knows" buttons, no MRR card in the hero. The hero is the headline, one paragraph, and the one line to copy: the MCP server's URL. (There was an MCP / CLI switch; the CLI, the skill command, was cut: the MCP is enough.) No instructions there: every agent's steps are in "How it works".
 2. The hero is smaller type with more room, and the brain is smaller: it turns on a dock between two drawn scenes, a robot lab on the left and a rocket on the right, the way Lemonade's hero has a street either side.
 3. The brain no longer travels beside the chapters. Each ability is a Lemonade section: centered text; under it a picture of its own (a radar, three waves, a channel board, a before-and-after), never the same component twice; and at the bottom, on the section's edge, Nevo doing that section's thing with the brain: holding it up like a radar, surfing with it, kicking it into a goal, watering it until it grows. The scroll plays each one (section 6.2). White and grey bands alternate.
 4. Every drawing has one touch of pink, as each of Lemonade's does: the lab's dish, the rocket's nose and fins, the radar arcs, the surfboard, the goal's net, the watering can.
@@ -16,14 +16,14 @@ Plan v4, 1 Oct 2026. This file is the source of truth; change it here first.
 
 ## 1. What this is
 
-A one-page marketing site for **Nevo's Brain**: an MCP server and a SKILL file that give an AI agent Nevo's distribution and marketing playbooks (finding niches, finding hypes, marketing tactics, growth hacking). It is free, with no signup.
+A one-page marketing site for **Nevo's Brain**: an MCP server that gives an AI agent Nevo's distribution and marketing playbooks (finding niches, finding hypes, marketing tactics, growth hacking). It is free, with no signup.
 
 The page has one job: get a founder who already works with an AI agent to copy the install command.
 
 | In scope | Out of scope |
 |---|---|
-| The marketing page: copy, illustrations, scroll animation | Building the MCP server or the SKILL file |
-| The real commands to add the skill or the MCP | Checkout, accounts, waitlist (it is free, no signup) |
+| The marketing page: copy, illustrations, scroll animation | Building the MCP server |
+| The real commands to add the MCP | Checkout, accounts, waitlist (it is free, no signup) |
 | Proof: the ARR number, Stripe-style charts | Playbook pages hosted on the site (parked, section 13) |
 
 ## 2. The calls this plan makes
@@ -77,7 +77,6 @@ Measured from lemonade.com on 30 Sep 2026. The tokens live in `src/styles/tokens
 ┌───────────────────────────────────────────────────────────────┐
 │              H1, centered, two lines                          │
 │              one paragraph                                    │
-│              [MCP] [CLI]                                      │
 │              https://nevo.md/mcp                       Copy   │
 │                                                               │
 │  robot lab        ( 3D brain on its dock )       rocket pad   │
@@ -97,9 +96,9 @@ Measured from lemonade.com on 30 Sep 2026. The tokens live in `src/styles/tokens
 │   the brain returns with the four abilities, takes them in,   │
 │   and drops into Nevo's head. "It all came out of one head."  │
 ├───────────────────────────────────────────────────────────────┤
-│ Proof · How it works (the full panel: Skill, MCP, every agent)│
-│ · Questions · "Nevo’s brain never sleeps" and the MCP / CLI   │
-│ switch on the top of his room: at the very bottom the lights  │
+│ Proof · How it works (the full panel: every agent's MCP steps)│
+│ · Questions · "Nevo’s brain never sleeps" and the MCP URL     │
+│ on the top of his room: at the very bottom the lights         │
 │ go off. The page ends with the room: no footer.              │
 └───────────────────────────────────────────────────────────────┘
 ```
@@ -109,7 +108,7 @@ Measured from lemonade.com on 30 Sep 2026. The tokens live in `src/styles/tokens
 All of it is in `src/content/site.ts`, as a first draft for you to rewrite.
 
 - **H1:** "Your agent can build anything. Now teach it to sell."
-- **Sub:** "Nevo's Brain is a SKILL file and an MCP server that plug the distribution playbook behind Postiz into your agent: how to find a niche, catch a hype early, pick the channel, and grow the number."
+- **Sub:** "Nevo's Brain is an MCP server that plugs the distribution playbook behind Postiz into your agent: how to find a niche, catch a hype early, pick the channel, and grow the number."
 
 | Ability | H2 | Nevo's scene |
 |---|---|---|
@@ -134,9 +133,7 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 
 ### Install
 
-**In the hero and the last section:** a switch, MCP (first) and CLI, and under it the one line to copy: the MCP server's URL, or `npx skills add …`. No agent menu, no notes. **In "How it works":** the full panel, with every agent's steps: Skill, MCP and "Tell your agent" tabs; the agent chosen there is remembered.
-
-**Skill:** `npx skills add gitroomhq/nevos-brain`. The `skills` CLI installs into whichever agents it finds.
+**In the hero and the last section:** the one line to copy, the MCP server's URL. No switch, no agent menu, no notes. **In "How it works":** the full panel, with every agent's MCP steps; the agent chosen there is remembered. MCP only: the skill (`npx skills add …`, its other installers and the "Tell your agent" line) was cut, the MCP is enough.
 
 **MCP,** checked against each CLI's help or docs:
 
@@ -150,9 +147,7 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 | Hermes | `hermes mcp add nevos-brain --url https://nevo.md/mcp` |
 | Gemini CLI | `gemini mcp add --transport http nevos-brain https://nevo.md/mcp` |
 
-**Tell your agent:** "Install the skill at https://nevo.md/SKILL.md and use it whenever I ask about marketing, distribution or growth."
-
-The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it lists the skill with the real CLI and sends the MCP server an `initialize` request. The MCP has no key and no auth.
+The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it sends the MCP server an `initialize` request. The MCP has no key and no auth.
 
 ## 6. The brain story
 
@@ -172,11 +167,11 @@ What you ruled out: smooth-scroll libraries that change speed or inertia, and pi
 
 ### 6.2 Layout
 
-- **Hero:** the first screen, all of it (`.hero-screen`, at least 100svh, with a little room under it): the headline, the paragraph, the switch and the line to copy together at the top; the brain on its dock and the two scenes standing at the bottom of the screen, with the space left over between the two; the first ability starts at the fold. The brain turns on its own canvas (`src/brain/hero.ts`), 22 rem wide at most, over a still image of itself for the first paint. With a mouse it can be picked up: drag it sideways to spin it (a flick coasts on), up or down to tip it toward you or away (at most about 35°); let go and it sits back up and carries on turning. The cursor is a hand where there is a mouse. On a touch screen it cannot be picked up at all, so a swipe over it always scrolls the page and nobody gets caught on it (it used to take sideways swipes; you were afraid people would get stuck). Pointer events only, a mouse's only: no wheel or touch listeners, and the browser's own touch handling. With reduced motion it stays where it is put. The two scenes stand on the hero's bottom edge at the window's edges, the same height, a little taller than the brain, and never so wide that they reach it; their pale backgrounds fade out before the brain. Under 900 px wide the scenes are hidden.
+- **Hero:** the first screen, all of it (`.hero-screen`, at least 100svh, with a little room under it): the headline, the paragraph and the line to copy together at the top; the brain on its dock and the two scenes standing at the bottom of the screen, with the space left over between the two; the first ability starts at the fold. The brain turns on its own canvas (`src/brain/hero.ts`), 22 rem wide at most, over a still image of itself for the first paint. With a mouse it can be picked up: drag it sideways to spin it (a flick coasts on), up or down to tip it toward you or away (at most about 35°); let go and it sits back up and carries on turning. The cursor is a hand where there is a mouse. On a touch screen it cannot be picked up at all, so a swipe over it always scrolls the page and nobody gets caught on it (it used to take sideways swipes; you were afraid people would get stuck). Pointer events only, a mouse's only: no wheel or touch listeners, and the browser's own touch handling. With reduced motion it stays where it is put. The two scenes stand on the hero's bottom edge at the window's edges, the same height, a little taller than the brain, and never so wide that they reach it; their pale backgrounds fade out before the brain. Under 900 px wide the scenes are hidden.
 - **Abilities:** a section each: the text centered; well below it, the section's picture (60 rem wide at most; rearranged for one column under 860 px); and well below that Nevo's scene (`NevoAct.astro`), centered and standing on the section's bottom edge, no wider than 44 rem and no taller than 46% of the screen. Lots of room above each one. White and grey alternate from the hero to the finale.
 - **Nevo's scenes** (`src/scripts/nevo-acts.ts`): each is a short video from a first key frame to a last, and the scroll plays it, like the finale: it starts once 85% of the picture is on screen and has played out when the picture's middle reaches the middle of the screen: about a third of a screen of scrolling (about 310 px at 1440×900), so the end is seen whole, with room to scroll on before the picture leaves. (It used to end with the picture's top near the top of the screen, over half a screen; the end was cut off as soon as you scrolled on.) Scrolling back runs it backwards, eased over about 120 ms. The mouse does nothing to it (it did at first; you preferred the scroll). It reads where the page is, never the wheel, and never moves the page. The video loads when its section is near; until it can be played, and for anyone who asked for less motion or less data, the first frame is shown as a still.
 - **Finale:** a stage as tall as the screen (or as the scene, on a phone), then Nevo's place, then the Meet Nevo text.
-- **Last section, and the end of the page** (`FinalCta.astro`, `src/scripts/night.ts`), copied from the end of lemonade.com/life: "Nevo’s brain never sleeps" and the MCP / CLI switch, standing on the faded top edge of his room (the room is pulled up behind them by 12% of its height, so nothing in it is behind the words: half, then 30%, put them over his head), the room as wide as the page (84 rem at most). There is no footer: the page ends with the room. It is one movie in four clips, each starting on the frame another ends on, so no cut shows: **awake** (a loop: the lamp on, Nevo awake in bed looking about, his brain typing at the laptop); **sleep** (he yawns, closes his eyes, z’s float up, the lamp goes off, the room is dark but for the laptop’s pink glow); **night** (a loop: he sleeps, the brain keeps typing); **wake** (sleep played backwards: the lamp comes on, he opens his eyes). He falls asleep when you reach the very bottom (the room all on screen); he wakes when you scroll back up a little (12% of the window) from the furthest down you went, with the room in view, and falls asleep again if you scroll down to the bottom again. Nothing is ever left half-way: if the room leaves the screen in the middle of a change (a flick), the page takes the colours of where you are at once, and the room shows him awake or asleep to match, or the change if you come back in time to see it. (The first version waited until the room was nearly off the screen to wake him, and froze a change half-way when the room left the screen, so scrolling back up from the very bottom left the page dark.) The page darkens with the room, frame by frame (the darkness of every frame of sleep was measured when it was made, `night-sleep.json`): the section, the questions above and the page past its end take the room’s paper colour, down to the page’s dark (`--dark`), and the headline turns white. With the lights on, the card with the line to copy stands off the white room on a deep shadow; as it goes dark, the switch glows pink and so does the card, its light shining out from behind it, and a soft pink light falls from them over the wall of the room. Cut to be quick (you asked: it took too long): sleep is entered at the start of the yawn (it opens with a smile that repeats the awake loop); the awake loop hands over only when he faces you, as he does there (`meets`, measured on his head), playing at 2× while he looks away, under a second; the yawn plays at 1.5× until the lights are off; wake is entered just after the lights went off, so the lamp comes on at once, and so is a turn-round in the dark. Measured: 1.3 to 2.1 s from reaching the bottom to dark, about 0.4 s from scrolling up to the lamp on. Changing your mind half-way swaps sleep and wake at the same frame. Under 900 px the words stand above the room instead of on it, and the room keeps 13 rem of height and loses its far ends. With less motion: the two stills, lights off and on at once; with Save-Data, the stills fade. The four clips (1.5 MB) load when the room is a screen away.
+- **Last section, and the end of the page** (`FinalCta.astro`, `src/scripts/night.ts`), copied from the end of lemonade.com/life: "Nevo’s brain never sleeps" and the MCP URL, standing on the faded top edge of his room (the room is pulled up behind them by 12% of its height, so nothing in it is behind the words: half, then 30%, put them over his head), the room as wide as the page (84 rem at most). There is no footer: the page ends with the room. It is one movie in four clips, each starting on the frame another ends on, so no cut shows: **awake** (a loop: the lamp on, Nevo awake in bed looking about, his brain typing at the laptop); **sleep** (he yawns, closes his eyes, z’s float up, the lamp goes off, the room is dark but for the laptop’s pink glow); **night** (a loop: he sleeps, the brain keeps typing); **wake** (sleep played backwards: the lamp comes on, he opens his eyes). He falls asleep when you reach the very bottom (the room all on screen); he wakes when you scroll back up a little (12% of the window) from the furthest down you went, with the room in view, and falls asleep again if you scroll down to the bottom again. Nothing is ever left half-way: if the room leaves the screen in the middle of a change (a flick), the page takes the colours of where you are at once, and the room shows him awake or asleep to match, or the change if you come back in time to see it. (The first version waited until the room was nearly off the screen to wake him, and froze a change half-way when the room left the screen, so scrolling back up from the very bottom left the page dark.) The page darkens with the room, frame by frame (the darkness of every frame of sleep was measured when it was made, `night-sleep.json`): the section and the page past its end take the room’s paper colour, down to the page’s dark (`--dark`), the whole page above it goes dark with it (a layer of the page’s dark over it, as dark as the room), and the headline turns white. With the lights on, the card with the line to copy stands off the white room on a deep shadow; as it goes dark, the card glows pink, its light shining out from behind it. Cut to be quick (you asked: it took too long): sleep is entered at the start of the yawn (it opens with a smile that repeats the awake loop); the awake loop hands over only when he faces you, as he does there (`meets`, measured on his head), playing at 2× while he looks away, under a second; the yawn plays at 1.5× until the lights are off; wake is entered just after the lights went off, so the lamp comes on at once, and so is a turn-round in the dark. Measured: 1.3 to 2.1 s from reaching the bottom to dark, about 0.4 s from scrolling up to the lamp on. Changing your mind half-way swaps sleep and wake at the same frame. Under 900 px the words stand above the room instead of on it, and the room keeps 13 rem of height and loses its far ends. With less motion: the two stills, lights off and on at once; with Save-Data, the stills fade. The four clips (1.5 MB) load when the room is a screen away.
 
 ### 6.3 Finale storyboard
 
@@ -284,14 +279,14 @@ nevomd/
 
 **Commands:** `pnpm dev`, `pnpm test`, `pnpm build`, `pnpm preview` (the built site, locally), deploy: `railway init` once, then `railway up`, and `railway domain` for a public address, `node tests/shots.mjs <folder>` (screenshots of every step; `--mobile`, `--size=2560x1328`), `node tests/capture-still.mjs`, `node art/scripts/bake-folds.mjs`.
 
-**Tests (Playwright, using the installed Chrome):** the wheel scrolls exactly as far as it is turned; no wheel listeners, no blocking touch listeners, no scroll-snap or smooth scrolling; text moves one pixel per pixel scrolled; the story's rows are contiguous and none is empty, nothing fixed or pin-spaced; something moves with the page at every point, at six window sizes; the finale is the same whether you jump there or scroll there, and returns to its opening pose; when it has played out, Nevo's face and the label are on screen, and still are a fifth of a screen later, and he is whole once the page has brought him up (four window sizes); reduced motion stops the timers, and without it the brain spins (compared with a tolerance of 8 levels, since a faded edge composites a level differently from paint to paint); the hero has nothing above the headline and no buttons but the switch and Copy; it opens on the MCP URL and switches to the CLI, and both copy; the hero and the end have the switch and no instructions; every MCP command in the full panel is built from the one name and URL; the agent chosen there is remembered; each of Nevo's scenes is where the scroll says, both ways, plays over about a third of a screen, and has played out with its picture whole on screen; the mouse does nothing to it, and it stays a still with reduced motion; dragging the hero's brain with a mouse turns and tips it without scrolling the page, it sits back up when let go, and a flick coasts; on a phone, swipes over it (sideways, up, diagonal) scroll the page and never turn it; the last section says the brain never sleeps; scrolled with the wheel: down to the end he falls asleep through the clips in order, the lights off within 3.5 s, the section the page's dark and the questions dim, and nothing comes after the room; a jiggle leaves him asleep; back up a little he wakes and the page is light within 1.5 s; down again, asleep; one flick back up from the bottom leaves the page light; on a phone it ends dark and he wakes on the way back up; changing your mind half-way turns the movie round; with reduced motion, two stills and no video loaded; the launch check (skipped while the names are mocks).
+**Tests (Playwright, using the installed Chrome):** the wheel scrolls exactly as far as it is turned; no wheel listeners, no blocking touch listeners, no scroll-snap or smooth scrolling; text moves one pixel per pixel scrolled; the story's rows are contiguous and none is empty, nothing fixed or pin-spaced; something moves with the page at every point, at six window sizes; the finale is the same whether you jump there or scroll there, and returns to its opening pose; when it has played out, Nevo's face and the label are on screen, and still are a fifth of a screen later, and he is whole once the page has brought him up (four window sizes); reduced motion stops the timers, and without it the brain spins (compared with a tolerance of 8 levels, since a faded edge composites a level differently from paint to paint); the hero has nothing above the headline and no button but Copy; the hero and the end show the MCP URL alone, it copies, and there are no instructions and no skill command anywhere; every MCP command in the full panel is built from the one name and URL; the agent chosen there is remembered; each of Nevo's scenes is where the scroll says, both ways, plays over about a third of a screen, and has played out with its picture whole on screen; the mouse does nothing to it, and it stays a still with reduced motion; dragging the hero's brain with a mouse turns and tips it without scrolling the page, it sits back up when let go, and a flick coasts; on a phone, swipes over it (sideways, up, diagonal) scroll the page and never turn it; the last section says the brain never sleeps; scrolled with the wheel: down to the end he falls asleep through the clips in order, the lights off within 3.5 s, the section and the whole page above it the page's dark, and nothing comes after the room; a jiggle leaves him asleep; back up a little he wakes and the page is light within 1.5 s; down again, asleep; one flick back up from the bottom leaves the page light; on a phone it ends dark and he wakes on the way back up; changing your mind half-way turns the movie round; with reduced motion, two stills and no video loaded; the launch check (skipped while the names are mocks).
 
 ## 10. What is done and what is left
 
 | | Status |
 |---|---|
 | Page structure, all sections, draft copy | Done |
-| Hero with the MCP / CLI switch, 3D brain (it can be dragged) and scenes | Done |
+| Hero with the MCP URL, 3D brain (it can be dragged) and scenes | Done |
 | Ability sections: text, a picture of its own, Nevo with the brain, played by the scroll | Done |
 | Finale: brain into Nevo's head, Nevo acting | Done |
 | Tests for the scroll rules and the install blocks | Done, passing |
@@ -304,7 +299,7 @@ nevomd/
 ## 11. Decisions
 
 **Decided:**
-- The CTA is the MCP / CLI switch and the line to copy, in the hero and at the end, MCP first, with no instructions; every agent's steps are in "How it works". No waitlist, no top bar, no menu, no logo, no footer, no other buttons.
+- The CTA is the line to copy, the MCP server's URL, in the hero and at the end, with no instructions; every agent's steps are in "How it works". No waitlist, no top bar, no menu, no logo, no footer, no other buttons.
 - The brain and the ability objects are real 3D. The brain is in the hero and the finale only.
 - The ability sections follow Lemonade: centered text, the drawing at the bottom of the section, bands alternating.
 - That drawing is Nevo, in a different pose in each section and never the finale's bust, always doing something with the brain, and played by the scroll, like the finale (not the mouse). He has to look like you.
@@ -325,7 +320,7 @@ nevomd/
 ## 12. Needed from you
 
 1. The copy. All of it is a draft, and the bio facts are from articles that are months old.
-2. The real names for the commands before launch: skill repo, MCP URL, server name.
+2. The real names for the commands before launch: MCP URL, server name.
 3. A fresh Stripe proof link.
 
 ## 13. Risks and parked ideas

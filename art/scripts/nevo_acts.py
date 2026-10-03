@@ -173,6 +173,40 @@ ACTS = {
             "seedling, and looks at the viewer with a calm, confident smile."
         ),
     ),
+    # The MCP server's sign-in page (nevos-brain): Nevo at the door with the guest list while you
+    # type your email (a loop on `first`), then he lets you in when the code is right. The page's
+    # own 3D brain stands beside the drawing, so none is drawn here.
+    "door": dict(
+        first=(
+            "Nevo stands at a door as a friendly doorman, seen from the knees up, in three-quarter "
+            "view, turned toward the viewer. On the RIGHT of the picture, a closed wooden door in a "
+            "plain door frame with a small round lamp above it. In front of the door, a thick velvet "
+            "rope hangs in a loose curve between two short posts with round tops. Nevo stands on the "
+            "LEFT, beside the rope, holding a clipboard (the guest list, only a few grey lines on it) "
+            "in one hand and a pen in the other; he looks up from the list at the viewer with a calm, "
+            "friendly, slightly curious look, as if asking for your name. No brain anywhere in the "
+            "picture. The velvet rope is the pink thing."
+        ),
+        # Drawn again (lastc). The first try (last_1): he grew, stood in front of the rope and
+        # the post, and the rope ran into his belt, so he, the post and the rope looked pasted on
+        # top of each other. The second (lastb): right size and place, but a third hand held the
+        # clipboard and the rope. Hands are now spelled out, and the rope is left on the ground.
+        last=(
+            "Nevo lets the viewer in. The door behind has swung open inward, showing a plain pale "
+            "doorway. Nevo has exactly two hands and two arms. His left arm holds the clipboard "
+            "tucked flat under it against his side, with the pen clipped to it; his right arm is "
+            "stretched out toward the open door, palm up, welcoming the viewer in. Nothing else is "
+            "in his hands. He smiles warmly at the viewer. The pink velvet rope has been unhooked "
+            "from the post nearest Nevo: it hangs from the other post, by the door, and its free end "
+            "lies on the ground in front of the door, away from Nevo. Nevo is EXACTLY the same size "
+            "and in exactly the same place as in the first image: his head at the same height, the "
+            "bottom of the picture crossing his legs at the same place; he does not step forward and "
+            "is not drawn bigger. Nothing overlaps him: both posts stay exactly where they are, "
+            "standing apart from him with white space between them and his body, and the rope does "
+            "not touch him. The door frame, the lamp and both posts stay exactly where they are in "
+            "the first image."
+        ),
+    ),
 }
 
 SHEET_PROMPT = (
