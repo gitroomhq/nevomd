@@ -17,15 +17,12 @@ import signinAllow from '../assets/howto/signin-3-allow.webp';
 const lastPoint = mrrData.points[mrrData.points.length - 1];
 
 export const proof = {
-  /** MRR on the Stripe card, in dollars. */
+  /** MRR on the proof card, in dollars. */
   mrr: lastPoint.mrr,
   /** ISO date the MRR figure was read. */
   asOf: lastPoint.date,
-  /**
-   * TODO before launch: replace with a fresh Stripe proof link.
-   * This one is the snapshot from the Aug 21 article and shows an older figure.
-   */
-  stripeUrl: 'https://profile.stripe.com/@wickedguro/m/QMYOzV3C',
+  /** Postiz's live, verified revenue page. */
+  proofUrl: 'https://trustmrr.com/startup/postiz',
   raised: '$0',
   founders: 1,
   platforms: '30+',
@@ -398,13 +395,11 @@ export const meetNevo = {
 
 export const proofSection = {
   title: 'Every play has a receipt.',
-  sub: 'The revenue is public and verified by Stripe. This chart is redrawn from that data, and the link goes to the original.',
+  sub: 'The revenue is public and verified by TrustMRR from Postiz’s Stripe. This chart is redrawn from that data, and the link goes to the original.',
   chartTitle: 'Postiz monthly recurring revenue',
-  stripeLink: 'Verified on Stripe',
-  /** Under the table. How exact the numbers are depends on where mrr.json came from. */
-  fine: mrrData.exact
-    ? 'Every figure comes straight from Stripe’s API.'
-    : 'Read off the Stripe chart to the nearest $500, except the latest figure, which is exact.',
+  proofLink: 'Verified on TrustMRR',
+  /** Under the table: where the numbers in mrr.json come from. */
+  fine: 'Month starts up to September 2026 are read off the Stripe chart to the nearest $500. Later figures come from Postiz’s Stripe through TrustMRR, scaled to match Stripe’s own MRR.',
   annotations: [
     { date: '2024-09-01', text: 'open-source launch', dx: 12, dy: -46 },
     { date: '2025-08-15', text: 'one outreach campaign', dx: -150, dy: -62 },

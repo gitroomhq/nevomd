@@ -1,0 +1,41 @@
+# Once a day: today's MRR from TrustMRR into src/data/mrr.json, committed so the chart's
+# history builds up in git. Railway deploys main on every push, so the commit is the deploy.
+# See PLAN.md section 7. Secret: TRUSTMRR_API_KEY.
+name: Daily MRR
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mrr
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Plain Node, no packages needed.
+      - name: Fetch today's MRR
+        run: node scripts/trustmrr-mrr.mjs
+        env:
+          TRUSTMRR_API_KEY: ${{ secrets.TRUSTMRR_API_KEY }}
+
+      - name: Commit mrr.json
+        run: |
+          git diff --quiet src/data/mrr.json && { echo "No change."; exit 0; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898699+github-actions[bot]@users.noreply.github.com'
+          git add src/data/mrr.json
+          git commit -m "chore: MRR $(date -u +%F)"
+          git push

@@ -1,9 +1,7 @@
 {
-  "source": "Digitized from reference/stripe-mrr-2026-09-30.png (Stripe MRR chart, Postiz)",
-  "exact": false,
-  "method": "Line traced against the $0 and $250K gridlines and the Jan 1 2025 / Jan 1 2026 ticks",
-  "accuracy_usd": 1300,
-  "note": "Approximate month-start values, rounded to $500. The last point is the exact figure shown on the card. Replace with a Stripe export if one is available.",
+  "source": "Month starts up to Sep 2026 read off the Stripe MRR chart (reference/stripe-mrr-2026-09-30.png); later figures from the TrustMRR API",
+  "adjust": 1.0206,
+  "note": "Written by scripts/trustmrr-mrr.mjs on every build: TrustMRR's MRR × 1.0206, added as the latest point. Earlier points are kept.",
   "points": [
     {
       "date": "2024-09-01",
@@ -108,6 +106,10 @@
     {
       "date": "2026-09-30",
       "mrr": 229846
+    },
+    {
+      "date": "2026-10-05",
+      "mrr": 244084
     }
   ]
 }

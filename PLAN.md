@@ -204,17 +204,13 @@ A real 3D model, in plain WebGL (`src/brain/three/`).
 
 ## 7. Proof: Stripe-style charts
 
-Modelled on your Stripe profile card, redrawn in the site's style: charcoal text, hairline grid, pink line, axis labels on the right. Drawn as SVG at build time; a crosshair and tooltip snap to the nearest month (mouse, touch or arrow keys); the same numbers are in a table underneath. Every card links to Stripe.
+Modelled on your Stripe profile card, redrawn in the site's style: charcoal text, hairline grid, pink line, axis labels on the right. Drawn as SVG at build time; a crosshair and tooltip snap to the nearest month (mouse, touch or arrow keys); the same numbers are in a table underneath. Every card links to Postiz's page on TrustMRR (trustmrr.com/startup/postiz), "Verified on TrustMRR".
 
-**Data.** `src/data/mrr.json`, the one file the headline, the card and the chart read. Before every build, `scripts/stripe-mrr.mjs` fills it from Stripe's Analytics API (`revenue.mrr`, Stripe's own MRR, as on the Billing dashboard): the first day of each month, then the latest full day (UTC), exact to the dollar; the fine print under the table says which kind of data it is. Without `STRIPE_ANALYTICS_KEY` the file stays as it is, which today means the figures read off the Stripe screenshot you sent (`reference/stripe-mrr-2026-09-30.png`): month starts rounded to $500, good to about ±$1,300, the last point exact. If the key is set and Stripe fails, the build fails, so Railway keeps serving the last good deploy instead of an older number. The chart's top line and date ticks follow the data.
+**Data.** `src/data/mrr.json`, the one file the headline, the card and the chart read. Before every build, `scripts/trustmrr-mrr.mjs` asks the TrustMRR API (trustmrr.com/docs/api, `GET /startups/postiz`) for today's MRR, multiplies it by 1.0206 (TrustMRR runs a little under Stripe's own MRR; on 5 Oct 2026 that gave $244,084 against $244,078 on Stripe) and adds it as the latest point. TrustMRR has no history, so the points already in the file stay: the month starts up to Sep 2026 read off the Stripe screenshot you sent (`reference/stripe-mrr-2026-09-30.png`, rounded to $500, good to about ±$1,300), the exact $229,846 on 30 Sep, then each new month's first day and each past month's last reading as builds add them. The API sends dollars, though its docs say cents; the script fails if the new figure is under half or over double the last one. Without `TRUSTMRR_API_KEY` the file stays as it is (which is what happens in Railway's build). If the key is set and TrustMRR fails, the build fails, so Railway keeps serving the last good deploy instead of an older number. The chart's top line and date ticks follow the data.
 
-**Keeping it live** (needs you):
-1. The Analytics API is in private preview: ask Stripe for access at docs.stripe.com/data/analytics.
-2. A restricted key from the Postiz account with Data → Metrics → Read and nothing else. Locally it goes in `.env`; `pnpm mrr` refreshes the file on its own.
-3. On the Railway service: `STRIPE_ANALYTICS_KEY`, and `NO_CACHE=1` so a redeploy of the same files really rebuilds instead of reusing yesterday's cached build. Every deploy's build log shows a `stripe-mrr:` line with the day's number.
-4. A daily redeploy: Railway's cron template (github.com/brody192/railway-cron), or a scheduled GitHub Action running `railway redeploy`.
+**Keeping it live.** The site is static, so the number changes only when it is rebuilt. `.github/workflows/mrr.yml` runs every day at 06:00 UTC (and on demand from the Actions tab): it runs the script and commits `src/data/mrr.json` to main ("chore: MRR <date>"), so the chart's history builds up in git. The Railway service (`nevomd` in the Postiz project) deploys main from GitHub on every push, so that commit is the deploy. Railway needs no key: the build finds the file already updated. The GitHub secret `TRUSTMRR_API_KEY` is set; locally the key is in `.env` and `pnpm mrr` refreshes the file.
 
-**The headline number.** ARR is the latest MRR × 12, rounded down to one decimal, and the hero headline, Meet Nevo and the card all follow the data. $229,846 MRR is $2.76M ARR, shown as "$2.7M". $3M ARR is $250k MRR. See D1.
+**The headline number.** ARR is the latest MRR × 12, rounded down to one decimal, and the hero headline, Meet Nevo and the card all follow the data. $244,084 MRR is $2.93M ARR, shown as "$2.9M". $3M ARR is $250k MRR. See D1.
 
 ## 8. Art
 
@@ -280,12 +276,12 @@ nevomd/
 │  │                         scenes, played by the scroll), night.ts (lights out), chart-hover.ts
 │  └─ assets/                art/ (brain still, portrait rig), scenery/ (drawings and videos)
 ├─ art/                      raw/, prepared/, traced/, video/, scripts/  (not shipped)
-├─ scripts/stripe-mrr.mjs    fills src/data/mrr.json from Stripe before every build
+├─ scripts/trustmrr-mrr.mjs  adds today's MRR from TrustMRR to src/data/mrr.json before every build
 └─ tests/                    scroll-rules.spec.ts, install.spec.ts, nevo-acts.spec.ts, hero-brain.spec.ts,
                              night.spec.ts, shots.mjs, capture-still.mjs
 ```
 
-**Commands:** `pnpm dev`, `pnpm test`, `pnpm build` (fetches the MRR from Stripe first), `pnpm mrr` (only that), `pnpm preview` (the built site, locally), deploy: `railway init` once, then `railway up`, and `railway domain` for a public address, `node tests/shots.mjs <folder>` (screenshots of every step; `--mobile`, `--size=2560x1328`), `node tests/capture-still.mjs`, `node art/scripts/bake-folds.mjs`.
+**Commands:** `pnpm dev`, `pnpm test`, `pnpm build` (fetches the MRR from TrustMRR first), `pnpm mrr` (only that), `pnpm preview` (the built site, locally), deploy: `railway init` once, then `railway up`, and `railway domain` for a public address, `node tests/shots.mjs <folder>` (screenshots of every step; `--mobile`, `--size=2560x1328`), `node tests/capture-still.mjs`, `node art/scripts/bake-folds.mjs`.
 
 **Tests (Playwright, using the installed Chrome):** the wheel scrolls exactly as far as it is turned; no wheel listeners, no blocking touch listeners, no scroll-snap or smooth scrolling; text moves one pixel per pixel scrolled; the story's rows are contiguous and none is empty, nothing fixed or pin-spaced; something moves with the page at every point, at six window sizes; the finale is the same whether you jump there or scroll there, and returns to its opening pose; when it has played out, Nevo's face and the label are on screen, and still are a fifth of a screen later, and he is whole once the page has brought him up (four window sizes); reduced motion stops the timers, and without it the brain spins (compared with a tolerance of 8 levels, since a faded edge composites a level differently from paint to paint); the hero has nothing above the headline and no button but Copy; the hero and the end show the MCP URL alone, it copies, and there are no instructions and no skill command anywhere; every MCP command in the full panel is built from the one name and URL; the agent chosen there is remembered; each of Nevo's scenes is where the scroll says, both ways, plays over about a third of a screen, and has played out with its picture whole on screen; the mouse does nothing to it, and it stays a still with reduced motion; dragging the hero's brain with a mouse turns and tips it without scrolling the page, it sits back up when let go, and a flick coasts; on a phone, swipes over it (sideways, up, diagonal) scroll the page and never turn it; the last section says the brain never sleeps; scrolled with the wheel: down to the end he falls asleep through the clips in order, the lights off within 3.5 s, the section and the whole page above it the page's dark, and nothing comes after the room; a jiggle leaves him asleep; back up a little he wakes and the page is light within 1.5 s; down again, asleep; one flick back up from the bottom leaves the page light; on a phone it ends dark and he wakes on the way back up; changing your mind half-way turns the movie round; with reduced motion, two stills and no video loaded; the launch check (skipped while the names are mocks).
 
@@ -301,8 +297,8 @@ nevomd/
 | Hero loops, Nevo's four scenes | Done |
 | Last section: "Nevo’s brain never sleeps" on his room, lights out, the end of the page | Done |
 | Your review: the copy, the facts | Next |
-| Real install names, fresh Stripe link | Needs you |
-| Live MRR from Stripe (section 7) | Built; needs Stripe's preview access, a key and a daily redeploy |
+| Real install names | Needs you |
+| Live MRR from TrustMRR (section 7) | Done: daily GitHub Action |
 | Launch work: favicon and social image, font subsetting, JSON-LD, `/llms.txt`, sitemap, DataFast, a real iPhone and Safari pass, deploy | To do |
 
 ## 11. Decisions
@@ -330,15 +326,13 @@ nevomd/
 
 1. The copy. All of it is a draft, and the bio facts are from articles that are months old.
 2. The real names for the commands before launch: MCP URL, server name.
-3. A fresh Stripe proof link.
-4. Stripe Analytics API access, a key, and the Railway setup for a live MRR (section 7).
 
 ## 13. Risks and parked ideas
 
 | Risk | Handling |
 |---|---|
 | A command on the page fails on launch day | Commands generated from one config, a launch check in the tests |
-| The numbers go stale | One data file, filled from Stripe on every build and redeployed daily, an "as of" date, a link to the live proof |
+| The numbers go stale | One data file, updated from TrustMRR on every build and redeployed daily, an "as of" date, a link to the live proof |
 | The 3D is heavy on an old phone | Buffers capped at 2x; loops stop off screen. Not yet measured on a real low-end phone |
 | iOS Safari | `svh` units, sizes measured on resize and never on scroll. Not yet tested on a real iPhone |
 | Nevo's scenes on a phone | About 3.3 MB of video for the four, each loaded only near the screen. Seeking a video on scroll is not yet tested on a real iPhone |

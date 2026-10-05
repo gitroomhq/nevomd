@@ -9,8 +9,8 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node --env-file-if-exists=.env scripts/stripe-mrr.mjs && astro build",
-    "mrr": "node --env-file-if-exists=.env scripts/stripe-mrr.mjs",
+    "build": "node --env-file-if-exists=.env scripts/trustmrr-mrr.mjs && astro build",
+    "mrr": "node --env-file-if-exists=.env scripts/trustmrr-mrr.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "test": "playwright test",

@@ -1,6 +1,6 @@
 ---
 import MrrChart from './MrrChart.astro';
-import { series, usd, monthYear } from '../lib/chart';
+import { series, usd, monthYear, fullDate } from '../lib/chart';
 import { proof, proofSection, asOfLabel } from '../content/site';
 ---
 
@@ -19,7 +19,7 @@ import { proof, proofSection, asOfLabel } from '../content/site';
         </div>
         <p class="card__meta">
           As of {asOfLabel}.
-          <a class="link" href={proof.stripeUrl} rel="noopener">{proofSection.stripeLink}</a>
+          <a class="link" href={proof.proofUrl} rel="noopener">{proofSection.proofLink}</a>
         </p>
       </figcaption>
 
@@ -38,7 +38,7 @@ import { proof, proofSection, asOfLabel } from '../content/site';
               {
                 series.map((p, i) => (
                   <tr>
-                    <th scope="row">{i === series.length - 1 ? asOfLabel : monthYear(p.t)}</th>
+                    <th scope="row">{i === series.length - 1 ? asOfLabel : p.date.endsWith('-01') ? monthYear(p.t) : fullDate(p.t)}</th>
                     <td>{usd(p.mrr)}</td>
                   </tr>
                 ))
