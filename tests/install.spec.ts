@@ -1,7 +1,7 @@
 /**
- * Installing: the hero and the end of the page show the MCP server's URL, with no
- * instructions; every agent's steps are in the full panel in "How it works". Every command
- * comes from content/site.ts, and copying works.
+ * Installing: the hero and the end of the page show the MCP server's URL and a "How to use"
+ * button that opens every agent's steps in a dialog; the same steps are in the full panel in
+ * "How it works". Every command comes from content/site.ts, and copying works.
  */
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
@@ -25,7 +25,7 @@ test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
 test('the hero shows the MCP server URL, and it copies', async ({ page }) => {
   await page.goto('/');
-  const hero = page.locator('.hero-get');
+  const hero = page.locator('.hero-get .quick');
 
   await expect(hero.locator('.cmd__text')).toHaveText(mcpUrl);
   await hero.getByRole('button', { name: 'Copy the MCP server URL' }).click();
@@ -33,10 +33,10 @@ test('the hero shows the MCP server URL, and it copies', async ({ page }) => {
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(mcpUrl);
 });
 
-test('the hero has nothing above the headline, and no button but Copy', async ({ page }) => {
+test('the hero has nothing above the headline, and no buttons but Copy and How to use', async ({ page }) => {
   await page.goto('/');
   // No top bar, no menu, no logo, no call-to-action buttons: the headline comes first, and the
-  // only control is the Copy for the MCP server URL.
+  // only controls are the Copy for the MCP server URL and the How to use beside it.
   await expect(page.locator('header, nav[aria-label="Sections"], .strip, .btn')).toHaveCount(0);
   const first = await page.locator('main').evaluate((main) => {
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
@@ -45,18 +45,18 @@ test('the hero has nothing above the headline, and no button but Copy', async ({
     return null;
   });
   expect(first).toBe('H1');
-  const controls = await page.locator('.hero-row, .hero-get').locator('a, button, select').evaluateAll((els) =>
-    els.map((el) => (el.hasAttribute('data-copy') ? 'copy' : el.tagName.toLowerCase())),
+  const controls = await page.locator('.hero-row, .hero-get .quick').locator('a, button, select').evaluateAll((els) =>
+    els.map((el) => (el.hasAttribute('data-copy') ? 'copy' : el.hasAttribute('data-howto') ? 'howto' : el.tagName.toLowerCase())),
   );
-  expect(controls).toEqual(['copy']);
+  expect(controls).toEqual(['copy', 'howto']);
 });
 
 test('the hero and the end show the MCP server URL alone, with no instructions', async ({ page }) => {
   await page.goto('/');
   for (const block of ['.hero-get', '[data-night]']) {
-    const install = page.locator(`${block} [data-install]`);
+    const install = page.locator(`${block} .quick`);
     await expect(install.locator('.cmd__text')).toHaveText(mcpUrl);
-    // No switch, no agent menu and no notes: every agent's steps are in How it works.
+    // No switch, no agent menu and no notes: every agent's steps are behind How to use.
     await expect(install.locator('[role="tab"], select, p, label')).toHaveCount(0);
   }
   // Nothing on the page offers the skill or its CLI any more.
@@ -76,6 +76,21 @@ test('every MCP line in the full panel is built from the one server name and URL
   // No command on the page carries a key: sign-in happens over OAuth the first time the agent connects.
   const all = await page.locator('.cmd__text').allTextContents();
   for (const text of all) expect(text).not.toMatch(/api[-_ ]?key|bearer|authorization/i);
+});
+
+test('How to use opens every agent’s steps, Claude and ChatGPT first, and closes', async ({ page }) => {
+  await page.goto('/');
+  for (const where of ['hero', 'final']) {
+    const dialog = page.locator(`#${where}-howto`);
+    await expect(dialog).toBeHidden();
+    await page.locator(`[data-howto="${where}-howto"]`).click();
+    await expect(dialog).toBeVisible();
+    const agents = await dialog.locator('[data-agent]').allTextContents();
+    expect(agents.slice(0, 2).map((a) => a.trim())).toEqual(['Claude', 'ChatGPT']);
+    await expect(dialog.locator('[data-agent-panel]:not([hidden]) .cmd__text')).toHaveText(mcpUrl);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  }
 });
 
 test('the agent chosen in How it works is remembered', async ({ page }) => {

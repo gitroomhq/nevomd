@@ -45,7 +45,7 @@ test('the last section says the brain never sleeps', async ({ page }) => {
   await ready(page);
   await expect(page.locator('[data-night] h2')).toHaveText('Nevo’s brain never sleeps');
   // The install block is still there to take away.
-  await expect(page.locator('[data-night] [data-install]')).toHaveCount(1);
+  await expect(page.locator('[data-night] .quick[data-install]')).toHaveCount(1);
 });
 
 test('down to the end he falls asleep quickly; back up a little he wakes; down again, asleep', async ({ page }) => {

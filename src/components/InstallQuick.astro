@@ -1,16 +1,36 @@
 ---
 /**
  * The install block of the hero and of the last section: the one line to copy, the MCP
- * server's URL. No instructions here: every agent's steps are in "How it works"
- * (InstallPanel.astro). Everything it prints comes from content/site.ts.
+ * server's URL, and a "How to use" button that opens every agent's steps in a dialog (the same
+ * panel as in "How it works", InstallPanel.astro). Everything it prints comes from content/site.ts.
  */
 import CommandBox from './CommandBox.astro';
+import InstallPanel from './InstallPanel.astro';
 import { install } from '../content/site';
+
+interface Props {
+  /** Which block this is, for unique ids and analytics. */
+  where: string;
+}
+
+const { where } = Astro.props;
+const dialogId = `${where}-howto`;
 ---
 
 <div class="quick" data-install>
-  <CommandBox value={install.mcpUrl} name="the MCP server URL" />
+  <CommandBox value={install.mcpUrl} name="the MCP server URL">
+    <button slot="after" type="button" class="help" data-howto={dialogId} data-howto-name={where} aria-haspopup="dialog" aria-controls={dialogId}>
+      How to use
+    </button>
+  </CommandBox>
 </div>
+
+<dialog class="howto" id={dialogId} aria-labelledby={`${dialogId}-install-title`}>
+  <button type="button" class="howto__close" data-howto-close aria-label="Close">
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4.5 4.5l9 9M13.5 4.5l-9 9"></path></svg>
+  </button>
+  <InstallPanel prefix={dialogId} />
+</dialog>
 
 <style>
   /* The line to copy, centered. */
@@ -42,15 +62,88 @@ import { install } from '../content/site';
 
   .quick :global(.cmd__copy) {
     min-width: 5rem;
-    border-radius: 0 0.75rem 0.75rem 0;
+    border-radius: 0;
     font-size: 0.875rem;
+  }
+
+  /* "How to use": the last segment of the card, in pink so it reads as the way in. */
+  .help {
+    flex: none;
+    padding: 0 1rem;
+    background: none;
+    border: 0;
+    border-left: 1px solid var(--hairline);
+    border-radius: 0 0.75rem 0.75rem 0;
+    color: var(--pink-text);
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .help:hover {
+    background: var(--band);
+  }
+
+  /* The dialog: the panel is the card, the dialog only places it. */
+  .howto {
+    width: min(40rem, calc(100% - 2rem));
+    max-width: none;
+    max-height: calc(100dvh - 2rem);
+    padding: 0;
+    overflow: auto;
+    background: none;
+    border: 0;
+    border-radius: var(--radius);
+    text-align: left;
+  }
+
+  .howto::backdrop {
+    background: rgb(0 0 0 / 0.45);
+  }
+
+  .howto__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: none;
+    border: 0;
+    border-radius: 50%;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .howto__close:hover {
+    background: var(--band);
+  }
+
+  .howto__close svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
   }
 
   @media (max-width: 520px) {
     .quick :global(.cmd__text) {
-      padding: 0.75rem 0.875rem;
+      padding: 0.75rem 0.625rem;
       font-size: 0.8125rem;
       line-height: 1.3125rem;
+    }
+
+    /* Only the icon shows here, so the long-form width would just squeeze the URL. */
+    .quick :global(.cmd__copy) {
+      min-width: 2.75rem;
+    }
+
+    .help {
+      padding: 0 0.625rem;
+      font-size: 0.8125rem;
     }
   }
 </style>

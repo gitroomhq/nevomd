@@ -133,21 +133,22 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 
 ### Install
 
-**In the hero and the last section:** the one line to copy, the MCP server's URL. No switch, no agent menu, no notes. **In "How it works":** the full panel, with every agent's MCP steps; the agent chosen there is remembered. MCP only: the skill (`npx skills add …`, its other installers and the "Tell your agent" line) was cut, the MCP is enough.
+**In the hero and the last section:** the one line to copy, the MCP server's URL, with Copy and a "How to use" button beside it. How to use opens the full panel in a dialog; no switch, agent menu or notes on the page itself. **In "How it works":** the full panel, with every agent's MCP steps, Claude and ChatGPT first; the agent chosen there is remembered. Agents you set up by clicking around show each step with our own screenshot of it, taken in the real app with Nevo's Brain and the URL filled in (`src/assets/howto/`). Claude has them; ChatGPT's are still to take. Under every agent's steps, the same three sign-in steps (email, 6-digit code, Allow) with screenshots of the server's own pages. MCP only: the skill (`npx skills add …`, its other installers and the "Tell your agent" line) was cut, the MCP is enough.
 
 **MCP,** checked against each CLI's help or docs:
 
 | Agent | Command or steps |
 |---|---|
+| Claude (web, desktop) | Customize → Connectors → + Add → Add custom connector → name and URL → Continue (checked in claude.ai, Oct 2026) |
+| ChatGPT (web, paid plans) | Settings → Security and login → Developer mode on; then Plugins → + → paste the URL → Create (OpenAI's developer docs, Oct 2026) |
 | Claude Code | `claude mcp add --transport http nevos-brain https://mcp.nevo.md/mcp` |
-| Claude (web, desktop) | Customize → Connectors → + → Add custom connector → paste the URL |
 | Cursor | "Add to Cursor" link, or in `~/.cursor/mcp.json`: `{"mcpServers":{"nevos-brain":{"url":"https://mcp.nevo.md/mcp"}}}` |
 | Codex | `codex mcp add nevos-brain --url https://mcp.nevo.md/mcp` |
 | OpenClaw | `openclaw mcp add nevos-brain --url https://mcp.nevo.md/mcp --transport streamable-http` |
 | Hermes | `hermes mcp add nevos-brain --url https://mcp.nevo.md/mcp` |
 | Gemini CLI | `gemini mcp add --transport http nevos-brain https://mcp.nevo.md/mcp` |
 
-The names are mocks until the real ones exist. They live in one place, `install` in `site.ts`, with `mock: true`; the launch check in the tests is skipped while that flag is set, and once it is cleared it sends the MCP server an `initialize` request with no token and expects the OAuth 401. The MCP has no key; it signs users in with OAuth2 and their email, free.
+The server is live at `https://mcp.nevo.md/mcp` (the `nevos-brain` repo). The names live in one place, `install` in `site.ts`, with `mock: false`; the launch check sends the MCP server an `initialize` request with no token and expects the OAuth 401. The MCP has no key; it signs users in with OAuth2 and their email, free.
 
 ## 6. The brain story
 
@@ -205,9 +206,15 @@ A real 3D model, in plain WebGL (`src/brain/three/`).
 
 Modelled on your Stripe profile card, redrawn in the site's style: charcoal text, hairline grid, pink line, axis labels on the right. Drawn as SVG at build time; a crosshair and tooltip snap to the nearest month (mouse, touch or arrow keys); the same numbers are in a table underneath. Every card links to Stripe.
 
-**Data.** Read off the Stripe screenshot you sent (`reference/stripe-mrr-2026-09-30.png`). Month-start values, rounded to $500, good to about ±$1,300; the last point is the exact figure on the card. In `src/data/mrr.json`.
+**Data.** `src/data/mrr.json`, the one file the headline, the card and the chart read. Before every build, `scripts/stripe-mrr.mjs` fills it from Stripe's Analytics API (`revenue.mrr`, Stripe's own MRR, as on the Billing dashboard): the first day of each month, then the latest full day (UTC), exact to the dollar; the fine print under the table says which kind of data it is. Without `STRIPE_ANALYTICS_KEY` the file stays as it is, which today means the figures read off the Stripe screenshot you sent (`reference/stripe-mrr-2026-09-30.png`): month starts rounded to $500, good to about ±$1,300, the last point exact. If the key is set and Stripe fails, the build fails, so Railway keeps serving the last good deploy instead of an older number. The chart's top line and date ticks follow the data.
 
-**The headline number.** $229,846 MRR is $2.76M ARR. $3M ARR is $250k MRR. See D1.
+**Keeping it live** (needs you):
+1. The Analytics API is in private preview: ask Stripe for access at docs.stripe.com/data/analytics.
+2. A restricted key from the Postiz account with Data → Metrics → Read and nothing else. Locally it goes in `.env`; `pnpm mrr` refreshes the file on its own.
+3. On the Railway service: `STRIPE_ANALYTICS_KEY`, and `NO_CACHE=1` so a redeploy of the same files really rebuilds instead of reusing yesterday's cached build. Every deploy's build log shows a `stripe-mrr:` line with the day's number.
+4. A daily redeploy: Railway's cron template (github.com/brody192/railway-cron), or a scheduled GitHub Action running `railway redeploy`.
+
+**The headline number.** ARR is the latest MRR × 12, rounded down to one decimal, and the hero headline, Meet Nevo and the card all follow the data. $229,846 MRR is $2.76M ARR, shown as "$2.7M". $3M ARR is $250k MRR. See D1.
 
 ## 8. Art
 
@@ -273,11 +280,12 @@ nevomd/
 │  │                         scenes, played by the scroll), night.ts (lights out), chart-hover.ts
 │  └─ assets/                art/ (brain still, portrait rig), scenery/ (drawings and videos)
 ├─ art/                      raw/, prepared/, traced/, video/, scripts/  (not shipped)
+├─ scripts/stripe-mrr.mjs    fills src/data/mrr.json from Stripe before every build
 └─ tests/                    scroll-rules.spec.ts, install.spec.ts, nevo-acts.spec.ts, hero-brain.spec.ts,
                              night.spec.ts, shots.mjs, capture-still.mjs
 ```
 
-**Commands:** `pnpm dev`, `pnpm test`, `pnpm build`, `pnpm preview` (the built site, locally), deploy: `railway init` once, then `railway up`, and `railway domain` for a public address, `node tests/shots.mjs <folder>` (screenshots of every step; `--mobile`, `--size=2560x1328`), `node tests/capture-still.mjs`, `node art/scripts/bake-folds.mjs`.
+**Commands:** `pnpm dev`, `pnpm test`, `pnpm build` (fetches the MRR from Stripe first), `pnpm mrr` (only that), `pnpm preview` (the built site, locally), deploy: `railway init` once, then `railway up`, and `railway domain` for a public address, `node tests/shots.mjs <folder>` (screenshots of every step; `--mobile`, `--size=2560x1328`), `node tests/capture-still.mjs`, `node art/scripts/bake-folds.mjs`.
 
 **Tests (Playwright, using the installed Chrome):** the wheel scrolls exactly as far as it is turned; no wheel listeners, no blocking touch listeners, no scroll-snap or smooth scrolling; text moves one pixel per pixel scrolled; the story's rows are contiguous and none is empty, nothing fixed or pin-spaced; something moves with the page at every point, at six window sizes; the finale is the same whether you jump there or scroll there, and returns to its opening pose; when it has played out, Nevo's face and the label are on screen, and still are a fifth of a screen later, and he is whole once the page has brought him up (four window sizes); reduced motion stops the timers, and without it the brain spins (compared with a tolerance of 8 levels, since a faded edge composites a level differently from paint to paint); the hero has nothing above the headline and no button but Copy; the hero and the end show the MCP URL alone, it copies, and there are no instructions and no skill command anywhere; every MCP command in the full panel is built from the one name and URL; the agent chosen there is remembered; each of Nevo's scenes is where the scroll says, both ways, plays over about a third of a screen, and has played out with its picture whole on screen; the mouse does nothing to it, and it stays a still with reduced motion; dragging the hero's brain with a mouse turns and tips it without scrolling the page, it sits back up when let go, and a flick coasts; on a phone, swipes over it (sideways, up, diagonal) scroll the page and never turn it; the last section says the brain never sleeps; scrolled with the wheel: down to the end he falls asleep through the clips in order, the lights off within 3.5 s, the section and the whole page above it the page's dark, and nothing comes after the room; a jiggle leaves him asleep; back up a little he wakes and the page is light within 1.5 s; down again, asleep; one flick back up from the bottom leaves the page light; on a phone it ends dark and he wakes on the way back up; changing your mind half-way turns the movie round; with reduced motion, two stills and no video loaded; the launch check (skipped while the names are mocks).
 
@@ -294,6 +302,7 @@ nevomd/
 | Last section: "Nevo’s brain never sleeps" on his room, lights out, the end of the page | Done |
 | Your review: the copy, the facts | Next |
 | Real install names, fresh Stripe link | Needs you |
+| Live MRR from Stripe (section 7) | Built; needs Stripe's preview access, a key and a daily redeploy |
 | Launch work: favicon and social image, font subsetting, JSON-LD, `/llms.txt`, sitemap, DataFast, a real iPhone and Safari pass, deploy | To do |
 
 ## 11. Decisions
@@ -311,7 +320,7 @@ nevomd/
 
 | | Decision | Default in the build |
 |---|---|---|
-| D1 | The headline number | "$2.7M ARR", computed from the MRR; it says "$3M" once MRR reaches $250k |
+| D1 | The headline number | ARR from the latest MRR, rounded down to one decimal: "$2.7M" now, "$3M" once MRR reaches $250k, then "$3.1M" and up |
 | D2 | H1 | "Your agent can build anything. Now teach it to sell." |
 | D5 | Accent colour | Lemonade's `#FF0083`; one token to change |
 | D6 | What the MCP does that the SKILL doesn't | The FAQ says the MCP always has the latest |
@@ -322,18 +331,19 @@ nevomd/
 1. The copy. All of it is a draft, and the bio facts are from articles that are months old.
 2. The real names for the commands before launch: MCP URL, server name.
 3. A fresh Stripe proof link.
+4. Stripe Analytics API access, a key, and the Railway setup for a live MRR (section 7).
 
 ## 13. Risks and parked ideas
 
 | Risk | Handling |
 |---|---|
 | A command on the page fails on launch day | Commands generated from one config, a launch check in the tests |
-| The numbers go stale | One data file, an "as of" date, a link to the live proof |
+| The numbers go stale | One data file, filled from Stripe on every build and redeployed daily, an "as of" date, a link to the live proof |
 | The 3D is heavy on an old phone | Buffers capped at 2x; loops stop off screen. Not yet measured on a real low-end phone |
 | iOS Safari | `svh` units, sizes measured on resize and never on scroll. Not yet tested on a real iPhone |
 | Nevo's scenes on a phone | About 3.3 MB of video for the four, each loaded only near the screen. Seeking a video on scroll is not yet tested on a real iPhone |
 
-Parked: playbook pages on the site; a live MRR figure from Stripe; an "ask the brain one question" box.
+Parked: playbook pages on the site; an "ask the brain one question" box.
 
 ## Appendix A. Source articles
 

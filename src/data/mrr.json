@@ -1,5 +1,6 @@
 {
   "source": "Digitized from reference/stripe-mrr-2026-09-30.png (Stripe MRR chart, Postiz)",
+  "exact": false,
   "method": "Line traced against the $0 and $250K gridlines and the Jan 1 2025 / Jan 1 2026 ticks",
   "accuracy_usd": 1300,
   "note": "Approximate month-start values, rounded to $500. The last point is the exact figure shown on the card. Replace with a Stripe export if one is available.",

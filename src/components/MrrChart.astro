@@ -3,7 +3,7 @@
  * The full MRR chart, drawn at build time. Two sizes are rendered (wide and narrow) and CSS
  * shows the one that fits, so the axis text stays readable on a phone.
  */
-import { series, scales, linePath, areaPath, usd, usdCompact, fullDate, valueAt } from '../lib/chart';
+import { series, scales, linePath, areaPath, usd, usdCompact, fullDate, monthYear, valueAt } from '../lib/chart';
 import { proofSection } from '../content/site';
 
 interface Props {
@@ -18,7 +18,9 @@ const H = wide ? 400 : 280;
 const m = wide ? { top: 30, right: 62, bottom: 38, left: 10 } : { top: 26, right: 46, bottom: 32, left: 6 };
 const box = { x0: m.left, x1: W - m.right, y0: m.top, y1: H - m.bottom };
 
-const Y_MAX = 250_000;
+// The top gridline is the first $50k step above the highest point, so a new high always fits.
+const STEP = 50_000;
+const Y_MAX = Math.ceil(Math.max(...series.map((p) => p.mrr)) / STEP) * STEP;
 const t0 = series[0].t;
 const t1 = series[series.length - 1].t;
 const { x, y } = scales(box, [t0, t1], Y_MAX);
@@ -27,11 +29,18 @@ const pts = series.map((p) => ({ x: x(p.t), y: y(p.mrr) }));
 const end = pts[pts.length - 1];
 const last = series[series.length - 1];
 
-const yTicks = wide ? [0, 50_000, 100_000, 150_000, 200_000, 250_000] : [0, 100_000, 200_000];
-const xTicks = (wide ? ['2025-01-01', '2025-07-01', '2026-01-01', '2026-07-01'] : ['2025-01-01', '2026-01-01']).map((iso) => {
-  const t = Date.parse(`${iso}T00:00:00Z`);
-  return { x: x(t), label: new Date(t).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }) };
-});
+const yStep = wide ? STEP : 2 * STEP;
+const yTicks = Array.from({ length: Math.floor(Y_MAX / yStep) + 1 }, (_, i) => i * yStep);
+
+// A tick each January and July (January only when narrow), none within two months of either end.
+const MARGIN = 60 * 86_400_000;
+const xTicks: { x: number; label: string }[] = [];
+for (let year = new Date(t0).getUTCFullYear(); year <= new Date(t1).getUTCFullYear(); year++) {
+  for (const month of wide ? [0, 6] : [0]) {
+    const t = Date.UTC(year, month, 1);
+    if (t > t0 + MARGIN && t < t1 - MARGIN) xTicks.push({ x: x(t), label: monthYear(t) });
+  }
+}
 
 // Handwritten notes at the moments the story turns. Wide chart only.
 const notes = wide
@@ -59,7 +68,7 @@ const id = `mrr-${variant}`;
   <svg
     viewBox={`0 0 ${W} ${H}`}
     role="img"
-    aria-label={`Line chart of Postiz monthly recurring revenue from ${fullDate(t0)} to ${fullDate(t1)}, rising from $0 to ${usd(last.mrr)}. The numbers are in the table below.`}
+    aria-label={`Line chart of Postiz monthly recurring revenue from ${fullDate(t0)} to ${fullDate(t1)}, rising from ${usd(series[0].mrr)} to ${usd(last.mrr)}. The numbers are in the table below.`}
   >
     <defs>
       <marker id={`${id}-arrow`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">

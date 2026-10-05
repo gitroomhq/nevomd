@@ -1,7 +1,8 @@
 /**
  * Behaviour for the install blocks: the copy buttons everywhere, and, in the full panel in "How
  * it works", the choice of agent, which is remembered. The small blocks in the hero and at the
- * end are the MCP server's URL and its Copy alone.
+ * end are the MCP server's URL, its Copy, and a "How to use" button that opens the full panel
+ * in a dialog.
  */
 
 const AGENT_KEY = 'nevos-brain:agent';
@@ -78,6 +79,23 @@ function setupCopy() {
   });
 }
 
+/** "How to use": opens the dialog with every agent's steps. Esc closes it natively, so do a close button and a click on the backdrop. */
+function setupHowto() {
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-howto]')) {
+    const dialog = document.getElementById(btn.dataset.howto!) as HTMLDialogElement | null;
+    if (!dialog) continue;
+    btn.addEventListener('click', () => {
+      dialog.showModal();
+      track('howto', { where: btn.dataset.howtoName ?? '' });
+    });
+    dialog.querySelector('[data-howto-close]')?.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+}
+
 const roots = [...document.querySelectorAll<HTMLElement>('[data-install]')];
 setupAgents(roots);
 setupCopy();
+setupHowto();

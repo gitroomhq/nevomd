@@ -24,6 +24,7 @@ const { value, name, prose = false, compact = false } = Astro.props;
     </svg>
     <span data-copy-label>Copy</span>
   </button>
+  <slot name="after" />
 </div>
 
 <style>

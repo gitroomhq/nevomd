@@ -3,6 +3,12 @@
  * Copy is a first draft for Nevo to rewrite; numbers carry their source.
  */
 import mrrData from '../data/mrr.json';
+import claudeCustomize from '../assets/howto/claude-1-customize.webp';
+import claudeAdd from '../assets/howto/claude-2-add.webp';
+import claudeConnector from '../assets/howto/claude-3-connector.webp';
+import signinEmail from '../assets/howto/signin-1-email.webp';
+import signinCode from '../assets/howto/signin-2-code.webp';
+import signinAllow from '../assets/howto/signin-3-allow.webp';
 
 // ---------------------------------------------------------------------------
 // Proof. One source for the headline number, so it cannot drift from Stripe.
@@ -29,10 +35,11 @@ export const proof = {
 const arr = proof.mrr * 12;
 
 /**
- * PLAN.md decision D1: the page says "$3M ARR" only once Stripe MRR reaches $250k.
- * Until then it states the real figure, rounded down to one decimal.
+ * PLAN.md decision D1: ARR in millions, rounded down to one decimal so the page never claims
+ * more than Stripe shows: "$2.7M", then "$3M" once MRR reaches $250k, then "$3.1M".
  */
-export const arrShort = arr >= 3_000_000 ? '$3M' : `$${(Math.floor(arr / 100_000) / 10).toFixed(1)}M`;
+const arrMillions = Math.floor(arr / 100_000) / 10;
+export const arrShort = `$${Number.isInteger(arrMillions) ? arrMillions : arrMillions.toFixed(1)}M`;
 export const arrLabel = `${arrShort} ARR`;
 export const asOfLabel = new Date(`${proof.asOf}T00:00:00Z`).toLocaleDateString('en-US', {
   month: 'short',
@@ -42,12 +49,12 @@ export const asOfLabel = new Date(`${proof.asOf}T00:00:00Z`).toLocaleDateString(
 });
 
 // ---------------------------------------------------------------------------
-// Install names. Mocks until the real MCP server exists.
+// Install names. The MCP server is live at mcp.nevo.md (the nevos-brain repo).
 // ---------------------------------------------------------------------------
 
 export const install = {
-  /** True while the names below are placeholders. The launch check fails on it. */
-  mock: true,
+  /** True while the names below are placeholders. The launch check is skipped while it is set. */
+  mock: false,
   serverName: 'nevos-brain',
   mcpUrl: 'https://mcp.nevo.md/mcp',
 };
@@ -60,6 +67,28 @@ const cursorDeeplink =
   '&config=' +
   encodeURIComponent(Buffer.from(JSON.stringify({ url: install.mcpUrl })).toString('base64'));
 
+export type HowtoStep = { text: string; shot?: { src: ImageMetadata; alt: string; width: number } };
+
+/** What happens after any agent is added: the server's own sign-in pages (nevos-brain, src/pages.ts). */
+export const signIn = {
+  title: 'Then sign in. The same for every agent:',
+  steps: [
+    {
+      text: 'Your agent opens my sign-in page. Enter your email.',
+      shot: { src: signinEmail, alt: 'The “Connect Nevo’s Brain” page asking for your email', width: 360 },
+    },
+    {
+      text: 'Type the 6-digit code I email you.',
+      shot: { src: signinCode, alt: 'The “Check your email” page with the 6-digit code typed in', width: 360 },
+    },
+    {
+      text: 'Click Allow. Now ask your agent anything about marketing.',
+      shot: { src: signinAllow, alt: 'The “You’re in” page with the Allow button', width: 360 },
+    },
+  ] as HowtoStep[],
+  fine: 'Free, no card, no key.',
+};
+
 export type McpAgent = {
   id: string;
   label: string;
@@ -68,24 +97,50 @@ export type McpAgent = {
   /** The same in one line, for the small install block in the hero. Defaults to the note. */
   short?: string;
   value: string;
-  steps?: string[];
+  /** For the agents you set up by clicking around: each step, with a screenshot of it where we have one. */
+  steps?: HowtoStep[];
   deeplink?: { label: string; href: string };
 };
 
 /** One entry per agent. Each line was checked against the agent's CLI help or docs (PLAN.md section 5). */
 export const mcpAgents: McpAgent[] = [
   {
-    id: 'claude-code',
-    label: 'Claude Code',
-    value: `claude mcp add --transport http ${install.serverName} ${install.mcpUrl}`,
-  },
-  {
     id: 'claude',
     label: 'Claude',
     note: 'On the web or desktop app:',
-    short: 'Customize, Connectors, +, “Add custom connector”, then paste this URL.',
-    steps: ['Open Customize, then Connectors.', 'Click +, then “Add custom connector”.', 'Paste this URL and click Add.'],
+    short: 'Customize, Connectors, + Add, “Add custom connector”, then paste this URL.',
+    steps: [
+      {
+        text: 'Click Customize in the sidebar.',
+        shot: { src: claudeCustomize, alt: 'Claude’s sidebar with Customize highlighted', width: 220 },
+      },
+      {
+        text: 'Open Connectors, click + Add, then “Add custom connector”.',
+        shot: { src: claudeAdd, alt: 'The Connectors tab with the Add menu open on “Add custom connector”', width: 575 },
+      },
+      {
+        text: 'Name it Nevo’s Brain, paste this URL and click Continue.',
+        shot: { src: claudeConnector, alt: 'The “Add custom connector” form filled in with Nevo’s Brain and https://mcp.nevo.md/mcp', width: 440 },
+      },
+    ],
     value: install.mcpUrl,
+  },
+  {
+    id: 'chatgpt',
+    label: 'ChatGPT',
+    note: 'On chatgpt.com, with a paid plan:',
+    short: 'Turn on Developer mode, then Plugins, +, and paste this URL.',
+    steps: [
+      { text: 'Open Settings, then Security and login, and turn on Developer mode.' },
+      { text: 'Open Plugins in the sidebar and click +.' },
+      { text: 'Name it Nevo’s Brain, paste this URL and click Create.' },
+    ],
+    value: install.mcpUrl,
+  },
+  {
+    id: 'claude-code',
+    label: 'Claude Code',
+    value: `claude mcp add --transport http ${install.serverName} ${install.mcpUrl}`,
   },
   {
     id: 'cursor',
@@ -124,7 +179,7 @@ export const mcpAgents: McpAgent[] = [
   },
 ];
 
-export const worksWith = ['Claude Code', 'Claude', 'Cursor', 'Codex', 'OpenClaw', 'Hermes', 'Gemini CLI'];
+export const worksWith = ['Claude', 'ChatGPT', 'Claude Code', 'Cursor', 'Codex', 'OpenClaw', 'Hermes', 'Gemini CLI'];
 
 // ---------------------------------------------------------------------------
 // Links
@@ -161,7 +216,7 @@ export const meta = {
 };
 
 export const hero = {
-  title: 'I took Postiz to $2.7m ARR alone.\nYour agent can copy my brain, free.',
+  title: `I took Postiz to ${arrShort.toLowerCase()} ARR alone.\nYour agent can copy my brain, free.`,
   sub: 'Connect Nevo’s Brain to Claude / ChatGPT or any agent and\nit will correct your marketing, positioning and add you insane growth hacks.',
   free: 'Free. One command, then your email.',
 };
@@ -347,6 +402,10 @@ export const proofSection = {
   sub: 'The revenue is public and verified by Stripe. This chart is redrawn from that data, and the link goes to the original.',
   chartTitle: 'Postiz monthly recurring revenue',
   stripeLink: 'Verified on Stripe',
+  /** Under the table. How exact the numbers are depends on where mrr.json came from. */
+  fine: mrrData.exact
+    ? 'Every figure comes straight from Stripe’s API.'
+    : 'Read off the Stripe chart to the nearest $500, except the latest figure, which is exact.',
   annotations: [
     { date: '2024-09-01', text: 'open-source launch', dx: 12, dy: -46 },
     { date: '2025-08-15', text: 'one outreach campaign', dx: -150, dy: -62 },
