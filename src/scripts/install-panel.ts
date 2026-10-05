@@ -95,7 +95,31 @@ function setupHowto() {
   }
 }
 
+/** The install guides: one step at a time, with Back and Next. Without this script every step shows. */
+function setupSteppers() {
+  for (const stepper of document.querySelectorAll<HTMLElement>('[data-stepper]')) {
+    const steps = [...stepper.querySelectorAll<HTMLElement>('[data-step]')];
+    const nav = stepper.querySelector<HTMLElement>('[data-stepper-nav]')!;
+    const prev = nav.querySelector<HTMLButtonElement>('[data-step-prev]')!;
+    const next = nav.querySelector<HTMLButtonElement>('[data-step-next]')!;
+    const dots = [...nav.querySelectorAll<HTMLElement>('.stepper__dots > span')];
+    let at = 0;
+    const show = (i: number) => {
+      at = Math.max(0, Math.min(steps.length - 1, i));
+      steps.forEach((s, j) => (s.hidden = j !== at));
+      dots.forEach((d, j) => d.classList.toggle('is-on', j === at));
+      prev.disabled = at === 0;
+      next.disabled = at === steps.length - 1;
+    };
+    prev.addEventListener('click', () => show(at - 1));
+    next.addEventListener('click', () => show(at + 1));
+    nav.hidden = steps.length < 2;
+    show(0);
+  }
+}
+
 const roots = [...document.querySelectorAll<HTMLElement>('[data-install]')];
 setupAgents(roots);
 setupCopy();
 setupHowto();
+setupSteppers();

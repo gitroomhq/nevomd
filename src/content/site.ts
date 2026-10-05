@@ -67,26 +67,25 @@ const cursorDeeplink =
   '&config=' +
   encodeURIComponent(Buffer.from(JSON.stringify({ url: install.mcpUrl })).toString('base64'));
 
-export type HowtoStep = { text: string; shot?: { src: ImageMetadata; alt: string; width: number } };
+export type HowtoStep = { text: string; shot?: { src: ImageMetadata; alt: string } };
 
 /** What happens after any agent is added: the server's own sign-in pages (nevos-brain, src/pages.ts). */
 export const signIn = {
-  title: 'Then sign in. The same for every agent:',
+  title: 'Then sign in:',
   steps: [
     {
       text: 'Your agent opens my sign-in page. Enter your email.',
-      shot: { src: signinEmail, alt: 'The “Connect Nevo’s Brain” page asking for your email', width: 360 },
+      shot: { src: signinEmail, alt: 'The “Connect Nevo’s Brain” page asking for your email' },
     },
     {
       text: 'Type the 6-digit code I email you.',
-      shot: { src: signinCode, alt: 'The “Check your email” page with the 6-digit code typed in', width: 360 },
+      shot: { src: signinCode, alt: 'The “Check your email” page with the 6-digit code typed in' },
     },
     {
       text: 'Click Allow. Now ask your agent anything about marketing.',
-      shot: { src: signinAllow, alt: 'The “You’re in” page with the Allow button', width: 360 },
+      shot: { src: signinAllow, alt: 'The “You’re in” page with the Allow button' },
     },
   ] as HowtoStep[],
-  fine: 'Free, no card, no key.',
 };
 
 export type McpAgent = {
@@ -112,15 +111,15 @@ export const mcpAgents: McpAgent[] = [
     steps: [
       {
         text: 'Click Customize in the sidebar.',
-        shot: { src: claudeCustomize, alt: 'Claude’s sidebar with Customize highlighted', width: 220 },
+        shot: { src: claudeCustomize, alt: 'Claude’s sidebar with Customize highlighted' },
       },
       {
         text: 'Open Connectors, click + Add, then “Add custom connector”.',
-        shot: { src: claudeAdd, alt: 'The Connectors tab with the Add menu open on “Add custom connector”', width: 575 },
+        shot: { src: claudeAdd, alt: 'The Connectors tab with the Add menu open on “Add custom connector”' },
       },
       {
         text: 'Name it Nevo’s Brain, paste this URL and click Continue.',
-        shot: { src: claudeConnector, alt: 'The “Add custom connector” form filled in with Nevo’s Brain and https://mcp.nevo.md/mcp', width: 440 },
+        shot: { src: claudeConnector, alt: 'The “Add custom connector” form filled in with Nevo’s Brain and https://mcp.nevo.md/mcp' },
       },
     ],
     value: install.mcpUrl,

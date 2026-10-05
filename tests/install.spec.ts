@@ -93,6 +93,22 @@ test('How to use opens every agent’s steps, Claude and ChatGPT first, and clos
   }
 });
 
+test('the steps show one at a time, the agent’s own and then the sign-in', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-howto="hero-howto"]').click();
+  const claude = page.locator('#hero-howto [data-agent-panel="claude"]');
+  const shown = claude.locator('[data-step]:not([hidden])');
+  await expect(shown).toHaveCount(1);
+  await expect(shown).toContainText('Customize');
+  await expect(claude.locator('[data-step-prev]')).toBeDisabled();
+
+  const total = await claude.locator('[data-step]').count();
+  for (let i = 1; i < total; i++) await claude.locator('[data-step-next]').click();
+  await expect(shown).toContainText('Allow');
+  await expect(shown).toHaveCount(1);
+  await expect(claude.locator('[data-step-next]')).toBeDisabled();
+});
+
 test('the agent chosen in How it works is remembered', async ({ page }) => {
   await page.goto('/#how');
   const panel = page.locator('#how .install');

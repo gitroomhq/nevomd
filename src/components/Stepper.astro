@@ -1,0 +1,157 @@
+---
+/**
+ * An install guide shown one step at a time: the step, its screenshot in a frame of fixed size,
+ * and Back / Next. Every step is in the HTML; install-panel.ts shows one at a time, so without
+ * JavaScript they are all there in a list.
+ */
+import type { HowtoStep } from '../content/site';
+
+interface Props {
+  steps: HowtoStep[];
+  /** Said above the first step, e.g. for agents whose only steps are the sign-in. */
+  label?: string;
+}
+
+const { steps, label } = Astro.props;
+const n = steps.length;
+---
+
+<div class="stepper" data-stepper>
+  {label && <p class="stepper__label">{label}</p>}
+  <ol class="stepper__steps" aria-live="polite">
+    {
+      steps.map((s, i) => (
+        <li data-step>
+          <p class="stepper__text">
+            <span class="stepper__n">
+              {i + 1}/{n}
+            </span>
+            {s.text}
+          </p>
+          {s.shot && (
+            <a class="stepper__shot" href={s.shot.src.src} target="_blank" rel="noopener" aria-label={`${s.shot.alt} (full size)`}>
+              <img src={s.shot.src.src} width={s.shot.src.width} height={s.shot.src.height} alt={s.shot.alt} loading="lazy" decoding="async" />
+            </a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+  <div class="stepper__nav" hidden data-stepper-nav>
+    <button type="button" data-step-prev>Back</button>
+    <span class="stepper__dots" aria-hidden="true">{steps.map(() => <span />)}</span>
+    <button type="button" data-step-next>Next</button>
+  </div>
+</div>
+
+<style>
+  .stepper {
+    display: grid;
+    gap: 0.625rem;
+    min-width: 0;
+  }
+
+  .stepper__label {
+    font-weight: 700;
+  }
+
+  .stepper__steps {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  [data-step][hidden] {
+    display: none;
+  }
+
+  /* Room for two lines, so a short step and a long one leave the picture in the same place. */
+  .stepper__text {
+    min-height: 3.25rem;
+  }
+
+  .stepper__n {
+    margin-right: 0.5rem;
+    color: var(--pink-text);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The same frame for every screenshot, so Back and Next never move under the pointer. */
+  .stepper__shot {
+    --frame: 13rem;
+    --pad: 0.75rem;
+    display: grid;
+    place-items: center;
+    height: var(--frame);
+    margin-top: 0.5rem;
+    padding: var(--pad);
+    background: var(--band);
+    border-radius: 0.75rem;
+    cursor: zoom-in;
+  }
+
+  .stepper__shot img {
+    max-width: 100%;
+    max-height: calc(var(--frame) - 2 * var(--pad));
+    width: auto;
+    height: auto;
+    border: 1px solid var(--hairline);
+    border-radius: 0.5rem;
+  }
+
+  .stepper__nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .stepper__nav[hidden] {
+    display: none;
+  }
+
+  .stepper__nav button {
+    min-width: 5.5rem;
+    padding: 0.375rem 0.875rem;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 62.4375rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .stepper__nav [data-step-next] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .stepper__nav button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .stepper__dots {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  .stepper__dots span {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--hairline);
+  }
+
+  .stepper__dots span:global(.is-on) {
+    background: var(--pink);
+  }
+
+  @media (max-width: 520px) {
+    .stepper__shot {
+      --frame: 11rem;
+      --pad: 0.5rem;
+    }
+  }
+</style>

@@ -5,7 +5,7 @@
  * Everything it prints comes from content/site.ts.
  */
 import CommandBox from './CommandBox.astro';
-import HowtoStep from './HowtoStep.astro';
+import Stepper from './Stepper.astro';
 import { mcpAgents, hero, signIn } from '../content/site';
 
 interface Props {
@@ -36,27 +36,17 @@ const { prefix: p = 'how' } = Astro.props;
       mcpAgents.map((a, i) => (
         <div data-agent-panel={a.id} hidden={i !== 0}>
           {a.note && <p>{a.note}</p>}
-          {a.steps && (
-            <ol class="install__steps">
-              {a.steps.map((s) => <HowtoStep step={s} />)}
-            </ol>
-          )}
           <CommandBox value={a.value} name={`the ${a.label} setup`} />
           {a.deeplink && (
             <p class="install__deeplink">
               Or <a class="link" href={a.deeplink.href}>{a.deeplink.label}</a> in one click.
             </p>
           )}
+          {/* The agent's own steps, then the sign-in every agent goes through, one at a time. */}
+          <Stepper steps={[...(a.steps ?? []), ...signIn.steps]} label={a.steps ? undefined : signIn.title} />
         </div>
       ))
     }
-    <div class="install__signin">
-      <p>{signIn.title}</p>
-      <ol class="install__steps">
-        {signIn.steps.map((s) => <HowtoStep step={s} />)}
-      </ol>
-      <p class="install__fine">{signIn.fine}</p>
-    </div>
   </div>
 </div>
 
@@ -122,23 +112,6 @@ const { prefix: p = 'how' } = Astro.props;
     display: none;
   }
 
-  .install__steps {
-    display: grid;
-    gap: 0.75rem;
-    list-style: decimal;
-    padding-left: 1.375rem;
-  }
-
-
-  /* After the agent's own steps: the sign-in every agent goes through. */
-  .install__signin {
-    display: grid;
-    gap: 0.75rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--hairline);
-  }
-
-  .install__fine,
   .install__deeplink {
     font-size: 1rem;
     color: var(--ink-muted);
