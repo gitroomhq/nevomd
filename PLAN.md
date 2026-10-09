@@ -150,7 +150,7 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 
 The server is live at `https://mcp.nevo.md/mcp` (the `nevos-brain` repo). The names live in one place, `install` in `site.ts`, with `mock: false`; the launch check sends the MCP server an `initialize` request with no token and expects the OAuth 401. The MCP has no key; it signs users in with OAuth2 and their email, free.
 
-**Privacy and terms** (`/privacy`, `/terms`, `src/layouts/Legal.astro`): one column of text, run by Gitroom LLC, contact nevo@postiz.com (`legal` in `site.ts`). They describe what the MCP server really does (`nevos-brain`: email and sign-in session, every search logged with the user, newsletter on sign-up through beehiiv, Resend, OpenAI embeddings, Railway); change them when it changes. Linked from one small line under "How it works" (no footer).
+**Privacy and terms** (`/privacy`, `/terms`, `src/layouts/Legal.astro`): one column of text, run by Gitroom LLC, contact nevo@postiz.com (`legal` in `site.ts`). They describe what the MCP server really does (`nevos-brain`: email and sign-in session, every search logged with the user, newsletter on sign-up through beehiiv, Resend, OpenAI embeddings, Railway); change them when it changes. Linked from one small line under "How it works" (no footer), with the MCP docs (mcp.nevo.md, `src/docs.ts` in `nevos-brain`), and from the sign-in page.
 
 ## 6. The brain story
 

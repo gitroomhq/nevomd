@@ -1,6 +1,6 @@
 ---
 import InstallPanel from './InstallPanel.astro';
-import { howItWorks } from '../content/site';
+import { howItWorks, install } from '../content/site';
 import bustUrl from '../assets/art/nevo-bust.svg?url';
 ---
 
@@ -41,7 +41,8 @@ import bustUrl from '../assets/art/nevo-bust.svg?url';
 
     <p class="fine">
       Signing in subscribes you to my newsletter; unsubscribe from any email.{' '}
-      <a href="/privacy">Privacy</a>&nbsp;· <a href="/terms">Terms</a>
+      <a href={new URL('/', install.mcpUrl).href}>MCP docs</a>&nbsp;· <a href="/privacy">Privacy</a>&nbsp;·{' '}
+      <a href="/terms">Terms</a>
     </p>
   </div>
 </section>
