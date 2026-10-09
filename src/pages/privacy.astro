@@ -1,0 +1,165 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { legal, install } from '../content/site';
+
+const mcpHost = new URL(install.mcpUrl).host;
+const mail = `mailto:${legal.email}`;
+---
+
+<Legal
+  title="Privacy policy"
+  description="What Nevo’s Brain collects when you visit nevo.md and when your agent signs in to the MCP server, why, and how to have it deleted."
+  other={{ href: '/terms', label: 'terms of service' }}
+>
+  <p>
+    Nevo’s Brain is run by {legal.operator}, the company behind Postiz (“we”, “us”). This policy covers the website
+    at nevo.md and the MCP server at {mcpHost} (together, “the service”).
+  </p>
+
+  <section class="tldr">
+    <h2>The short version</h2>
+    <ul>
+      <li>The website has no analytics, no ad trackers and no cookies.</li>
+      <li>To use the brain, you sign in with your email. We keep your email and a log of what your agent searches.</li>
+      <li>Signing in subscribes you to Nevo’s newsletter. Unsubscribe from any email; you keep your access.</li>
+      <li>We don’t sell your data and we don’t show ads.</li>
+      <li>Email <a href={mail}>{legal.email}</a> and we will delete everything we hold about you.</li>
+    </ul>
+  </section>
+
+  <h2>What we collect</h2>
+
+  <h3>When you visit nevo.md</h3>
+  <p>
+    The website is a static page. It sets no cookies and runs no analytics or advertising scripts; its fonts and
+    videos are served from our own domain. If you pick an agent in “How it works”, your browser remembers that choice
+    in its local storage, on your device only. We never receive it.
+  </p>
+  <p>
+    Like any web host, our hosting provider records standard request logs (IP address, browser, the page asked for,
+    and the time) to run and protect the servers.
+  </p>
+
+  <h3>When your agent signs in to the MCP server</h3>
+  <ul>
+    <li><strong>Your email address</strong>, and when your account was created.</li>
+    <li>
+      <strong>A 6-digit sign-in code</strong> we email you. It works for 10 minutes.
+    </li>
+    <li>
+      <strong>Your sign-in session</strong>: the IP address and browser it came from, and the access and refresh
+      tokens your agent receives.
+    </li>
+    <li>
+      <strong>The agent app you connected</strong> (for example Claude, ChatGPT or Cursor), as it registers itself:
+      its name, ID and callback address.
+    </li>
+  </ul>
+
+  <h3>When your agent uses the brain</h3>
+  <p>
+    Every call is logged with your account: which tool was used, the search text (up to its first 500 characters),
+    which agent app sent it, and when. Your agent writes these searches, and they can describe your product or
+    project. Don’t let it send passwords, keys or other people’s personal information.
+  </p>
+  <p>
+    We also use your IP address, in memory and for about a minute, to limit how many requests can be made.
+  </p>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li>To sign you in and answer your agent’s searches.</li>
+    <li>
+      To keep the service working for everyone: rate limits (60 calls a minute per person) and blocking accounts that
+      abuse it.
+    </li>
+    <li>
+      To improve the brain. Nevo reads what founders ask to learn which questions it answers poorly and what to add
+      next.
+    </li>
+    <li>To send you Nevo’s newsletter (below).</li>
+  </ul>
+  <p>
+    If you are in the EU or UK, our legal bases are: providing the service you asked for (sign-in, answers), our
+    legitimate interests (security, abuse prevention, improving the brain, and the newsletter, which you can stop at
+    any time), and our legal obligations.
+  </p>
+
+  <h2>The newsletter</h2>
+  <p>
+    Signing in subscribes your email to Nevo’s newsletter, sent through beehiiv. The sign-in page says so before you
+    sign in. Every issue has an unsubscribe link. Unsubscribing doesn’t affect your access to the brain, and signing
+    in again never subscribes you again once you have left.
+  </p>
+
+  <h2>Who else handles it</h2>
+  <p>We share data only with the providers that run the service for us, and only what each one needs:</p>
+  <div class="table">
+    <table>
+      <thead>
+        <tr><th scope="col">Provider</th><th scope="col">What for</th><th scope="col">What it gets</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Railway</td><td>Hosting and database</td><td>Everything above, stored on its servers</td></tr>
+        <tr><td>Resend</td><td>Sending sign-in codes</td><td>Your email and the code</td></tr>
+        <tr><td>beehiiv</td><td>The newsletter</td><td>Your email</td></tr>
+        <tr><td>OpenAI</td><td>Matching searches to the brain’s content</td><td>The search text, not who sent it</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Your agent app (Claude, ChatGPT, Cursor and others) sees your searches and the brain’s answers too. It is run by
+    its own company, under its own privacy policy, not ours.
+  </p>
+  <p>
+    We don’t sell or rent personal information, and we don’t share it for advertising. We disclose it to others only
+    if the law requires it, to protect the service or its users, or as part of a sale or merger of the business, in
+    which case this policy keeps applying to it.
+  </p>
+
+  <h2>How long we keep it</h2>
+  <ul>
+    <li>Sign-in codes: 10 minutes. Access tokens: one hour; refresh tokens until they expire or are revoked.</li>
+    <li>Your account and its search log: until you ask us to delete them.</li>
+    <li>The newsletter subscription: until you unsubscribe or ask us to delete it.</li>
+    <li>Hosting request logs: for the short period our hosting provider keeps them.</li>
+  </ul>
+
+  <h2>Your rights</h2>
+  <p>
+    Wherever you live, you can ask us to show you what we hold about you, send you a copy, correct it, or delete it,
+    and you can object to how we use it. Email <a href={mail}>{legal.email}</a> from the address you signed in with.
+    We answer within 30 days. Deleting your account removes your email, your sessions, your search log and your
+    newsletter subscription.
+  </p>
+  <p>
+    If you are in the EU or UK and think we have handled your data wrongly, you can complain to your local data
+    protection authority. California residents: we don’t sell or share personal information as the CCPA defines it.
+  </p>
+
+  <h2>Where it is stored</h2>
+  <p>
+    Our providers store and process data in the United States and other countries, which may have different data
+    protection laws from yours. For transfers out of the EU and UK we rely on the safeguards our providers offer,
+    such as standard contractual clauses.
+  </p>
+
+  <h2>Security</h2>
+  <p>
+    Everything travels over HTTPS. There are no passwords to leak: you sign in with a one-time code, tokens are short
+    lived and work only for this MCP server, and only Nevo can read the search logs. No system is perfectly secure; if
+    we learn of a breach that affects you, we will tell you.
+  </p>
+
+  <h2>Children</h2>
+  <p>
+    The service is for founders and is not meant for anyone under 16. If you think a child has signed up, email us and
+    we will delete the account.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    If we change this policy, we will update it here and change the date at the top. If a change affects how we use
+    data we already have, we will email you before it takes effect.
+  </p>
+</Legal>

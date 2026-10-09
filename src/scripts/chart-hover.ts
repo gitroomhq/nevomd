@@ -1,9 +1,9 @@
 /**
  * Hover and keyboard readout for the MRR chart: a crosshair that snaps to the nearest month
- * and a tooltip with the value. The same numbers are in the table under the chart, so the
- * tooltip never gates anything.
+ * and a tooltip with the value, as MRR or ARR, whichever the card shows. The same numbers are
+ * in the table under the chart, so the tooltip never gates anything.
  */
-type HoverPoint = { x: number; y: number; v: string; d: string };
+type HoverPoint = { x: number; y: number; v: string; va: string; d: string };
 
 for (const root of document.querySelectorAll<HTMLElement>('[data-chart]')) {
   const svg = root.querySelector('svg')!;
@@ -27,7 +27,7 @@ for (const root of document.querySelectorAll<HTMLElement>('[data-chart]')) {
     dot.setAttribute('cx', String(p.x));
     dot.setAttribute('cy', String(p.y));
     hover.removeAttribute('hidden');
-    tipValue.textContent = p.v;
+    tipValue.textContent = root.closest<HTMLElement>('[data-unit]')?.dataset.unit === 'arr' ? p.va : p.v;
     tipDate.textContent = p.d;
     const rect = svg.getBoundingClientRect();
     const left = (p.x / viewW) * rect.width;

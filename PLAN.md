@@ -150,6 +150,8 @@ The sizes of the dots and waves are pictures, not data; the columns in the befor
 
 The server is live at `https://mcp.nevo.md/mcp` (the `nevos-brain` repo). The names live in one place, `install` in `site.ts`, with `mock: false`; the launch check sends the MCP server an `initialize` request with no token and expects the OAuth 401. The MCP has no key; it signs users in with OAuth2 and their email, free.
 
+**Privacy and terms** (`/privacy`, `/terms`, `src/layouts/Legal.astro`): one column of text, run by Gitroom LLC, contact nevo@postiz.com (`legal` in `site.ts`). They describe what the MCP server really does (`nevos-brain`: email and sign-in session, every search logged with the user, newsletter on sign-up through beehiiv, Resend, OpenAI embeddings, Railway); change them when it changes. Linked from one small line under "How it works" (no footer).
+
 ## 6. The brain story
 
 ### 6.1 Scroll rules
@@ -204,7 +206,7 @@ A real 3D model, in plain WebGL (`src/brain/three/`).
 
 ## 7. Proof: Stripe-style charts
 
-Modelled on your Stripe profile card, redrawn in the site's style: charcoal text, hairline grid, pink line, axis labels on the right. Drawn as SVG at build time; a crosshair and tooltip snap to the nearest month (mouse, touch or arrow keys); the same numbers are in a table underneath. Every card links to Postiz's page on TrustMRR (trustmrr.com/startup/postiz), "Verified on TrustMRR".
+Modelled on your Stripe profile card, redrawn in the site's style: charcoal text, hairline grid, pink line, axis labels on the right. Drawn as SVG at build time; a crosshair and tooltip snap to the nearest month (mouse, touch or arrow keys); the same numbers are in a table underneath. A switch at the top right shows the card as MRR (the default) or ARR (MRR × 12): the title, the figure, the axis, the tooltip and the table all change, the line does not. Every card links to Postiz's page on TrustMRR (trustmrr.com/startup/postiz), "Verified on TrustMRR".
 
 **Data.** `src/data/mrr.json`, the one file the headline, the card and the chart read. Before every build, `scripts/trustmrr-mrr.mjs` asks the TrustMRR API (trustmrr.com/docs/api, `GET /startups/postiz`) for today's MRR, multiplies it by 1.0206 (TrustMRR runs a little under Stripe's own MRR; on 5 Oct 2026 that gave $244,084 against $244,078 on Stripe) and adds it as the latest point. TrustMRR has no history, so the points already in the file stay: the month starts up to Sep 2026 read off the Stripe screenshot you sent (`reference/stripe-mrr-2026-09-30.png`, rounded to $500, good to about ±$1,300), the exact $229,846 on 30 Sep, then each new month's first day and each past month's last reading as builds add them. The API sends dollars, though its docs say cents; the script fails if the new figure is under half or over double the last one. Without `TRUSTMRR_API_KEY` the file stays as it is (which is what happens in Railway's build). If the key is set and TrustMRR fails, the build fails, so Railway keeps serving the last good deploy instead of an older number. The chart's top line and date ticks follow the data.
 

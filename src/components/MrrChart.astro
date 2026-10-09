@@ -1,9 +1,11 @@
 ---
 /**
  * The full MRR chart, drawn at build time. Two sizes are rendered (wide and narrow) and CSS
- * shows the one that fits, so the axis text stays readable on a phone.
+ * shows the one that fits, so the axis text stays readable on a phone. ARR is MRR × 12, so the
+ * line is the same in both; only the labels differ. Both sets are drawn, and the card's
+ * data-unit shows one (Proof.astro).
  */
-import { series, scales, linePath, areaPath, usd, usdCompact, fullDate, monthYear, valueAt } from '../lib/chart';
+import { series, scales, linePath, areaPath, usd, usdCompact, usdAxis, toArr, fullDate, monthYear, valueAt } from '../lib/chart';
 import { proofSection } from '../content/site';
 
 interface Props {
@@ -60,7 +62,7 @@ const notes = wide
     })
   : [];
 
-const hoverPoints = series.map((p, i) => ({ x: +pts[i].x.toFixed(1), y: +pts[i].y.toFixed(1), v: usd(p.mrr), d: fullDate(p.t) }));
+const hoverPoints = series.map((p, i) => ({ x: +pts[i].x.toFixed(1), y: +pts[i].y.toFixed(1), v: usd(p.mrr), va: usd(toArr(p.mrr)), d: fullDate(p.t) }));
 const id = `mrr-${variant}`;
 ---
 
@@ -80,8 +82,11 @@ const id = `mrr-${variant}`;
       yTicks.map((v) => (
         <g>
           <line x1={box.x0} x2={box.x1} y1={y(v)} y2={y(v)} class:list={['chart__grid', { 'chart__grid--base': v === 0 }]} />
-          <text x={box.x1 + 10} y={y(v) + 4} class="chart__tick">
+          <text x={box.x1 + 10} y={y(v) + 4} class="chart__tick" data-unit-show="mrr">
             {usdCompact(v)}
+          </text>
+          <text x={box.x1 + 10} y={y(v) + 4} class="chart__tick" data-unit-show="arr">
+            {usdAxis(toArr(v))}
           </text>
         </g>
       ))
@@ -112,7 +117,8 @@ const id = `mrr-${variant}`;
     }
 
     <circle cx={end.x} cy={end.y} r="5.5" class="chart__end"></circle>
-    <text x={end.x - 12} y={end.y - 12} text-anchor="end" class="chart__endlabel">{usd(last.mrr)}</text>
+    <text x={end.x - 12} y={end.y - 12} text-anchor="end" class="chart__endlabel" data-unit-show="mrr">{usd(last.mrr)}</text>
+    <text x={end.x - 12} y={end.y - 12} text-anchor="end" class="chart__endlabel" data-unit-show="arr">{usd(toArr(last.mrr))}</text>
 
     <g class="chart__hover" data-hover hidden>
       <line y1={box.y0} y2={box.y1} data-hover-line></line>

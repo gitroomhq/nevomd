@@ -38,10 +38,32 @@ import bustUrl from '../assets/art/nevo-bust.svg?url';
     </ol>
 
     <InstallPanel />
+
+    <p class="fine">
+      Signing in subscribes you to my newsletter; unsubscribe from any email.{' '}
+      <a href="/privacy">Privacy</a>&nbsp;· <a href="/terms">Terms</a>
+    </p>
   </div>
 </section>
 
 <style>
+  .fine {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .fine a {
+    color: inherit;
+    text-underline-offset: 0.1875rem;
+  }
+
+  .fine a:hover {
+    color: var(--pink-text);
+  }
+
   .diagram {
     display: flex;
     align-items: center;

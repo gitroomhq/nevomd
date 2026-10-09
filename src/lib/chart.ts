@@ -57,6 +57,12 @@ export const usd = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
 
 export const usdCompact = (n: number) => (n >= 1000 ? `$${Math.round(n / 1000)}K` : `$${Math.round(n)}`);
 
+/** Axis labels that reach millions, for ARR: "$600K", "$1.2M", "$3M". */
+export const usdAxis = (n: number) => (n >= 1_000_000 ? `$${+(n / 1_000_000).toFixed(1)}M` : usdCompact(n));
+
+/** ARR is MRR × 12. */
+export const toArr = (mrr: number) => mrr * 12;
+
 export const monthYear = (t: number) =>
   new Date(t).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 

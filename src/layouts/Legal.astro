@@ -1,0 +1,157 @@
+---
+/**
+ * The privacy policy and the terms: one quiet column of text, the site's type and colours,
+ * a way back to the page, and a link to the other document at the end.
+ */
+import Base from './Base.astro';
+import { legal } from '../content/site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The other document, linked at the end. */
+  other: { href: string; label: string };
+}
+const { title, description, other } = Astro.props;
+
+const updated = new Date(`${legal.updated}T00:00:00Z`).toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<Base title={`${title} · Nevo’s Brain`} description={description}>
+  <main id="main" class="legal">
+    <div class="legal__col">
+      <a class="legal__back" href="/">← Nevo’s Brain</a>
+      <h1 class="h1">{title}</h1>
+      <p class="legal__updated">Last updated {updated}</p>
+      <div class="legal__body">
+        <slot />
+      </div>
+      <p class="legal__end">
+        Questions? Email <a class="link" href={`mailto:${legal.email}`}>{legal.email}</a>. See also our <a
+          class="link"
+          href={other.href}>{other.label}</a
+        >.
+      </p>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .legal {
+    padding: clamp(2.5rem, 6vw, 5rem) var(--gutter) clamp(4rem, 9vw, 7rem);
+  }
+
+  .legal__col {
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .legal__back {
+    display: inline-block;
+    margin-bottom: 2.5rem;
+    color: var(--ink-muted);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+
+  .legal__back:hover {
+    color: var(--pink-text);
+  }
+
+  .legal__updated {
+    margin-top: 0.75rem;
+    color: var(--ink-muted);
+    font-size: 1rem;
+  }
+
+  .legal__body {
+    margin-top: 2rem;
+  }
+
+  .legal__end {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--hairline);
+    color: var(--ink-muted);
+    font-size: 1rem;
+  }
+
+  .legal__body :global(h2) {
+    margin: 3rem 0 0.875rem;
+    font-size: 1.375rem;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .legal__body :global(h3) {
+    margin: 1.75rem 0 0.5rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .legal__body :global(p + p),
+  .legal__body :global(p + ul),
+  .legal__body :global(ul + p),
+  .legal__body :global(table + p) {
+    margin-top: 1rem;
+  }
+
+  .legal__body :global(ul) {
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .legal__body :global(li::marker) {
+    color: var(--ink-faint);
+  }
+
+  .legal__body :global(a) {
+    color: var(--pink-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.1875rem;
+  }
+
+  /* The short version: the one touch of pink on the page. */
+  .legal__body :global(.tldr) {
+    margin-top: 2.5rem;
+    padding: 1.5rem 1.75rem;
+    background: var(--band);
+    border-left: 3px solid var(--pink);
+    border-radius: 0 var(--radius) var(--radius) 0;
+  }
+
+  .legal__body :global(.tldr h2) {
+    margin-top: 0;
+  }
+
+  .legal__body :global(.table) {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+
+  .legal__body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .legal__body :global(th),
+  .legal__body :global(td) {
+    padding: 0.625rem 0.75rem 0.625rem 0;
+    border-bottom: 1px solid var(--hairline);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .legal__body :global(th) {
+    font-weight: 700;
+  }
+</style>

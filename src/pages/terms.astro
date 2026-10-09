@@ -1,0 +1,135 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { legal, install } from '../content/site';
+
+const mcpHost = new URL(install.mcpUrl).host;
+const mail = `mailto:${legal.email}`;
+---
+
+<Legal
+  title="Terms of service"
+  description="The rules for using Nevo’s Brain, the free MCP server that gives your AI agent Nevo David’s distribution playbooks."
+  other={{ href: '/privacy', label: 'privacy policy' }}
+>
+  <p>
+    These terms are an agreement between you and {legal.operator}, the company behind Postiz (“we”, “us”), for the
+    website at nevo.md and the MCP server at {mcpHost} (together, “Nevo’s Brain” or “the service”). By connecting
+    the service to your agent or signing in, you agree to them. If you use it for a company, you agree for that
+    company too.
+  </p>
+
+  <section class="tldr">
+    <h2>The short version</h2>
+    <ul>
+      <li>It’s free. Use the answers to grow your own business.</li>
+      <li>Don’t scrape the brain, resell it, or get around its limits.</li>
+      <li>It’s marketing knowledge, not a promise of results. Check what your agent does with it.</li>
+      <li>We can change it, stop it, or block accounts that abuse it.</li>
+    </ul>
+  </section>
+
+  <h2>1. The service</h2>
+  <p>
+    Nevo’s Brain is an MCP server that lets your AI agent search Nevo David’s playbooks on distribution and
+    marketing: notes from his posts, articles, talks and interviews. It is free. We may add to it, change it, limit
+    it or shut it down at any time, and we don’t promise it will always be available or free of errors.
+  </p>
+
+  <h2>2. Your account</h2>
+  <ul>
+    <li>You sign in with an email address you control. One account per person.</li>
+    <li>You must be at least 16, and old enough where you live to agree to these terms.</li>
+    <li>
+      You are responsible for what happens through your account, including everything your agent does with it. Keep
+      your agent’s tokens to yourself.
+    </li>
+  </ul>
+
+  <h2>3. Fair use</h2>
+  <p>Each account can make up to 60 calls a minute. You agree not to:</p>
+  <ul>
+    <li>copy, scrape or systematically extract the brain’s content, or try to rebuild it as a dataset;</li>
+    <li>use its content to train or fine-tune AI models;</li>
+    <li>resell access, share your account, or offer the service to others through your own product or server;</li>
+    <li>get around the rate limits or a block, for example by opening more accounts;</li>
+    <li>probe, attack or overload the service, or try to reach parts of it not meant for you;</li>
+    <li>use it for anything illegal, or send it other people’s personal information or anyone’s secrets.</li>
+  </ul>
+
+  <h2>4. The content</h2>
+  <p>
+    The brain’s content, its notes and playbooks and the answers built from them, belongs to us and Nevo David. We
+    give you a personal, non-exclusive, revocable license to use the answers to run and grow your own business,
+    including in the work your agent does for you. You can quote short parts if you credit Nevo David. You can’t
+    republish the brain or large parts of it. “Nevo’s Brain” and “Postiz” are our names; don’t use them in a way
+    that suggests we endorse you.
+  </p>
+
+  <h2>5. Your searches</h2>
+  <p>
+    What your agent sends stays yours. You give us permission to store and use it to run, protect and improve the
+    service, as the <a href="/privacy">privacy policy</a> describes. Don’t send anything you don’t have the right to
+    share.
+  </p>
+
+  <h2>6. Not advice, no guarantees</h2>
+  <p>
+    The brain shares what worked for Nevo and Postiz, with the numbers he saw. It is general information, not
+    business, legal, financial or tax advice, and his results don’t predict yours. Your agent may also misread or
+    misquote what it finds. Check anything before you act on it, especially before spending money or posting in
+    public. You are responsible for what you and your agent do.
+  </p>
+
+  <h2>7. Other services</h2>
+  <p>
+    You use the brain through an agent app (Claude, ChatGPT, Cursor and others) run by another company, under that
+    company’s terms. Answers may link to other websites, which we don’t control. The brain’s answers also ask your
+    agent to suggest following Nevo on X and LinkedIn.
+  </p>
+
+  <h2>8. The newsletter</h2>
+  <p>
+    Signing in subscribes you to Nevo’s newsletter. You can unsubscribe from any email and keep using the service.
+  </p>
+
+  <h2>9. Blocking and leaving</h2>
+  <p>
+    We can suspend or block an account at any time, without notice, if we believe it breaks these terms or harms the
+    service or other people. You can stop using the service whenever you like, and ask us to delete your account at <a
+      href={mail}>{legal.email}</a
+    >. Sections 4 to 6 and 10 to 13 keep applying after your access ends.
+  </p>
+
+  <h2>10. Disclaimer</h2>
+  <p>
+    The service is provided “as is” and “as available”, without warranties of any kind, express or implied,
+    including merchantability, fitness for a particular purpose, accuracy and non-infringement, to the fullest extent
+    the law allows.
+  </p>
+
+  <h2>11. Limit of liability</h2>
+  <p>
+    To the fullest extent the law allows, we are not liable for any indirect, incidental, special, consequential or
+    punitive damages, or for lost profits, revenue, data or business, arising from your use of the service. Our total
+    liability for any claim about the service is limited to US$50. Some places don’t allow these limits, so they may
+    not all apply to you.
+  </p>
+
+  <h2>12. Indemnity</h2>
+  <p>
+    If someone brings a claim against us because of how you or your agent used the service, or because you broke
+    these terms, you will cover our reasonable costs and losses from it.
+  </p>
+
+  <h2>13. Law</h2>
+  <p>
+    These terms are governed by the laws of the jurisdiction where {legal.operator} is registered, and disputes go to
+    its courts, unless the law where you live gives you the right to bring them at home.
+  </p>
+
+  <h2>14. Changes</h2>
+  <p>
+    We may update these terms. We will post the new version here and change the date at the top; for changes that
+    matter, we will also email you. If you keep using the service after that, you accept the new terms.
+  </p>
+</Legal>

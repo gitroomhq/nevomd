@@ -188,6 +188,13 @@ export const links = {
   github: 'https://github.com/gitroomhq',
 };
 
+/** Who runs the site and the MCP server, for the privacy policy and the terms (src/pages/privacy.astro, terms.astro). */
+export const legal = {
+  operator: 'Gitroom LLC',
+  email: 'nevo@postiz.com',
+  updated: '2026-10-09',
+};
+
 const article = (id: string) => `https://x.com/wickedguro/status/${id}`;
 
 export const playbooks = [
@@ -397,9 +404,10 @@ export const proofSection = {
   title: 'Every play has a receipt.',
   sub: 'The revenue is public and verified by TrustMRR from Postiz’s Stripe. This chart is redrawn from that data, and the link goes to the original.',
   chartTitle: 'Postiz monthly recurring revenue',
+  chartTitleArr: 'Postiz annual recurring revenue',
   proofLink: 'Verified on TrustMRR',
   /** Under the table: where the numbers in mrr.json come from. */
-  fine: 'Month starts up to September 2026 are read off the Stripe chart to the nearest $500. Later figures come from Postiz’s Stripe through TrustMRR, scaled to match Stripe’s own MRR.',
+  fine: 'Month starts up to September 2026 are read off the Stripe chart to the nearest $500. Later figures come from Postiz’s Stripe through TrustMRR, scaled to match Stripe’s own MRR. ARR is MRR × 12.',
   annotations: [
     { date: '2024-09-01', text: 'open-source launch', dx: 12, dy: -46 },
     { date: '2025-08-15', text: 'one outreach campaign', dx: -150, dy: -62 },

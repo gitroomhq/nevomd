@@ -1,6 +1,6 @@
 ---
 import MrrChart from './MrrChart.astro';
-import { series, usd, monthYear, fullDate } from '../lib/chart';
+import { series, usd, toArr, monthYear, fullDate } from '../lib/chart';
 import { proof, proofSection, asOfLabel } from '../content/site';
 ---
 
@@ -11,16 +11,28 @@ import { proof, proofSection, asOfLabel } from '../content/site';
       <p>{proofSection.sub}</p>
     </div>
 
-    <figure class="card">
+    <figure class="card" data-unit="mrr">
       <figcaption class="card__head">
         <div>
-          <p class="card__label">{proofSection.chartTitle}</p>
-          <p class="card__value">{usd(proof.mrr)}</p>
+          <p class="card__label">
+            <span data-unit-show="mrr">{proofSection.chartTitle}</span>
+            <span data-unit-show="arr">{proofSection.chartTitleArr}</span>
+          </p>
+          <p class="card__value">
+            <span data-unit-show="mrr">{usd(proof.mrr)}</span>
+            <span data-unit-show="arr">{usd(toArr(proof.mrr))}</span>
+          </p>
         </div>
-        <p class="card__meta">
-          As of {asOfLabel}.
-          <a class="link" href={proof.proofUrl} rel="noopener">{proofSection.proofLink}</a>
-        </p>
+        <div class="card__side">
+          <div class="card__units" role="group" aria-label="Show revenue as" data-units hidden>
+            <button type="button" data-unit-pick="mrr" aria-pressed="true">MRR</button>
+            <button type="button" data-unit-pick="arr" aria-pressed="false">ARR</button>
+          </div>
+          <p class="card__meta">
+            As of {asOfLabel}.
+            <a class="link" href={proof.proofUrl} rel="noopener">{proofSection.proofLink}</a>
+          </p>
+        </div>
       </figcaption>
 
       <MrrChart variant="wide" />
@@ -32,14 +44,20 @@ import { proof, proofSection, asOfLabel } from '../content/site';
           <table>
             <caption class="sr-only">Postiz monthly recurring revenue by month</caption>
             <thead>
-              <tr><th scope="col">Month</th><th scope="col">MRR</th></tr>
+              <tr>
+                <th scope="col">Month</th>
+                <th scope="col"><span data-unit-show="mrr">MRR</span><span data-unit-show="arr">ARR</span></th>
+              </tr>
             </thead>
             <tbody>
               {
                 series.map((p, i) => (
                   <tr>
                     <th scope="row">{i === series.length - 1 ? asOfLabel : p.date.endsWith('-01') ? monthYear(p.t) : fullDate(p.t)}</th>
-                    <td>{usd(p.mrr)}</td>
+                    <td>
+                      <span data-unit-show="mrr">{usd(p.mrr)}</span>
+                      <span data-unit-show="arr">{usd(toArr(p.mrr))}</span>
+                    </td>
                   </tr>
                 ))
               }
@@ -71,6 +89,55 @@ import { proof, proofSection, asOfLabel } from '../content/site';
     align-items: flex-end;
     gap: 0.5rem 1.5rem;
     margin-bottom: 0.5rem;
+  }
+
+  /* MRR or ARR: every figure on the card is there twice, and data-unit shows one. */
+  .card :global([data-unit-show='arr']),
+  .card[data-unit='arr'] :global([data-unit-show='mrr']) {
+    display: none;
+  }
+
+  .card[data-unit='arr'] :global([data-unit-show='arr']) {
+    display: revert;
+  }
+
+  .card__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-self: stretch;
+  }
+
+  .card__units {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  .card__units[hidden] {
+    display: none;
+  }
+
+  .card__units button {
+    padding: 0.25rem 0.75rem;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 62.4375rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .card__units button[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  @media (max-width: 700px) {
+    .card__side {
+      align-items: flex-start;
+    }
   }
 
   .card__label {
