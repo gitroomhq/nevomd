@@ -1,0 +1,87 @@
+name: deploy-aws
+
+# Builds the site (Astro, static) and publishes it to S3 behind CloudFront:
+# dist/_astro first (hashed names, cached for a year), then everything else
+# (revalidated on every visit), old files removed, then CloudFront's cache
+# cleared. The AWS side lives in gitroomhq/postiz-internal-infra (environments/nevomd).
+#
+# Runs on every push to main, and after "Daily MRR": that workflow commits with
+# GITHUB_TOKEN, and such a push starts no other workflow, so the new MRR would
+# otherwise wait for the next push.
+#
+# Off until the repository variable AWS_DEPLOY is "true" (set it once the infra
+# is applied). Railway keeps deploying from its own integration until the cutover.
+#
+# Repository variables: AWS_DEPLOY, AWS_DEPLOY_ROLE_ARN, SITE_BUCKET,
+# CLOUDFRONT_DISTRIBUTION_ID (outputs deploy_role_arn, site_bucket, distribution_id).
+# Rollback: run this workflow by hand on the previous commit.
+
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Daily MRR"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-aws
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+
+jobs:
+  deploy:
+    if: vars.AWS_DEPLOY == 'true' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    # no job environment: the deploy role trusts this repository's main branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      # main's head: after Daily MRR, the commit it just pushed. art/ (the art
+      # pipeline's sources, ~195 MB) is not part of the build.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            /*
+            !/art/
+          sparse-checkout-cone-mode: false
+
+      - uses: pnpm/action-setup@v4 # the version in package.json's packageManager
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # without TRUSTMRR_API_KEY the MRR step keeps the committed src/data/mrr.json
+      - run: pnpm run build
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: publish
+        env:
+          BUCKET: ${{ vars.SITE_BUCKET }}
+        run: |
+          aws s3 sync dist/_astro "s3://$BUCKET/_astro" --only-show-errors --cache-control 'public, max-age=31536000, immutable'
+          aws s3 sync dist "s3://$BUCKET" --delete --exclude '_astro/*' --only-show-errors --cache-control 'public, max-age=0, must-revalidate'
+          aws s3 sync dist/_astro "s3://$BUCKET/_astro" --delete --only-show-errors --cache-control 'public, max-age=31536000, immutable'
+
+      - name: clear CloudFront's cache
+        env:
+          DISTRIBUTION: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: |
+          id=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths '/*' --query Invalidation.Id --output text)
+          aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION" --id "$id"
+          echo "published $(git rev-parse --short HEAD)"
